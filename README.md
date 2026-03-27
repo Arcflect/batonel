@@ -155,4 +155,9 @@ For open-ended exploration, use GitHub Discussions when available.
 
 ## License / ライセンス
 
-TBD
+Apache License 2.0.
+
+A short Japanese summary is available in `docs/LICENSE.ja.md`.
+
+Apache License 2.0 を採用します。
+日本語の参考サマリーは `docs/LICENSE.ja.md` にあります。
