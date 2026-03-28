@@ -143,6 +143,7 @@ The initial set of decisions focuses on core Archflow direction:
 - `0005` Examples precede presets
 - `0006` Verify starts with structure and contract consistency
 - `0007` Archflow remains sidecar-first before code-aware analysis
+- `0008` Minimal CLI error handling policy for Phase 2
 
 These decisions establish the early shape of the project.
 
@@ -301,6 +302,7 @@ Archflow は概念が多いプロジェクトです。
 - `0005` Examples は preset より先に来る
 - `0006` Verify は構造と contract の整合から始まる
 - `0007` Archflow はコード認識分析の前に sidecar ファースト のままである
+- `0008` Phase 2 における最小 CLI エラーハンドリングポリシー
 
 これらの決定はプロジェクトの初期形状を確立します。
 
