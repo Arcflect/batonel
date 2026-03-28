@@ -1,0 +1,30 @@
+name: create_user_handler
+module: user
+role: http_handler
+path: crates/adapters/http/src/handlers/create_user_handler.rs
+
+responsibilities:
+  - "Translate HTTP input into application input"
+  - "Call the create_user usecase"
+  - "Translate application output into HTTP response data"
+
+must_not:
+  - "Contain direct persistence logic"
+  - "Embed business rules that belong in domain or usecase"
+  - "Write SQL directly"
+
+allowed_dependencies:
+  - "crates/application"
+  - "crates/adapters/http"
+
+forbidden_dependencies:
+  - "crates/adapters/db"
+
+inputs:
+  - "CreateUserHttpRequest"
+
+outputs:
+  - "CreateUserHttpResponse"
+
+implementation_size: "small"
+status: "planned"

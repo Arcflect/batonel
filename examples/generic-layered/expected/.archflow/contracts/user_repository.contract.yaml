@@ -1,0 +1,27 @@
+name: user_repository
+module: user
+role: repository_interface
+path: src/application/interfaces/user_repository.txt
+
+responsibilities:
+  - "Define an abstraction for persistence access"
+  - "Provide a repository boundary for user persistence"
+  - "Hide infrastructure details from the application layer"
+
+must_not:
+  - "Contain persistence implementation details"
+  - "Contain transport-specific logic"
+
+allowed_dependencies:
+  - "src/domain"
+  - "src/application"
+
+forbidden_dependencies:
+  - "src/interfaces"
+  - "src/infrastructure"
+
+outputs:
+  - "UserRepository"
+
+implementation_size: "small"
+status: "planned"

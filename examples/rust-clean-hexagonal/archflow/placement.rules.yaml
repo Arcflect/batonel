@@ -1,0 +1,11 @@
+roles:
+  entity:
+    path: "crates/domain/src/entities/"
+  usecase:
+    path: "crates/application/src/usecases/"
+  repository_port:
+    path: "crates/application/src/ports/outbound/"
+  http_handler:
+    path: "crates/adapters/http/src/handlers/"
+  repository_impl:
+    path: "crates/adapters/db/src/repositories/"

@@ -1,0 +1,30 @@
+name: create_user_controller
+module: user
+role: controller
+path: src/interfaces/controllers/create_user_controller.txt
+
+responsibilities:
+  - "Accept input from an external interface"
+  - "Call the application layer"
+  - "Translate results into external response data"
+
+must_not:
+  - "Contain business rules that belong to domain or application"
+  - "Contain direct persistence logic"
+  - "Write infrastructure-specific operations"
+
+allowed_dependencies:
+  - "src/application"
+  - "src/interfaces"
+
+forbidden_dependencies:
+  - "src/infrastructure"
+
+inputs:
+  - "CreateUserRequest"
+
+outputs:
+  - "CreateUserResponse"
+
+implementation_size: "small"
+status: "planned"

@@ -1,0 +1,28 @@
+name: user
+module: user
+role: entity
+path: src/domain/entities/user.rs
+
+responsibilities:
+  - "Represent a core business concept"
+  - "Protect domain invariants"
+  - "Model the user entity"
+
+must_not:
+  - "Depend on transport or persistence details"
+  - "Contain HTTP-specific logic"
+  - "Contain direct database access"
+
+allowed_dependencies:
+  - "domain"
+
+forbidden_dependencies:
+  - "interfaces"
+  - "infrastructure"
+  - "application"
+
+outputs:
+  - "User"
+
+implementation_size: "small"
+status: "planned"

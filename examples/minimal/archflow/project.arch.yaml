@@ -1,0 +1,10 @@
+project:
+  name: minimal-app
+  architecture_style: simple
+  language: generic
+
+modules:
+  - name: user
+    features:
+      - create_user
+      - user_entity

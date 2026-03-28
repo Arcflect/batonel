@@ -1,0 +1,34 @@
+artifacts:
+  - name: user
+    module: user
+    role: entity
+    outputs:
+      - User
+
+  - name: create_user_service
+    module: user
+    role: service
+    inputs:
+      - CreateUserInput
+    outputs:
+      - CreateUserOutput
+
+  - name: user_repository
+    module: user
+    role: repository_interface
+    outputs:
+      - UserRepository
+
+  - name: create_user_controller
+    module: user
+    role: controller
+    inputs:
+      - CreateUserRequest
+    outputs:
+      - CreateUserResponse
+
+  - name: user_repository_gateway
+    module: user
+    role: gateway
+    outputs:
+      - UserRepositoryGateway

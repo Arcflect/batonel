@@ -1,0 +1,34 @@
+artifacts:
+  - name: user
+    module: user
+    role: entity
+    outputs:
+      - User
+
+  - name: create_user
+    module: user
+    role: usecase
+    inputs:
+      - CreateUserCommand
+    outputs:
+      - CreateUserResult
+
+  - name: user_repository
+    module: user
+    role: repository_port
+    outputs:
+      - UserRepository
+
+  - name: create_user_handler
+    module: user
+    role: http_handler
+    inputs:
+      - CreateUserHttpRequest
+    outputs:
+      - CreateUserHttpResponse
+
+  - name: postgres_user_repository
+    module: user
+    role: repository_impl
+    outputs:
+      - PostgresUserRepository

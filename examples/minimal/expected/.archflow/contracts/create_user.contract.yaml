@@ -1,0 +1,32 @@
+name: create_user
+module: user
+role: usecase
+path: src/application/usecases/create_user.rs
+
+responsibilities:
+  - "Execute one application use case"
+  - "Coordinate domain behavior"
+  - "Accept a user creation request"
+  - "Persist through an abstract repository boundary"
+
+must_not:
+  - "Access infrastructure details directly"
+  - "Return transport-specific responses"
+  - "Write SQL directly"
+
+allowed_dependencies:
+  - "domain"
+  - "application"
+
+forbidden_dependencies:
+  - "interfaces"
+  - "infrastructure"
+
+inputs:
+  - "CreateUserCommand"
+
+outputs:
+  - "CreateUserResult"
+
+implementation_size: "small"
+status: "planned"

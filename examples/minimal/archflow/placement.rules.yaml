@@ -1,0 +1,5 @@
+roles:
+  usecase:
+    path: "src/application/usecases/"
+  entity:
+    path: "src/domain/entities/"

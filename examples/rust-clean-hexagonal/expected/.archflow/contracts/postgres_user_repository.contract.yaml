@@ -1,0 +1,28 @@
+name: postgres_user_repository
+module: user
+role: repository_impl
+path: crates/adapters/db/src/repositories/postgres_user_repository.rs
+
+responsibilities:
+  - "Implement an outbound repository port"
+  - "Persist user data in PostgreSQL"
+  - "Translate between persistence data and domain/application models"
+
+must_not:
+  - "Contain HTTP-specific behavior"
+  - "Define core business policy"
+  - "Act as an application usecase"
+
+allowed_dependencies:
+  - "crates/domain"
+  - "crates/application"
+  - "crates/adapters/db"
+
+forbidden_dependencies:
+  - "crates/adapters/http"
+
+outputs:
+  - "PostgresUserRepository"
+
+implementation_size: "small"
+status: "planned"

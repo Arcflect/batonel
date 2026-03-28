@@ -12,6 +12,8 @@ Instead of only documenting architecture, Archflow helps define:
 
 Archflow is designed for teams that define the overall architecture first, then implement file by file with humans or lightweight AI models.
 
+For concrete example layouts and generated outputs, see [examples/README.md](./examples/README.md).
+
 ---
 
 ## English
@@ -66,6 +68,19 @@ It is not just an architecture linter.
 
 It is an **architecture-to-execution bridge**.
 
+## Examples
+
+Archflow includes example inputs and expected outputs to show how architecture
+is translated into placement rules, artifact contracts, and AI handoff prompts.
+
+Start here:
+- [examples/README.md](./examples/README.md)
+
+Included examples:
+- [`minimal`](./examples/minimal/README.md)
+- [`generic-layered`](./examples/generic-layered/README.md)
+- [`rust-clean-hexagonal`](./examples/rust-clean-hexagonal/README.md)
+
 ---
 
 ## 日本語
@@ -81,6 +96,8 @@ Archflow は、設計で決めた内容を、AI 開発時代に使える**実装
 - 何をしてはいけないか
 - どの依存を許可するか
 - AI に何を渡して実装させるか
+
+具体的なレイアウト例や生成された出力については、[examples/README.md](./examples/README.md)を参照してください。
 
 ### なぜ必要か
 
@@ -112,6 +129,18 @@ Archflow は、設計を以下へ変換することを目指します。
 Archflow は、単なる仕様管理ツールでも、単なる AI 向け instruction ファイルでも、単なる lint ツールでもありません。
 
 **設計から実装への橋渡しを行う OSS** です。
+
+## 例
+
+Archflowには、アーキテクチャが配置ルール、アーティファクト契約、およびAIへの引き継ぎプロンプトにどのように変換されるかを示すための、入力例と期待される出力が含まれています。
+
+まずはこちらから:
+- [examples/README.md](./examples/README.md)
+
+含まれる例:
+- [`minimal`](./examples/minimal/README.md)
+- [`generic-layered`](./examples/generic-layered/README.md)
+- [`rust-clean-hexagonal`](./examples/rust-clean-hexagonal/README.md)
 
 ---
 

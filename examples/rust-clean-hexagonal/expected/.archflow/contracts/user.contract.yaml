@@ -1,0 +1,28 @@
+name: user
+module: user
+role: entity
+path: crates/domain/src/entities/user.rs
+
+responsibilities:
+  - "Represent a core business concept"
+  - "Protect domain invariants"
+  - "Model the user entity"
+
+must_not:
+  - "Depend on application or adapter concerns"
+  - "Contain HTTP or database-specific logic"
+  - "Contain persistence access"
+
+allowed_dependencies:
+  - "crates/domain"
+
+forbidden_dependencies:
+  - "crates/application"
+  - "crates/adapters/http"
+  - "crates/adapters/db"
+
+outputs:
+  - "User"
+
+implementation_size: "small"
+status: "planned"

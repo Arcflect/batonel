@@ -1,0 +1,45 @@
+role_templates:
+  entity:
+    responsibilities:
+      - "Represent a core business concept"
+      - "Protect domain invariants"
+    must_not:
+      - "Depend on application or adapter concerns"
+      - "Contain HTTP or database-specific logic"
+    implementation_size: "small"
+
+  usecase:
+    responsibilities:
+      - "Execute one application use case"
+      - "Coordinate domain behavior through ports"
+    must_not:
+      - "Access adapter implementations directly"
+      - "Contain HTTP request/response logic"
+    implementation_size: "small"
+
+  repository_port:
+    responsibilities:
+      - "Define an outbound persistence boundary"
+      - "Hide infrastructure-specific details behind an abstraction"
+    must_not:
+      - "Contain database-specific implementation"
+    implementation_size: "small"
+
+  http_handler:
+    responsibilities:
+      - "Translate HTTP input into application input"
+      - "Call the application layer"
+      - "Translate application output into HTTP response data"
+    must_not:
+      - "Contain direct persistence logic"
+      - "Embed business rules that belong in domain or usecase"
+    implementation_size: "small"
+
+  repository_impl:
+    responsibilities:
+      - "Implement an outbound repository port"
+      - "Translate between persistence data and domain/application models"
+    must_not:
+      - "Contain HTTP-specific behavior"
+      - "Define core business policy"
+    implementation_size: "small"

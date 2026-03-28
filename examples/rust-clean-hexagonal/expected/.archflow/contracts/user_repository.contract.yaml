@@ -1,0 +1,27 @@
+name: user_repository
+module: user
+role: repository_port
+path: crates/application/src/ports/outbound/user_repository.rs
+
+responsibilities:
+  - "Define an outbound persistence boundary"
+  - "Provide an abstraction for user persistence"
+  - "Hide infrastructure-specific details behind an abstraction"
+
+must_not:
+  - "Contain database-specific implementation"
+  - "Contain HTTP-specific logic"
+
+allowed_dependencies:
+  - "crates/domain"
+  - "crates/application"
+
+forbidden_dependencies:
+  - "crates/adapters/http"
+  - "crates/adapters/db"
+
+outputs:
+  - "UserRepository"
+
+implementation_size: "small"
+status: "planned"
