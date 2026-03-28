@@ -1,0 +1,109 @@
+schema:
+  name: prompt
+  version: 0.1.0
+  description: >
+    Defines the structure of an AI handoff prompt derived from an artifact contract.
+
+required:
+  - artifact
+  - role
+  - module
+  - responsibilities
+  - must_not
+
+fields:
+  artifact:
+    type: string
+    required: true
+    description: Artifact name targeted by the prompt.
+
+  role:
+    type: string
+    required: true
+    description: Artifact role.
+
+  module:
+    type: string
+    required: true
+    description: Module name.
+
+  responsibilities:
+    type: list[string]
+    required: true
+    description: Responsibilities restated for implementation.
+
+  must_not:
+    type: list[string]
+    required: true
+    description: Forbidden behaviors restated for implementation.
+
+  allowed_dependencies:
+    type: list[string]
+    required: false
+    description: Allowed dependency areas or layers.
+
+  forbidden_dependencies:
+    type: list[string]
+    required: false
+    description: Forbidden dependency areas or layers.
+
+  inputs:
+    type: list[string]
+    required: false
+    description: Expected inputs.
+
+  outputs:
+    type: list[string]
+    required: false
+    description: Expected outputs.
+
+  completion_criteria:
+    type: list[string]
+    required: false
+    description: Conditions that define implementation completeness.
+
+  format:
+    type: string
+    required: false
+    description: >
+      Output prompt format.
+      Example values: markdown, plain-text, compact.
+
+notes:
+  - Prompt content should be derived from the contract.
+  - Prompts are delivery artifacts for humans or AI tools.
+  - Prompts should not introduce rules absent from the contract.
+
+example:
+  artifact: create_user
+  role: usecase
+  module: user
+
+  responsibilities:
+    - Execute one application use case
+    - Coordinate domain behavior
+    - Persist through an abstract repository boundary
+
+  must_not:
+    - Write SQL directly
+    - Return transport-specific responses
+
+  allowed_dependencies:
+    - domain
+    - application
+
+  forbidden_dependencies:
+    - interfaces
+    - infrastructure
+
+  inputs:
+    - CreateUserCommand
+
+  outputs:
+    - CreateUserResult
+
+  completion_criteria:
+    - The artifact has one clear responsibility
+    - The implementation respects architectural boundaries
+
+  format: markdown
