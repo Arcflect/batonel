@@ -38,47 +38,10 @@ pub fn execute() {
 
     for artifact in &artifacts_config.artifacts {
         match crate::generator::resolve_artifact_path(artifact, &placement_config) {
-            Ok(path) => {
-                match crate::generator::scaffold::generate_artifact_file(artifact, &path) {
-                    Ok(_) => {
-                        println!(
-                            "  [+] {} [{}] -> {}",
-                            artifact.name,
-                            artifact.role,
-                            path.display()
-                        );
-                        success_count += 1;
-                    }
-                    Err(e) => {
-                        eprintln!(
-                            "  [!] {} [{}]: Generation Error: {}",
-                            artifact.name,
-                            artifact.role,
-                            e
-                        );
-                        error_count += 1;
-                    }
-                }
-            }
-            Err(e) => {
-                eprintln!(
-                    "  [!] {} [{}]: Path Error: {}",
-                    artifact.name,
-                    artifact.role,
-                    e
-                );
-                error_count += 1;
-            }
+            Ok(path) => println!("  - {} -> {}", artifact.name, path.display()),
+            Err(e) => eprintln!("  - {}: Error: {}", artifact.name, e),
         }
     }
 
-    println!();
-    println!(
-        "Scaffold result: {} generated, {} errors.",
-        success_count, error_count
-    );
-    
-    if error_count > 0 {
-        std::process::exit(1);
-    }
+    println!("\nScaffold command executed (stub)");
 }
