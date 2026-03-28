@@ -31,7 +31,7 @@ pub fn execute() {
     println!("Style:   {}", project_config.project.architecture_style);
     println!("Modules: {}", project_config.modules.len());
     println!();
-    
+
     println!("Generating Artifacts:");
     let mut success_count = 0;
     let mut error_count = 0;

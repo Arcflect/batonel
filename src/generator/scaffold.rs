@@ -28,7 +28,10 @@ pub fn generate_artifact_with_sidecars(
     // 1. Generate the main artifact file
     write_file_safely(
         artifact_path,
-        &format!("// Archflow placeholder: {} ({})\n", artifact.name, artifact.role),
+        &format!(
+            "// Archflow placeholder: {} ({})\n",
+            artifact.name, artifact.role
+        ),
     )?;
 
     // 2. Generate sidecar files
@@ -40,7 +43,10 @@ pub fn generate_artifact_with_sidecars(
     );
     write_file_safely(
         &contract_path,
-        &format!("# Contract template for: {}\n# Role: {}\n", artifact.name, artifact.role),
+        &format!(
+            "# Contract template for: {}\n# Role: {}\n",
+            artifact.name, artifact.role
+        ),
     )?;
 
     let prompt_path = resolve_sidecar_path(
@@ -51,7 +57,10 @@ pub fn generate_artifact_with_sidecars(
     );
     write_file_safely(
         &prompt_path,
-        &format!("<!-- Prompt override for: {} ({}) -->\n", artifact.name, artifact.role),
+        &format!(
+            "<!-- Prompt override for: {} ({}) -->\n",
+            artifact.name, artifact.role
+        ),
     )?;
 
     Ok(())
@@ -64,7 +73,7 @@ fn resolve_sidecar_path(
     extension: &str,
 ) -> PathBuf {
     let file_name = format!("{}.{}", artifact.name, extension);
-    
+
     if let Some(dir) = override_dir {
         let mut path = PathBuf::from(dir);
         path.push(file_name);

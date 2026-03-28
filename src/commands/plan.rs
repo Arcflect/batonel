@@ -31,7 +31,7 @@ pub fn execute() {
     println!("Style:   {}", project_config.project.architecture_style);
     println!("Modules: {}", project_config.modules.len());
     println!();
-    
+
     println!("Planned Artifacts:");
     let mut success_count = 0;
     let mut error_count = 0;
@@ -48,12 +48,7 @@ pub fn execute() {
                 success_count += 1;
             }
             Err(e) => {
-                eprintln!(
-                    "  ! {} [{}]: Error: {}",
-                    artifact.name,
-                    artifact.role,
-                    e
-                );
+                eprintln!("  ! {} [{}]: Error: {}", artifact.name, artifact.role, e);
                 error_count += 1;
             }
         }
@@ -64,7 +59,7 @@ pub fn execute() {
         "Plan result: {} planned, {} errors.",
         success_count, error_count
     );
-    
+
     if error_count > 0 {
         std::process::exit(1);
     }

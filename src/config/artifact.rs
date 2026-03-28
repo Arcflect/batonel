@@ -31,7 +31,7 @@ impl ArtifactsPlanConfig {
     /// Loads the artifacts plan configuration from a given file path.
     pub fn load<P: AsRef<Path>>(path: P) -> Result<Self, ConfigError> {
         let path = path.as_ref();
-        
+
         if !path.exists() {
             return Err(ConfigError::NotFound(path.to_path_buf()));
         }
@@ -41,10 +41,11 @@ impl ArtifactsPlanConfig {
             source: e,
         })?;
 
-        let config: ArtifactsPlanConfig = serde_yaml::from_str(&contents).map_err(|e| ConfigError::Parse {
-            path: path.to_path_buf(),
-            source: e,
-        })?;
+        let config: ArtifactsPlanConfig =
+            serde_yaml::from_str(&contents).map_err(|e| ConfigError::Parse {
+                path: path.to_path_buf(),
+                source: e,
+            })?;
 
         Ok(config)
     }

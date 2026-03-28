@@ -26,14 +26,14 @@ pub fn resolve_artifact_path(
         .ok_or_else(|| ResolutionError::RoleNotFound(artifact.role.clone()))?;
 
     let mut path = PathBuf::from(&role_config.path);
-    
+
     // 3. Construct the actual file name
     let file_name = match &role_config.file_extension {
         Some(ext) => format!("{}.{}", artifact.name, ext),
         None => artifact.name.clone(),
     };
-    
+
     path.push(file_name);
-    
+
     Ok(path)
 }
