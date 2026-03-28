@@ -1,0 +1,11 @@
+roles:
+  entity:
+    path: "src/domain/entities/"
+  service:
+    path: "src/application/services/"
+  repository_interface:
+    path: "src/application/interfaces/"
+  controller:
+    path: "src/interfaces/controllers/"
+  gateway:
+    path: "src/infrastructure/gateways/"

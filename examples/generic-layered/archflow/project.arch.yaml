@@ -1,0 +1,13 @@
+project:
+  name: generic-layered-app
+  architecture_style: layered
+  language: generic
+
+modules:
+  - name: user
+    features:
+      - user_entity
+      - create_user_service
+      - user_repository
+      - create_user_controller
+      - user_repository_gateway

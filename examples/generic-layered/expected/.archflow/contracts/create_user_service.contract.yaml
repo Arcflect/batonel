@@ -1,0 +1,32 @@
+name: create_user_service
+module: user
+role: service
+path: src/application/services/create_user_service.txt
+
+responsibilities:
+  - "Execute one application-level operation"
+  - "Coordinate domain behavior through abstractions"
+  - "Accept a user creation input"
+  - "Persist through the repository interface"
+
+must_not:
+  - "Contain transport-specific behavior"
+  - "Access infrastructure implementations directly"
+  - "Embed persistence implementation logic"
+
+allowed_dependencies:
+  - "src/domain"
+  - "src/application/interfaces"
+
+forbidden_dependencies:
+  - "src/interfaces"
+  - "src/infrastructure"
+
+inputs:
+  - "CreateUserInput"
+
+outputs:
+  - "CreateUserOutput"
+
+implementation_size: "small"
+status: "planned"

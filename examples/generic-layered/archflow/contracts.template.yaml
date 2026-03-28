@@ -1,0 +1,45 @@
+role_templates:
+  entity:
+    responsibilities:
+      - "Represent a core business concept"
+      - "Protect domain invariants"
+    must_not:
+      - "Depend on application, interface, or infrastructure concerns"
+      - "Contain transport or persistence logic"
+    implementation_size: "small"
+
+  service:
+    responsibilities:
+      - "Execute one application-level operation"
+      - "Coordinate domain behavior through abstractions"
+    must_not:
+      - "Contain transport-specific behavior"
+      - "Access infrastructure implementations directly"
+    implementation_size: "small"
+
+  repository_interface:
+    responsibilities:
+      - "Define an abstraction for persistence access"
+      - "Hide infrastructure details from the application layer"
+    must_not:
+      - "Contain persistence implementation details"
+    implementation_size: "small"
+
+  controller:
+    responsibilities:
+      - "Accept input from an external interface"
+      - "Call the application layer"
+      - "Translate results into external response data"
+    must_not:
+      - "Contain business rules that belong to domain or application"
+      - "Contain direct persistence logic"
+    implementation_size: "small"
+
+  gateway:
+    responsibilities:
+      - "Implement infrastructure-facing persistence access"
+      - "Translate between persistence structures and domain/application models"
+    must_not:
+      - "Contain transport-specific logic"
+      - "Define core business policy"
+    implementation_size: "small"

@@ -1,0 +1,28 @@
+name: user
+module: user
+role: entity
+path: src/domain/entities/user.txt
+
+responsibilities:
+  - "Represent a core business concept"
+  - "Protect domain invariants"
+  - "Model the user entity"
+
+must_not:
+  - "Depend on application, interface, or infrastructure concerns"
+  - "Contain transport or persistence logic"
+  - "Contain direct external access"
+
+allowed_dependencies:
+  - "src/domain"
+
+forbidden_dependencies:
+  - "src/application"
+  - "src/interfaces"
+  - "src/infrastructure"
+
+outputs:
+  - "User"
+
+implementation_size: "small"
+status: "planned"

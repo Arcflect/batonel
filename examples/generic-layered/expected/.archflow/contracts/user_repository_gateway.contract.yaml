@@ -1,0 +1,28 @@
+name: user_repository_gateway
+module: user
+role: gateway
+path: src/infrastructure/gateways/user_repository_gateway.txt
+
+responsibilities:
+  - "Implement infrastructure-facing persistence access"
+  - "Translate between persistence structures and domain/application models"
+  - "Support user persistence operations"
+
+must_not:
+  - "Contain transport-specific logic"
+  - "Define core business policy"
+  - "Act as an application service"
+
+allowed_dependencies:
+  - "src/domain"
+  - "src/application"
+  - "src/infrastructure"
+
+forbidden_dependencies:
+  - "src/interfaces"
+
+outputs:
+  - "UserRepositoryGateway"
+
+implementation_size: "small"
+status: "planned"
