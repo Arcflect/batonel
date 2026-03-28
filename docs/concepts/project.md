@@ -147,3 +147,104 @@ It helps Archflow answer:
 - which examples or presets best fit the repository
 
 Without a clear project concept, the rest of the model becomes inconsistent.
+
+---
+
+## 日本語
+
+# Project
+
+## 概要
+
+Archflow における **Project** は、アーキテクチャの意図のトップレベルの定義です。
+
+プロジェクトは、Archflow がモジュール、配置ルール、artifact、contract、prompt を解釈する全体的な枠組みを記述します。
+
+---
+
+## 目的
+
+プロジェクト定義の目的は、グローバルなアーキテクチャコンテキストを確立することです。
+
+プロジェクトは次のような質問に答えます。
+
+- このリポジトリはどのような種類のシステムか？
+- どのアーキテクチャスタイルに従っているか？
+- どのモジュールが存在するか？
+- どの言語またはエコシステムを想定しているか？
+
+プロジェクト定義がなければ、残りの Archflow モデルには安定したコンテキストがありません。
+
+---
+
+## 責務
+
+プロジェクトは次のことを定義する責務を持ちます。
+
+- プロジェクトの名前とアイデンティティ
+- アーキテクチャスタイルまたはアプローチ
+- 言語の方向性またはエコシステム
+- モジュール空間（プロジェクト内でどのモジュールが存在するか）
+- 任意のグローバル設定
+
+プロジェクトは次の責務を持ちません。
+
+- 個々の artifact を定義すること（それは artifact プランに属します）
+- ロールを配置にマッピングすること（それは配置ルールに属します）
+- artifact の責務を定義すること（それは contract に属します）
+
+---
+
+## コアフィールド
+
+プロジェクト定義は通常、次のフィールドを含みます。
+
+- `name`: プロジェクトの識別子
+- `architecture_style`: アーキテクチャアプローチ（例: `clean`, `hexagonal`, `layered`, `simple`）
+- `language`: 主要な言語またはエコシステム（例: `rust`, `typescript`, `generic`）
+- `modules`: このプロジェクトに属するモジュールのリスト
+
+---
+
+## 例
+
+```yaml
+project:
+  name: user-service
+  architecture_style: clean-hexagonal
+  language: rust
+
+modules:
+  - name: user
+    features:
+      - user registration
+      - user profile management
+
+  - name: auth
+    features:
+      - authentication
+      - session management
+```
+
+---
+
+## 他の概念との関係
+
+プロジェクトは Archflow モデルの最上位です。
+
+- **project**: グローバルコンテキストを設定する
+- **module**: プロジェクト内の機能領域を定義する
+- **artifact**: モジュール内の具体的な実装ユニット
+- **placement rule**: artifact のロールをパスにマッピングする
+- **contract**: artifact の振る舞いの境界を定義する
+
+プロジェクトは Archflow が artifact、モジュール、ロール、パスを解釈する際に使用します。
+
+Archflow は次のことを決定するのに役立てます：
+
+- artifact がどこに属するか
+- ロールをどのように解釈するか
+- どの構造をスキャフォルドすべきか
+- どの examples やプリセットがリポジトリに最も合うか
+
+明確なプロジェクト概念がなければ、モデルの残りの部分が不整合になります。

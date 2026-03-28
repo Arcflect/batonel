@@ -1,0 +1,69 @@
+schema:
+  name: placement-rules
+  version: 0.1.0
+  description: >
+    Maps artifact roles to output paths in the project structure.
+
+required:
+  - roles
+
+fields:
+  roles:
+    type: map
+    required: true
+    description: Mapping from role name to placement rule.
+    additional_keys:
+      type: map
+      fields:
+        path:
+          type: string
+          required: true
+          description: >
+            Output directory path for artifacts of this role.
+        file_extension:
+          type: string
+          required: false
+          description: >
+            Optional file extension for generated artifacts.
+            Example values: rs, ts, py, md, txt.
+        naming:
+          type: map
+          required: false
+          description: Optional naming conventions for this role.
+          fields:
+            suffix:
+              type: string
+              required: false
+            prefix:
+              type: string
+              required: false
+        sidecar:
+          type: map
+          required: false
+          description: Optional sidecar file settings for this role.
+          fields:
+            contract_dir:
+              type: string
+              required: false
+            prompt_dir:
+              type: string
+              required: false
+
+notes:
+  - Placement rules define location, not behavioral responsibility.
+  - Different roles may map to different paths in the same project.
+  - Role names should align with role usage in artifact plans.
+
+example:
+  roles:
+    entity:
+      path: src/domain/entities/
+      file_extension: txt
+
+    usecase:
+      path: src/application/usecases/
+      file_extension: rs
+
+    controller:
+      path: src/interfaces/controllers/
+      file_extension: ts

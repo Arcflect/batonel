@@ -1,5 +1,13 @@
 # Archflow Roadmap
 
+For a more practical breakdown of each phase, see [docs/roadmap-detail.md](./docs/roadmap-detail.md).
+
+Related documents:
+- [docs/schema-guide.md](./docs/schema-guide.md)
+- [docs/architecture-flow.md](./docs/architecture-flow.md)
+- [docs/presets.md](./docs/presets.md)
+- [docs/decisions/README.md](./docs/decisions/README.md)
+
 ---
 
 ## English
@@ -16,6 +24,10 @@ Scope:
 - labels
 - roadmap
 - initial examples directory
+
+Related docs:
+- `examples/README.md`
+- `docs/contributing-areas.md`
 
 ### Phase 1: Core design model
 
@@ -34,6 +46,15 @@ Deliverables:
 - sample config files
 - terminology glossary
 
+Related docs:
+- `docs/concepts/project.md`
+- `docs/concepts/artifact.md`
+- `docs/concepts/contract.md`
+- `docs/concepts/prompt.md`
+- `docs/glossary.md`
+- `docs/schema-guide.md`
+- `docs/architecture-flow.md`
+
 ### Phase 2: Minimal CLI
 
 Goal:
@@ -48,6 +69,10 @@ Deliverables:
 - config initialization
 - structure generation
 - artifact sidecar generation
+
+Related docs:
+- `docs/roadmap-detail.md`
+- `docs/decisions/README.md`
 
 ### Phase 3: AI handoff layer
 
@@ -64,6 +89,10 @@ Deliverables:
 - example prompts
 - role-based prompt presets
 
+Related docs:
+- `docs/concepts/prompt.md`
+- `docs/decisions/README.md`
+
 ### Phase 4: Verification
 
 Goal:
@@ -79,6 +108,10 @@ Deliverables:
 - local verification
 - CI example workflow
 
+Related docs:
+- `docs/decisions/0006-verify-starts-with-structure-and-contract-consistency.md`
+- `docs/roadmap-detail.md`
+
 ### Phase 5: Presets and ecosystem fit
 
 Goal:
@@ -89,6 +122,10 @@ Scope:
 - generic preset
 - example repositories
 - GitHub workflow examples
+
+Related docs:
+- `docs/presets.md`
+- `examples/README.md`
 
 ### Longer-term directions
 
@@ -115,6 +152,10 @@ OSS としての土台を整える。
 - roadmap
 - examples ディレクトリの初期化
 
+関連ドキュメント:
+- `examples/README.md`
+- `docs/contributing-areas.md`
+
 ### Phase 1: コア設計モデル
 
 目標:
@@ -132,6 +173,15 @@ Archflow の最小概念を安定化する。
 - sample config files
 - 用語集
 
+関連ドキュメント:
+- `docs/concepts/project.md`
+- `docs/concepts/artifact.md`
+- `docs/concepts/contract.md`
+- `docs/concepts/prompt.md`
+- `docs/glossary.md`
+- `docs/schema-guide.md`
+- `docs/architecture-flow.md`
+
 ### Phase 2: 最小 CLI
 
 目標:
@@ -146,6 +196,10 @@ Archflow の最小概念を安定化する。
 - config 初期化
 - 構造生成
 - artifact sidecar 生成
+
+関連ドキュメント:
+- `docs/roadmap-detail.md`
+- `docs/decisions/README.md`
 
 ### Phase 3: AI handoff レイヤ
 
@@ -162,6 +216,10 @@ Archflow の最小概念を安定化する。
 - prompt サンプル
 - role ごとの prompt preset
 
+関連ドキュメント:
+- `docs/concepts/prompt.md`
+- `docs/decisions/README.md`
+
 ### Phase 4: Verify
 
 目標:
@@ -177,6 +235,10 @@ Archflow の最小概念を安定化する。
 - ローカル verify
 - CI 用サンプル workflow
 
+関連ドキュメント:
+- `docs/decisions/0006-verify-starts-with-structure-and-contract-consistency.md`
+- `docs/roadmap-detail.md`
+
 ### Phase 5: Preset と導入しやすさ
 
 目標:
@@ -187,6 +249,10 @@ Archflow の最小概念を安定化する。
 - generic preset
 - example repository
 - GitHub workflow examples
+
+関連ドキュメント:
+- `docs/presets.md`
+- `examples/README.md`
 
 ### 長期的な方向性
 

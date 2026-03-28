@@ -1,0 +1,126 @@
+schema:
+  name: contract
+  version: 0.1.0
+  description: >
+    Defines the responsibilities and constraints of a single artifact.
+
+required:
+  - name
+  - module
+  - role
+  - path
+  - responsibilities
+  - must_not
+  - status
+
+fields:
+  name:
+    type: string
+    required: true
+    description: Artifact name.
+
+  module:
+    type: string
+    required: true
+    description: Module name.
+
+  role:
+    type: string
+    required: true
+    description: Artifact role.
+
+  path:
+    type: string
+    required: true
+    description: Resolved implementation path for the artifact.
+
+  responsibilities:
+    type: list[string]
+    required: true
+    description: List of artifact responsibilities.
+
+  must_not:
+    type: list[string]
+    required: true
+    description: List of forbidden behaviors.
+
+  allowed_dependencies:
+    type: list[string]
+    required: false
+    description: Allowed dependency areas or layers.
+
+  forbidden_dependencies:
+    type: list[string]
+    required: false
+    description: Forbidden dependency areas or layers.
+
+  inputs:
+    type: list[string]
+    required: false
+    description: Expected inputs for the artifact.
+
+  outputs:
+    type: list[string]
+    required: false
+    description: Expected outputs for the artifact.
+
+  implementation_size:
+    type: string
+    required: false
+    description: >
+      Suggested implementation scope.
+      Example values: small, medium, large.
+
+  completion_criteria:
+    type: list[string]
+    required: false
+    description: Optional explicit completion criteria.
+
+  status:
+    type: string
+    required: true
+    description: >
+      Lifecycle status of the artifact.
+      Example values: planned, scaffolded, implementing, reviewing, done.
+
+  metadata:
+    type: map
+    required: false
+    description: Optional free-form metadata.
+
+notes:
+  - A contract belongs to exactly one artifact.
+  - Contracts preserve architectural intent during implementation.
+  - The prompt should be derived from the contract, not replace it.
+
+example:
+  name: create_user
+  module: user
+  role: usecase
+  path: src/application/usecases/create_user.rs
+
+  responsibilities:
+    - Execute one application use case
+    - Coordinate domain behavior
+    - Persist through an abstract repository boundary
+
+  must_not:
+    - Write SQL directly
+    - Return transport-specific responses
+
+  allowed_dependencies:
+    - domain
+    - application
+
+  forbidden_dependencies:
+    - interfaces
+    - infrastructure
+
+  inputs:
+    - CreateUserCommand
+
+  outputs:
+    - CreateUserResult
+
+  implementation_size: small
+  status: planned

@@ -1,0 +1,89 @@
+schema:
+  name: project
+  version: 0.1.0
+  description: >
+    Defines the top-level project context for Archflow.
+
+required:
+  - project
+
+fields:
+  project:
+    type: map
+    required: true
+    description: Top-level project definition.
+    fields:
+      name:
+        type: string
+        required: true
+        description: Unique project name.
+      architecture_style:
+        type: string
+        required: true
+        description: >
+          Architectural style used by the project.
+          Example values: simple, layered, clean-hexagonal, modular-monolith.
+      language:
+        type: string
+        required: true
+        description: >
+          Language orientation of the project.
+          Example values: generic, rust, typescript, python.
+
+  workspace:
+    type: map
+    required: false
+    description: Optional workspace or multi-package structure settings.
+    fields:
+      enabled:
+        type: boolean
+        required: true
+        description: Whether workspace mode is enabled.
+      members:
+        type: list[string]
+        required: false
+        description: List of workspace member paths.
+
+  modules:
+    type: list[map]
+    required: true
+    description: List of modules in the project.
+    item_fields:
+      name:
+        type: string
+        required: true
+        description: Module name.
+      features:
+        type: list[string]
+        required: false
+        description: Optional list of feature names in this module.
+
+  metadata:
+    type: map
+    required: false
+    description: Optional free-form metadata for future use.
+
+notes:
+  - A project defines architectural context, not implementation logic.
+  - Modules belong at the project level.
+  - Workspace is optional and ecosystem-dependent.
+
+example:
+  project:
+    name: sample-app
+    architecture_style: clean-hexagonal
+    language: rust
+
+  workspace:
+    enabled: true
+    members:
+      - crates/domain
+      - crates/application
+      - crates/adapters/http
+      - crates/adapters/db
+
+  modules:
+    - name: user
+      features:
+        - create_user
+        - user_entity

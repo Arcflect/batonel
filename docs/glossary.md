@@ -263,3 +263,258 @@ It means Archflow sits between:
 
 Archflow does not stop at documentation.
 It turns design intent into executable implementation context.
+
+---
+
+## 日本語
+
+この用語集は Archflow で使用されるコアな用語を定義します。
+
+terminology を example、ドキュメント、スキーマ、将来の CLI 動作にわたって安定させることが目的です。
+
+---
+
+### Project（プロジェクト）
+
+アーキテクチャの意図のトップレベルの定義。
+
+プロジェクトは、Archflow がモジュール、配置ルール、artifact、contract、prompt を解釈する全体的な枠組みを記述します。
+
+典型的な例：
+- Rust のクリーン / ヘキサゴナルアプリケーション
+- 汎用レイヤードサービス
+- 複数の境界を持つモジュラーモノリス
+
+---
+
+### Module（モジュール）
+
+プロジェクト内の名前付きアーキテクチャ領域。
+
+モジュールは関連する artifact と機能をグループ化します。
+通常はビジネス機能または凝集した技術的領域に合わせて配置されます。
+
+例：
+- `user`
+- `auth`
+- `billing`
+
+モジュールはそれ自体がパッケージやディレクトリである必要はありませんが、特定のプロジェクトではそれにマッピングされることがあります。
+
+---
+
+### Role（ロール）
+
+artifact に割り当てられたアーキテクチャ上のロール。
+
+ロールは Archflow が次のことを判断するのに役立ちます。
+
+- artifact がどこに配置されるべきか
+- どのテンプレートを適用するか
+- どのような責務が典型的か
+- どのような constraint を生成するか
+
+例：
+- `entity`
+- `usecase`
+- `service`
+- `repository_port`
+- `repository_interface`
+- `controller`
+- `handler`
+- `gateway`
+- `repository_impl`
+
+---
+
+### Artifact（アーティファクト）
+
+Archflow における最小の計画済み実装ユニット。
+
+artifact は、プロジェクト構造に存在すべき具体的なもの（ファイル、ハンドラー、エンティティ、サービス、リポジトリ境界、アダプターユニットなど）です。
+
+Artifact は Archflow がスキャフォルドし、制約を与え、人間または AI システムにハンドオフする主要なユニットです。
+
+例：
+- `user`
+- `create_user`
+- `user_repository`
+- `create_user_handler`
+
+---
+
+### Placement Rule（配置ルール）
+
+ロールをプロジェクト構造の場所にマッピングするルール。
+
+配置ルールは Archflow が artifact がどこに配置されるべきかを判断するのに役立ちます。
+
+例：
+- `entity` → `src/domain/entities/`
+- `usecase` → `src/application/usecases/`
+- `controller` → `src/interfaces/controllers/`
+
+配置ルールは場所を定義しますが、振る舞いは定義しません。
+
+---
+
+### Artifact Plan（アーティファクトプラン）
+
+プロジェクトのために作成すべき artifact の構造化されたリスト。
+
+artifact プランには通常、artifact の名前、ロール、モジュール、および任意の入力と出力が含まれます。
+
+これは Archflow がスキャフォルド生成に使用する主要な入力の 1 つです。
+
+---
+
+### Contract（コントラクト）
+
+artifact の責務と constraint の定義。
+
+contract は次のことを記述します。
+
+- artifact が何をすべきか
+- 何をしてはいけないか
+- どの依存関係が許可されているか
+- どの依存関係が禁止されているか
+- どのような入力と出力が期待されるか
+- 実装がどの程度集中しているべきか
+
+Contract は Archflow が実装中にアーキテクチャの意図を保全する主な方法です。
+
+---
+
+### Contract Template（コントラクトテンプレート）
+
+ロール別に contract を生成するための再利用可能なルールセット。
+
+contract テンプレートは、特定のロールにデフォルトの責務、constraint、実装ガイダンスを提供します。
+
+例：
+- デフォルトの `entity` テンプレート
+- デフォルトの `usecase` テンプレート
+- デフォルトの `controller` テンプレート
+
+artifact 固有の contract はこれらのテンプレートを拡張または精緻化することができます。
+
+---
+
+### Prompt（プロンプト）
+
+artifact contract の AI ハンドオフ表現。
+
+prompt は、プロジェクトコンテキスト、artifact のアイデンティティ、contract の境界を、AI コーディングツールに直接渡せる形式に変換します。
+
+Prompt は contract から導出されます。
+Prompt は主要な真実の源ではありません。
+
+---
+
+### Scaffold（スキャフォルド）
+
+Archflow によって生成された構造的な出力。
+
+スキャフォルディングには次のものが含まれる場合があります。
+
+- ディレクトリ
+- 仮ファイル
+- contract ファイル
+- prompt ファイル
+- メタデータファイル
+
+スキャフォルディングは、実装をより簡単で一貫したものにするためのものです。
+
+---
+
+### Verify（ベリファイ）
+
+プロジェクト構造と artifact の定義が Archflow のルールと整合して一致したままかどうかをチェックするプロセス。
+
+Verify には以下のチェックが含まれる場合があります。
+
+- 必須の contract フィールド
+- 配置の整合性
+- artifact のステータスの整合性
+- contract / prompt の存在
+- 将来の任意のコード認識チェック
+
+---
+
+### Preset（プリセット）
+
+一般的なアーキテクチャスタイルまたはエコシステム向けの再利用可能な設定パッケージ。
+
+preset には次のものが含まれる場合があります。
+
+- プロジェクトのデフォルト
+- 配置ルール
+- contract テンプレート
+- artifact の例
+- ロールの慣習
+
+例：
+- Rust クリーン / ヘキサゴナルプリセット
+- 汎用レイヤードプリセット
+
+---
+
+### AI Handoff（AI ハンドオフ）
+
+実装のために artifact を AI システムに渡す行為。
+
+Archflow での AI ハンドオフは次に基づいています。
+
+- プロジェクトコンテキスト
+- artifact の定義
+- contract
+- 生成された prompt
+
+目的は、実装をより明確に、範囲を小さく、アーキテクチャからの逸脱を少なくすることです。
+
+---
+
+### Sidecar File（サイドカーファイル）
+
+実装の artifact に付随するが、それ自体は実装ではないファイル。
+
+Archflow では、sidecar ファイルには一般的に次のものが含まれます。
+
+- `*.contract.yaml`
+- `*.prompt.md`
+
+Sidecar ファイルは、本番コードが存在する前でも Archflow が機能できるため重要です。
+
+---
+
+### Status（ステータス）
+
+artifact または contract のライフサイクル状態。
+
+ステータスは artifact がワークフローのどこにあるかを追跡するのに役立ちます。
+
+例：
+- `planned`
+- `scaffolded`
+- `implementing`
+- `reviewing`
+- `done`
+
+ステータスは AI 支援ワークフローと将来の verify に特に有用です。
+
+---
+
+### Architecture-to-Execution Bridge（設計から実行への橋渡し）
+
+Archflow が何であるかを簡潔に表現した言葉。
+
+Archflow が次の間に位置することを意味します。
+
+- アーキテクチャ設計
+- 構造計画
+- AI ハンドオフ
+- 実装スキャフォルディング
+- 将来の verify
+
+Archflow はドキュメント作成で止まりません。
+設計の意図を実行可能な実装コンテキストに変換します。

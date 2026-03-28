@@ -14,6 +14,8 @@ Archflow is designed for teams that define the overall architecture first, then 
 
 For concrete example layouts and generated outputs, see [examples/README.md](./examples/README.md).
 
+For deeper project documentation, see the [Docs guide](#docs--ドキュメント).
+
 ---
 
 ## English
@@ -81,6 +83,53 @@ Included examples:
 - [`generic-layered`](./examples/generic-layered/README.md)
 - [`rust-clean-hexagonal`](./examples/rust-clean-hexagonal/README.md)
 
+## Docs / ドキュメント
+
+If you want to understand the model, roadmap, and design decisions in more detail, start here:
+
+- [ROADMAP.md](./ROADMAP.md)
+- [docs/roadmap-detail.md](./docs/roadmap-detail.md)
+- [docs/schema-guide.md](./docs/schema-guide.md)
+- [docs/architecture-flow.md](./docs/architecture-flow.md)
+- [docs/presets.md](./docs/presets.md)
+- [docs/contributing-areas.md](./docs/contributing-areas.md)
+- [docs/glossary.md](./docs/glossary.md)
+- [docs/decisions/README.md](./docs/decisions/README.md)
+
+Core concepts:
+- [docs/concepts/project.md](./docs/concepts/project.md)
+- [docs/concepts/module.md](./docs/concepts/module.md)
+- [docs/concepts/role.md](./docs/concepts/role.md)
+- [docs/concepts/placement-rule.md](./docs/concepts/placement-rule.md)
+- [docs/concepts/artifact.md](./docs/concepts/artifact.md)
+- [docs/concepts/contract.md](./docs/concepts/contract.md)
+- [docs/concepts/prompt.md](./docs/concepts/prompt.md)
+- [docs/concepts/scaffold.md](./docs/concepts/scaffold.md)
+- [docs/concepts/verify.md](./docs/concepts/verify.md)
+
+Schema drafts:
+- [schemas/project.schema.yaml](./schemas/project.schema.yaml)
+- [schemas/placement-rules.schema.yaml](./schemas/placement-rules.schema.yaml)
+- [schemas/contracts-template.schema.yaml](./schemas/contracts-template.schema.yaml)
+- [schemas/artifacts-plan.schema.yaml](./schemas/artifacts-plan.schema.yaml)
+- [schemas/contract.schema.yaml](./schemas/contract.schema.yaml)
+- [schemas/prompt.schema.yaml](./schemas/prompt.schema.yaml)
+
+Recommended reading order:
+1. [examples/README.md](./examples/README.md)
+2. [docs/schema-guide.md](./docs/schema-guide.md)
+3. [docs/architecture-flow.md](./docs/architecture-flow.md)
+4. [docs/concepts/project.md](./docs/concepts/project.md)
+5. [docs/concepts/module.md](./docs/concepts/module.md)
+6. [docs/concepts/role.md](./docs/concepts/role.md)
+7. [docs/concepts/placement-rule.md](./docs/concepts/placement-rule.md)
+8. [docs/concepts/artifact.md](./docs/concepts/artifact.md)
+9. [docs/concepts/contract.md](./docs/concepts/contract.md)
+10. [docs/concepts/prompt.md](./docs/concepts/prompt.md)
+11. [docs/concepts/scaffold.md](./docs/concepts/scaffold.md)
+12. [docs/concepts/verify.md](./docs/concepts/verify.md)
+13. [docs/decisions/README.md](./docs/decisions/README.md)
+
 ---
 
 ## 日本語
@@ -98,6 +147,8 @@ Archflow は、設計で決めた内容を、AI 開発時代に使える**実装
 - AI に何を渡して実装させるか
 
 具体的なレイアウト例や生成された出力については、[examples/README.md](./examples/README.md)を参照してください。
+
+より詳しい設計資料は、下の [Docs / ドキュメント](#docs--ドキュメント) を参照してください。
 
 ### なぜ必要か
 
@@ -158,6 +209,11 @@ Archflow is currently in early design and repository bootstrap stage.
 - AI handoff prompt の生成
 - verify の最小実装
 
+より詳しい段階分けは、次を参照してください。
+
+- [ROADMAP.md](./ROADMAP.md)
+- [docs/roadmap-detail.md](./docs/roadmap-detail.md)
+
 ---
 
 ## Planned commands / 想定コマンド
@@ -180,13 +236,19 @@ For open-ended exploration, use GitHub Discussions when available.
 バグ報告、機能提案、アーキテクチャルール提案は GitHub Issues を利用してください。
 広めの議論は GitHub Discussions を想定しています。
 
+Contributors may also find these documents useful:
+
+- [CONTRIBUTING.md](./CONTRIBUTING.md)
+- [docs/contributing-areas.md](./docs/contributing-areas.md)
+- [docs/decisions/README.md](./docs/decisions/README.md)
+
 ---
 
 ## License / ライセンス
 
 Apache License 2.0.
 
-A short Japanese summary is available in `docs/LICENSE.ja.md`.
+A short Japanese summary is available in docs/LICENSE.ja.md.
 
 Apache License 2.0 を採用します。
-日本語の参考サマリーは `docs/LICENSE.ja.md` にあります。
+日本語の参考サマリーは [docs/LICENSE.ja.md](./docs/LICENSE.ja.md) にあります。

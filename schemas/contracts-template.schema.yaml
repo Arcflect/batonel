@@ -1,0 +1,65 @@
+schema:
+  name: contracts-template
+  version: 0.1.0
+  description: >
+    Defines reusable contract defaults for artifact roles.
+
+required:
+  - role_templates
+
+fields:
+  role_templates:
+    type: map
+    required: true
+    description: Mapping from role name to contract template.
+    additional_keys:
+      type: map
+      fields:
+        responsibilities:
+          type: list[string]
+          required: false
+          description: Default responsibilities for this role.
+        must_not:
+          type: list[string]
+          required: false
+          description: Default forbidden behaviors for this role.
+        allowed_dependencies:
+          type: list[string]
+          required: false
+          description: Default allowed dependency areas.
+        forbidden_dependencies:
+          type: list[string]
+          required: false
+          description: Default forbidden dependency areas.
+        implementation_size:
+          type: string
+          required: false
+          description: >
+            Suggested implementation scope.
+            Example values: small, medium, large.
+        completion_criteria:
+          type: list[string]
+          required: false
+          description: Optional default completion guidance.
+
+notes:
+  - Templates provide defaults, not final artifact contracts.
+  - Artifact-specific contracts may extend or refine these values.
+  - Templates should be role-oriented, not artifact-specific.
+
+example:
+  role_templates:
+    usecase:
+      responsibilities:
+        - Execute one application use case
+        - Coordinate domain behavior
+      must_not:
+        - Write SQL directly
+        - Return transport-specific responses
+      allowed_dependencies:
+        - domain
+        - application
+      forbidden_dependencies:
+        - interfaces
+        - infrastructure
+      implementation_size: small

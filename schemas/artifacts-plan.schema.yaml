@@ -1,0 +1,72 @@
+schema:
+  name: artifacts-plan
+  version: 0.1.0
+  description: >
+    Defines the list of artifacts that Archflow should scaffold or prepare.
+
+required:
+  - artifacts
+
+fields:
+  artifacts:
+    type: list[map]
+    required: true
+    description: List of planned artifacts.
+    item_fields:
+      name:
+        type: string
+        required: true
+        description: Artifact name.
+      module:
+        type: string
+        required: true
+        description: Module to which the artifact belongs.
+      role:
+        type: string
+        required: true
+        description: Artifact role used for placement and contract generation.
+      path:
+        type: string
+        required: false
+        description: >
+          Optional explicit path override.
+          If omitted, Archflow resolves the path from placement rules.
+      inputs:
+        type: list[string]
+        required: false
+        description: Optional list of expected inputs.
+      outputs:
+        type: list[string]
+        required: false
+        description: Optional list of expected outputs.
+      status:
+        type: string
+        required: false
+        description: >
+          Optional lifecycle status.
+          Example values: planned, scaffolded, implementing, reviewing, done.
+      tags:
+        type: list[string]
+        required: false
+        description: Optional tags for grouping or filtering artifacts.
+
+notes:
+  - The artifact plan is one of the main inputs to scaffold generation.
+  - Role names should exist in placement rules and usually in contract templates.
+  - Path may be omitted in favor of role-based resolution.
+
+example:
+  artifacts:
+    - name: create_user
+      module: user
+      role: usecase
+      inputs:
+        - CreateUserCommand
+      outputs:
+        - CreateUserResult
+
+    - name: user
+      module: user
+      role: entity
+      outputs:
+        - User

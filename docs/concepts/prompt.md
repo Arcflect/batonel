@@ -216,3 +216,137 @@ In the future, prompts may also support:
 - compact and detailed prompt variants
 - prompt validation against contracts
 - editor and agent integration
+
+---
+
+## 日本語
+
+# Prompt
+
+## 概要
+
+Archflow における **Prompt** は、artifact contract の AI ハンドオフ表現です。
+
+prompt は、プロジェクトコンテキスト、artifact のアイデンティティ、contract の境界を、AI コーディングツールに直接渡せる形式に変換します。
+
+Prompt は contract から導出されます。
+Prompt は主要な真実の源ではありません。
+
+---
+
+## 目的
+
+prompt の目的は、artifact の責務と制約を実装のハンドオフ形式に変換することです。
+
+prompt は次のような質問に答えます。
+
+- この artifact の対象は何か？
+- そのロールとモジュールは何か？
+- その責務は何か？
+- 何をしてはいけないか？
+- どのような入力と出力を期待するか？
+- 完了基準は何か？
+
+Prompt がなければ、Archflow から AI ツールへの接続は手動で行われる必要があります。
+
+---
+
+## 責務
+
+Prompt は次の責務を持ちます。
+
+- contract データを AI 向けの形式に変換する
+- 対象の artifact を明確に特定する
+- アーキテクチャの制約を実装可能な指示に変換する
+- 実装のスコープを境界付ける
+
+Prompt は次の責務を持ちません。
+
+- 新しいアーキテクチャルールを定義すること（それは contract に属します）
+- contract を置き換えること（contract が権威を持ちます）
+- 手書きのアドホックな指示になること
+- contract に記録されていない方法でビジネスロジックを発明すること
+
+---
+
+## Prompt と Contract の関係
+
+これは Archflow における最も重要な関係の 1 つです。
+
+- **contract** は artifact の境界の権威ある定義です
+- **prompt** は contract データを AI 向けの実装指示に変換したものです
+
+これが意味することは：
+
+- prompt は contract から生成されるべきです
+- prompt は contract からのデータを反映すべきです
+- prompt は新しい制約や責務を導入すべきではありません
+- 誰かがアーキテクチャの意図を理解したい場合、prompt ではなく contract を参照すべきです
+
+---
+
+## 例（Prompt の構造）
+
+典型的な artifact prompt は次のような構造をとります。
+
+```markdown
+# Artifact: create_user
+
+## Role
+usecase
+
+## Module
+user
+
+## Purpose
+Orchestrate user creation by validating input and persisting a new user entity.
+
+## Responsibilities
+- Validate the incoming CreateUserCommand
+- Create a new User aggregate
+- Persist the User through the repository port
+- Return a CreateUserResult
+
+## Must Not
+- Access the database directly
+- Handle HTTP or transport concerns
+
+## Inputs
+- CreateUserCommand
+
+## Outputs
+- CreateUserResult
+
+## Completion Criteria
+- The use case accepts the command
+- Validates input
+- Creates and persists the user
+- Returns a typed result
+```
+
+この形式は、一般的な AI コーディングアシスタントが実装を続けられるようにするのに十分な情報を提供します。
+
+---
+
+## 他の概念との関係
+
+Prompt は次のものと接続します。
+
+- **artifact**: prompt を受け取るもの
+- **contract**: prompt が導出されるところ
+- **module**: prompt が属するコンテキスト
+- **role**: prompt のメタデータの一部
+
+Prompt は Archflow のアーキテクチャモデルと AI ツールの間のブリッジです。
+
+---
+
+## 将来の方向性
+
+将来的に、prompt は次のものをサポートするかもしれません。
+
+- ロール固有の prompt プリセット
+- モデル固有の出力モード
+- コンパクトと詳細な prompt バリアント
+- contract に対する prompt バリデーション
+- エディタとエージェントの統合
