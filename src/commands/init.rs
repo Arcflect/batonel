@@ -22,8 +22,10 @@ modules:
             r#"roles:
   usecase:
     path: "src/application/usecases/"
+    file_extension: rs
   entity:
     path: "src/domain/entities/"
+    file_extension: rs
 "#,
         ),
         (

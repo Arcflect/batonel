@@ -1,11 +1,16 @@
 roles:
   entity:
     path: "src/domain/entities/"
+    file_extension: rs
   service:
     path: "src/application/services/"
+    file_extension: rs
   repository_interface:
     path: "src/application/interfaces/"
+    file_extension: rs
   controller:
     path: "src/interfaces/controllers/"
+    file_extension: rs
   gateway:
     path: "src/infrastructure/gateways/"
+    file_extension: rs

@@ -1,11 +1,16 @@
 roles:
   entity:
     path: "crates/domain/src/entities/"
+    file_extension: rs
   usecase:
     path: "crates/application/src/usecases/"
+    file_extension: rs
   repository_port:
     path: "crates/application/src/ports/outbound/"
+    file_extension: rs
   http_handler:
     path: "crates/adapters/http/src/handlers/"
+    file_extension: rs
   repository_impl:
     path: "crates/adapters/db/src/repositories/"
+    file_extension: rs
