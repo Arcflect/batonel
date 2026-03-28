@@ -14,25 +14,36 @@ pub fn execute() {
     }
 
     println!("Loading placement rules...");
-    match PlacementRulesConfig::load("placement.rules.yaml") {
+    let placement_config = match PlacementRulesConfig::load("placement.rules.yaml") {
         Ok(config) => {
             println!("Successfully loaded {} placement rules", config.roles.len());
+            config
         }
         Err(e) => {
             eprintln!("Error loading placement rules: {}", e);
             std::process::exit(1);
         }
-    }
+    };
 
     println!("Loading artifacts plan...");
-    match ArtifactsPlanConfig::load("artifacts.plan.yaml") {
+    let artifacts_config = match ArtifactsPlanConfig::load("artifacts.plan.yaml") {
         Ok(config) => {
             println!("Successfully loaded {} artifacts", config.artifacts.len());
-            println!("Scaffold command executed (stub)");
+            config
         }
         Err(e) => {
             eprintln!("Error loading artifacts plan: {}", e);
             std::process::exit(1);
         }
+    };
+
+    println!("\nScaffold Targets:");
+    for artifact in &artifacts_config.artifacts {
+        match crate::generator::resolve_artifact_path(artifact, &placement_config) {
+            Ok(path) => println!("  - {} -> {}", artifact.name, path.display()),
+            Err(e) => eprintln!("  - {}: Error: {}", artifact.name, e),
+        }
     }
+
+    println!("\nScaffold command executed (stub)");
 }

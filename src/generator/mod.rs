@@ -1,1 +1,3 @@
-// Stubbed module for future generator logic
+pub mod resolver;
+
+pub use resolver::resolve_artifact_path;
