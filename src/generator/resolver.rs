@@ -37,3 +37,26 @@ pub fn resolve_artifact_path(
 
     Ok(path)
 }
+
+/// Resolves the sibling paths for sidecar elements (contracts, prompts) based on the artifact path.
+pub fn resolve_sidecar_path(
+    artifact: &Artifact,
+    artifact_path: &std::path::Path,
+    override_dir: Option<&str>,
+    extension: &str,
+) -> PathBuf {
+    let file_name = format!("{}.{}", artifact.name, extension);
+
+    if let Some(dir) = override_dir {
+        let mut path = PathBuf::from(dir);
+        path.push(file_name);
+        path
+    } else {
+        // Default: adjacent to the artifact
+        if let Some(parent) = artifact_path.parent() {
+            parent.join(file_name)
+        } else {
+            PathBuf::from(file_name)
+        }
+    }
+}

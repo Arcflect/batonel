@@ -16,4 +16,9 @@ pub enum Commands {
     Plan,
     /// Scaffold code structure and artifact sidecars
     Scaffold,
+    /// Generate an AI handoff prompt for a specific artifact or contract
+    Prompt {
+        /// The artifact name or path to the .contract.yaml file
+        target: String,
+    },
 }
