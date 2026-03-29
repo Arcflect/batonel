@@ -34,6 +34,7 @@ user
 - CreateUserResult
 
 ## Completion criteria
-- The artifact has one clear application responsibility
-- It interacts with persistence only through the repository port
-- No adapter-specific implementation appears in this artifact
+- The usecase implements exactly one application flow.
+- It coordinates domain behavior through ports but does not implement infrastructure natively.
+- No HTTP or database logic is present.
+

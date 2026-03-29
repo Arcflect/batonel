@@ -32,6 +32,6 @@ user
 - CreateUserHttpResponse
 
 ## Completion criteria
-- The artifact stays thin and transport-focused
-- Business rules remain outside the handler
-- The handler delegates execution to the application layer
+- The handler cleanly translates transport models into application requests.
+- It invokes the application layer but embeds zero core business rules locally.
+

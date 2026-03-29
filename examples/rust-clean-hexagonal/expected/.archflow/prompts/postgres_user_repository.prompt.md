@@ -30,6 +30,6 @@ user
 - PostgresUserRepository
 
 ## Completion criteria
-- The artifact implements the repository port cleanly
-- Persistence concerns stay in the adapter layer
-- No transport concern leaks into this artifact
+- The implementation fulfills an outbound port.
+- It safely translates between raw persistence data and pure upstream domain models.
+

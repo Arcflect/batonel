@@ -29,6 +29,6 @@ user
 - UserRepository
 
 ## Completion criteria
-- The artifact defines a persistence abstraction clearly
-- It contains no infrastructure implementation
-- The boundary is usable by application services
+- The artifact focuses exclusively on its defined responsibilities.
+- The implementation respects forbidden dependencies and architectural rules.
+

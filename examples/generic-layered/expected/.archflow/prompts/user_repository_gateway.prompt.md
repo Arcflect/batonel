@@ -30,6 +30,6 @@ user
 - UserRepositoryGateway
 
 ## Completion criteria
-- The artifact implements the repository abstraction cleanly
-- Persistence concerns stay in the infrastructure layer
-- No interface concern leaks into this artifact
+- The artifact focuses exclusively on its defined responsibilities.
+- The implementation respects forbidden dependencies and architectural rules.
+

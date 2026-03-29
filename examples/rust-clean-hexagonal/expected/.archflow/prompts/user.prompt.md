@@ -30,6 +30,7 @@ user
 - User
 
 ## Completion criteria
-- The artifact clearly models a domain entity
-- Domain invariants are kept local to the entity
-- No application or adapter concern leaks into this artifact
+- The entity strictly protects its domain invariants.
+- Methods represent business rules, not just generic getters/setters.
+- No application, transport, or persistence details leak into this layer.
+

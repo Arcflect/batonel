@@ -32,6 +32,6 @@ user
 - CreateUserResponse
 
 ## Completion criteria
-- The artifact stays thin and interface-focused
-- Business rules remain outside the controller
-- The controller delegates execution to the application layer
+- The artifact focuses exclusively on its defined responsibilities.
+- The implementation respects forbidden dependencies and architectural rules.
+

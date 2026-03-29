@@ -29,6 +29,6 @@ user
 - UserRepository
 
 ## Completion criteria
-- The artifact defines an outbound port clearly
-- It contains abstraction only, not infrastructure details
-- The boundary is usable by application usecases
+- The abstraction focuses purely on the repository intent (e.g., retrieving aggregates).
+- It is fully decoupled from specific SQL, ORM, or database terminology.
+

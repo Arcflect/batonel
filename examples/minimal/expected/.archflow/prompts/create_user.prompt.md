@@ -34,6 +34,7 @@ user
 - CreateUserResult
 
 ## Completion criteria
-- The artifact has one clear responsibility
-- The implementation respects architectural boundaries
-- No infrastructure-specific logic appears in this artifact
+- The usecase implements exactly one application flow.
+- It coordinates domain behavior through ports but does not implement infrastructure natively.
+- No HTTP or database logic is present.
+

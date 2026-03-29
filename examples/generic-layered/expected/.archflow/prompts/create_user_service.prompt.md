@@ -34,6 +34,6 @@ user
 - CreateUserOutput
 
 ## Completion criteria
-- The artifact has one clear application responsibility
-- It uses persistence only through the repository interface
-- No interface or infrastructure implementation leaks into this artifact
+- The artifact focuses exclusively on its defined responsibilities.
+- The implementation respects forbidden dependencies and architectural rules.
+
