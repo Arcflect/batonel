@@ -1,7 +1,7 @@
 use crate::model::artifact::Artifact;
 use crate::model::placement::RolePlacement;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -35,7 +35,7 @@ pub fn generate_artifact_with_sidecars(
     )?;
 
     // 2. Generate sidecar files
-    let contract_path = resolve_sidecar_path(
+    let contract_path = crate::generator::resolver::resolve_sidecar_path(
         artifact,
         artifact_path,
         role_config.and_then(|r| r.sidecar.as_ref().and_then(|s| s.contract_dir.as_deref())),
@@ -49,7 +49,7 @@ pub fn generate_artifact_with_sidecars(
         ),
     )?;
 
-    let prompt_path = resolve_sidecar_path(
+    let prompt_path = crate::generator::resolver::resolve_sidecar_path(
         artifact,
         artifact_path,
         role_config.and_then(|r| r.sidecar.as_ref().and_then(|s| s.prompt_dir.as_deref())),
@@ -64,28 +64,6 @@ pub fn generate_artifact_with_sidecars(
     )?;
 
     Ok(())
-}
-
-fn resolve_sidecar_path(
-    artifact: &Artifact,
-    artifact_path: &Path,
-    override_dir: Option<&str>,
-    extension: &str,
-) -> PathBuf {
-    let file_name = format!("{}.{}", artifact.name, extension);
-
-    if let Some(dir) = override_dir {
-        let mut path = PathBuf::from(dir);
-        path.push(file_name);
-        path
-    } else {
-        // Default: adjacent to the artifact
-        if let Some(parent) = artifact_path.parent() {
-            parent.join(file_name)
-        } else {
-            PathBuf::from(file_name)
-        }
-    }
 }
 
 fn write_file_safely(path: &Path, content: &str) -> Result<(), ScaffoldError> {

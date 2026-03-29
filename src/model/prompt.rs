@@ -33,10 +33,8 @@ pub struct Prompt {
     pub completion_criteria: Option<Vec<String>>,
 }
 
-impl From<&Contract> for Prompt {
-    fn from(contract: &Contract) -> Self {
-        // Derive default completion criteria from the basic architectural boundaries
-        // This keeps the prompt generation deterministic and faithful to the contract rules
+impl From<&crate::model::contract::Contract> for Prompt {
+    fn from(contract: &crate::model::contract::Contract) -> Self {
         let completion_criteria = Some(vec![
             "The artifact focuses exclusively on its defined responsibilities.".to_string(),
             "The implementation respects forbidden dependencies and architectural rules."
@@ -57,5 +55,86 @@ impl From<&Contract> for Prompt {
             outputs: contract.outputs.clone(),
             completion_criteria,
         }
+    }
+}
+
+impl Prompt {
+    pub fn format_markdown(&self) -> String {
+        let mut out = String::new();
+        out.push_str(&format!("# Artifact Prompt: {}\n\n", self.artifact_name));
+        out.push_str(&format!(
+            "Implement the `{}` artifact.\n\n",
+            self.artifact_name
+        ));
+        out.push_str(&format!("## Role\n{}\n\n", self.role));
+        out.push_str(&format!("## Module\n{}\n\n", self.module));
+
+        if !self.responsibilities.is_empty() {
+            out.push_str("## Responsibilities\n");
+            for r in &self.responsibilities {
+                out.push_str(&format!("- {}\n", r));
+            }
+            out.push('\n');
+        }
+
+        if !self.must_not.is_empty() {
+            out.push_str("## Must not\n");
+            for m in &self.must_not {
+                out.push_str(&format!("- {}\n", m));
+            }
+            out.push('\n');
+        }
+
+        if let Some(deps) = &self.allowed_dependencies {
+            if !deps.is_empty() {
+                out.push_str("## Allowed dependencies\n");
+                for d in deps {
+                    out.push_str(&format!("- {}\n", d));
+                }
+                out.push('\n');
+            }
+        }
+
+        if let Some(deps) = &self.forbidden_dependencies {
+            if !deps.is_empty() {
+                out.push_str("## Forbidden dependencies\n");
+                for d in deps {
+                    out.push_str(&format!("- {}\n", d));
+                }
+                out.push('\n');
+            }
+        }
+
+        if let Some(inputs) = &self.inputs {
+            if !inputs.is_empty() {
+                out.push_str("## Inputs\n");
+                for i in inputs {
+                    out.push_str(&format!("- {}\n", i));
+                }
+                out.push('\n');
+            }
+        }
+
+        if let Some(outputs) = &self.outputs {
+            if !outputs.is_empty() {
+                out.push_str("## Outputs\n");
+                for o in outputs {
+                    out.push_str(&format!("- {}\n", o));
+                }
+                out.push('\n');
+            }
+        }
+
+        if let Some(criteria) = &self.completion_criteria {
+            if !criteria.is_empty() {
+                out.push_str("## Completion criteria\n");
+                for c in criteria {
+                    out.push_str(&format!("- {}\n", c));
+                }
+                out.push('\n');
+            }
+        }
+
+        out
     }
 }

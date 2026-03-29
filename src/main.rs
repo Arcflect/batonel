@@ -20,5 +20,8 @@ fn main() {
         Commands::Scaffold => {
             commands::scaffold::execute();
         }
+        Commands::Prompt { target } => {
+            commands::prompt::execute(&target);
+        }
     }
 }
