@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use super::contract::Contract;
+
 /// The internal Prompt representation used during Phase 3 generation.
 /// This model acts strictly down-stream from contracts; it is not a parallel source of truth.
 /// It translates the semantic constraints of a contract into an AI-ready delivery payload.
