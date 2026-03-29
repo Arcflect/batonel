@@ -13,16 +13,16 @@ pub struct Contract {
 
     pub responsibilities: Vec<String>,
     pub must_not: Vec<String>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub allowed_dependencies: Option<Vec<String>>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub forbidden_dependencies: Option<Vec<String>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub inputs: Option<Vec<String>>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none")]
     pub outputs: Option<Vec<String>>,
 
