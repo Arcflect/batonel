@@ -27,6 +27,9 @@ pub struct Contract {
     pub outputs: Option<Vec<String>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub completion_criteria: Option<Vec<String>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub implementation_size: Option<String>,
 
     pub status: String,

@@ -33,36 +33,40 @@ pub struct Prompt {
 
 impl From<&crate::model::contract::Contract> for Prompt {
     fn from(contract: &crate::model::contract::Contract) -> Self {
-        let criteria_items = match contract.role.as_str() {
-            "entity" => vec![
-                "The entity strictly protects its domain invariants.",
-                "Methods represent business rules, not just generic getters/setters.",
-                "No application, transport, or persistence details leak into this layer.",
-            ],
-            "usecase" => vec![
-                "The usecase implements exactly one application flow.",
-                "It coordinates domain behavior through ports but does not implement infrastructure natively.",
-                "No HTTP or database logic is present.",
-            ],
-            "repository_port" => vec![
-                "The abstraction focuses purely on the repository intent (e.g., retrieving aggregates).",
-                "It is fully decoupled from specific SQL, ORM, or database terminology.",
-            ],
-            r if r.contains("handler") => vec![
-                "The handler cleanly translates transport models into application requests.",
-                "It invokes the application layer but embeds zero core business rules locally.",
-            ],
-            r if r == "repository_impl" || r == "repository" => vec![
-                "The implementation fulfills an outbound port.",
-                "It safely translates between raw persistence data and pure upstream domain models.",
-            ],
-            _ => vec![
-                "The artifact focuses exclusively on its defined responsibilities.",
-                "The implementation respects forbidden dependencies and architectural rules.",
-            ],
+        let completion_criteria = match contract.completion_criteria.as_ref() {
+            Some(criteria) if !criteria.is_empty() => Some(criteria.clone()),
+            _ => {
+                let criteria_items = match contract.role.as_str() {
+                    "entity" => vec![
+                        "The entity strictly protects its domain invariants.",
+                        "Methods represent business rules, not just generic getters/setters.",
+                        "No application, transport, or persistence details leak into this layer.",
+                    ],
+                    "usecase" => vec![
+                        "The usecase implements exactly one application flow.",
+                        "It coordinates domain behavior through ports but does not implement infrastructure natively.",
+                        "No HTTP or database logic is present.",
+                    ],
+                    "repository_port" => vec![
+                        "The abstraction focuses purely on the repository intent (e.g., retrieving aggregates).",
+                        "It is fully decoupled from specific SQL, ORM, or database terminology.",
+                    ],
+                    r if r.contains("handler") => vec![
+                        "The handler cleanly translates transport models into application requests.",
+                        "It invokes the application layer but embeds zero core business rules locally.",
+                    ],
+                    r if r == "repository_impl" || r == "repository" => vec![
+                        "The implementation fulfills an outbound port.",
+                        "It safely translates between raw persistence data and pure upstream domain models.",
+                    ],
+                    _ => vec![
+                        "The artifact focuses exclusively on its defined responsibilities.",
+                        "The implementation respects forbidden dependencies and architectural rules.",
+                    ],
+                };
+                Some(criteria_items.into_iter().map(String::from).collect())
+            }
         };
-
-        let completion_criteria = Some(criteria_items.into_iter().map(String::from).collect());
 
         Prompt {
             artifact_name: contract.name.clone(),
