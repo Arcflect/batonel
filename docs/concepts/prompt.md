@@ -61,6 +61,20 @@ Typical prompt sections include:
 - outputs
 - completion criteria
 
+---
+
+## Canonical Section Order
+
+To ensure consistency across multiple artifacts and different output modes, Archflow follows a strict canonical section order:
+
+1.  **Identity**: Artifact Name, Role, and Module.
+2.  **Scope**: Responsibilities and "Must Not" constraints.
+3.  **Connectivity**: Allowed and Forbidden dependencies.
+4.  **Interface**: Expected Inputs and Outputs.
+5.  **Fulfillment**: Completion Criteria (Definition of Done).
+
+This stable order makes it easier for both humans and AI models to scan and compare prompts.
+
 Prompts may be represented as Markdown, plain text, or structured output.
 
 ---
@@ -272,6 +286,20 @@ prompt は次のような質問に答えます。
 - 何をしてはいけないか？
 - どのような入力と出力を期待するか？
 - 完了基準は何か？
+
+---
+
+## 標準的なセクション順序
+
+複数のアーティファクト間や異なる出力モード間での一貫性を保つため、Archflow は厳格なセクション順序に従います。
+
+1.  **Identity（アイデンティティ）**: Artifact 名、Role、Module。
+2.  **Scope（スコープ）**: 責務（Responsibilities）と禁止事項（Must Not）。
+3.  **Connectivity（接続性）**: 許可された依存関係と禁止された依存関係。
+4.  **Interface（インターフェース）**: 期待される入力（Inputs）と出力（Outputs）。
+5.  **Fulfillment（履行）**: 完了基準（Completion Criteria / Definition of Done）。
+
+この安定した順序により、人間も AI モデルもプロンプトをスキャンし、比較することが容易になります。
 
 Prompt がなければ、Archflow から AI ツールへの接続は手動で行われる必要があります。
 
