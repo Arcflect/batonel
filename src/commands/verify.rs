@@ -1,10 +1,13 @@
 use crate::config::{ArtifactsPlanConfig, ContractConfig, PlacementRulesConfig, ProjectConfig};
 use crate::model::contract_validation;
 use crate::model::verify::{CheckResult, VerifyReport, VerifyStatus, VerifyTarget};
-use std::path::Path;
+use std::collections::HashSet;
+use std::fs;
+use std::path::{Path, PathBuf};
 
 pub fn execute() {
     let mut results = Vec::new();
+    let mut verified_contracts = HashSet::new();
 
     println!("Archflow Architectural Verification");
     println!("==================================");
@@ -41,11 +44,17 @@ pub fn execute() {
 
                     // Check physical contract existence
                     if contract_path.exists() {
+                        let normalized_path = fs::canonicalize(&contract_path)
+                            .unwrap_or_else(|_| contract_path.to_path_buf())
+                            .to_string_lossy()
+                            .to_string();
+                        verified_contracts.insert(normalized_path.clone());
+
                         results.push(CheckResult {
                             check_id: "contract-exists".to_string(),
                             target: VerifyTarget::Contract { 
                                 artifact_name: artifact.name.clone(),
-                                path: contract_path.to_string_lossy().to_string() 
+                                path: normalized_path
                             },
                             status: VerifyStatus::Pass,
                             message: format!("Contract exists for {}", artifact.name),
@@ -55,7 +64,25 @@ pub fn execute() {
                         match ContractConfig::load(&contract_path) {
                             Ok(contract_file) => {
                                 let c = &contract_file.contract;
-                                if c.name == artifact.name && c.role == artifact.role && c.module == artifact.module {
+                                // Detailed identity mismatch assessment
+                                let mut mismatches = Vec::new();
+                                if c.name != artifact.name {
+                                    mismatches.push(format!("name: expectation '{}' vs actual '{}'", artifact.name, c.name));
+                                }
+                                if c.module != artifact.module {
+                                    mismatches.push(format!("module: expectation '{}' vs actual '{}'", artifact.module, c.module));
+                                }
+                                if c.role != artifact.role {
+                                    mismatches.push(format!("role: expectation '{}' vs actual '{}'", artifact.role, c.role));
+                                }
+                                
+                                // Path alignment: contract.path should match the resolved artifact source path
+                                let resolved_source_path = path.to_string_lossy().to_string();
+                                if c.path != resolved_source_path {
+                                    mismatches.push(format!("path: expectation '{}' vs actual '{}'", resolved_source_path, c.path));
+                                }
+
+                                if mismatches.is_empty() {
                                     results.push(CheckResult {
                                         check_id: "contract-identity".to_string(),
                                         target: VerifyTarget::Contract { 
@@ -63,7 +90,7 @@ pub fn execute() {
                                             path: contract_path.to_string_lossy().to_string() 
                                         },
                                         status: VerifyStatus::Pass,
-                                        message: format!("Contract identity matches plan for {}", artifact.name),
+                                        message: format!("Contract identity and path match plan for {}", artifact.name),
                                     });
                                 } else {
                                     results.push(CheckResult {
@@ -74,10 +101,9 @@ pub fn execute() {
                                         },
                                         status: VerifyStatus::Fail,
                                         message: format!(
-                                            "Contract identity mismatch for {}: Plan({}/{}/{}) vs Contract({}/{}/{})",
+                                            "Contract identity mismatch for {}: {}",
                                             artifact.name,
-                                            artifact.name, artifact.role, artifact.module,
-                                            c.name, c.role, c.module
+                                            mismatches.join(", ")
                                         ),
                                     });
                                 }
@@ -157,6 +183,26 @@ pub fn execute() {
         println!();
     }
 
+    // 2.5 Reverse Check: Orphaned Contracts
+    let all_contracts = find_all_contracts(".");
+    for contract_path in all_contracts {
+        let path_str = fs::canonicalize(&contract_path)
+            .unwrap_or_else(|_| contract_path.to_path_buf())
+            .to_string_lossy()
+            .to_string();
+        if !verified_contracts.contains(&path_str) {
+            results.push(CheckResult {
+                check_id: "orphaned-contract".to_string(),
+                target: VerifyTarget::Contract { 
+                    artifact_name: "unknown".to_string(), // We don't know which artifact it was supposed to be
+                    path: path_str.clone(),
+                },
+                status: VerifyStatus::Fail,
+                message: format!("Orphaned contract found: {} (Not defined in artifacts.plan.yaml)", path_str),
+            });
+        }
+    }
+
     // 3. Final Report
     let report = VerifyReport::new(results);
     render_report(&report);
@@ -221,4 +267,39 @@ fn render_report(report: &VerifyReport) {
     } else {
         println!("Verification failed.");
     }
+}
+
+fn find_all_contracts<P: AsRef<Path>>(dir: P) -> Vec<PathBuf> {
+    let mut contracts = Vec::new();
+    let entries = match fs::read_dir(dir) {
+        Ok(e) => e,
+        Err(_) => return contracts,
+    };
+
+    for entry in entries {
+        if let Ok(entry) = entry {
+            let path = entry.path();
+            if path.is_dir() {
+                // Skip common ignore directories
+                let name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+                if name == "target" || name == ".git" || name == "node_modules" {
+                    continue;
+                }
+                contracts.extend(find_all_contracts(path));
+            } else if path.is_file() {
+                if let Some(ext) = path.extension() {
+                    if ext == "yaml" || ext == "yml" {
+                        if let Some(file_name) = path.file_name().and_then(|n| n.to_str()) {
+                            if (file_name.ends_with(".contract.yaml") || file_name.ends_with(".contract.yml"))
+                                && file_name != "contracts.template.yaml"
+                            {
+                                contracts.push(path);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    contracts
 }

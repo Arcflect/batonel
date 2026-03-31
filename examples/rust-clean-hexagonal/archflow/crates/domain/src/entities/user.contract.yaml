@@ -1,7 +1,7 @@
 name: user
 module: user
 role: entity
-path: src/domain/entities/user.rs
+path: crates/domain/src/entities/user.rs
 status: planned
 responsibilities:
   - TODO

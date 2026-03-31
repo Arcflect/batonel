@@ -1,6 +1,7 @@
 name: create_user_service
 module: user
 role: service
+path: src/application/services/create_user_service.rs
 status: planned
 responsibilities:
   - TODO

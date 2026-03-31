@@ -1,6 +1,7 @@
 name: create_user_controller
 module: user
 role: controller
+path: src/interfaces/controllers/create_user_controller.rs
 status: planned
 responsibilities:
   - TODO
