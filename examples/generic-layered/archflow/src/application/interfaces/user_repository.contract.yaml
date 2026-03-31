@@ -1,0 +1,8 @@
+name: user_repository
+module: user
+role: repository_interface
+status: planned
+responsibilities:
+  - TODO
+must_not:
+  - TODO

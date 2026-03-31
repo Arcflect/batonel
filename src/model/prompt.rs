@@ -255,7 +255,7 @@ mod tests {
             forbidden_dependencies: None,
             inputs: None,
             outputs: None,
-            implementation_size: "small".to_string(),
+            implementation_size: Some("small".to_string()),
             status: "planned".to_string(),
             completion_criteria: None,
         };
@@ -285,7 +285,7 @@ mod tests {
             forbidden_dependencies: None,
             inputs: None,
             outputs: None,
-            implementation_size: "small".to_string(),
+            implementation_size: Some("small".to_string()),
             status: "planned".to_string(),
             completion_criteria: Some(vec!["Manual rule".to_string()]),
         };

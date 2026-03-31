@@ -1,0 +1,8 @@
+name: user
+module: user
+role: entity
+status: planned
+responsibilities:
+  - TODO
+must_not:
+  - TODO

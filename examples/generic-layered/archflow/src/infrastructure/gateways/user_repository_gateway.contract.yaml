@@ -1,0 +1,8 @@
+name: user_repository_gateway
+module: user
+role: gateway
+status: planned
+responsibilities:
+  - TODO
+must_not:
+  - TODO

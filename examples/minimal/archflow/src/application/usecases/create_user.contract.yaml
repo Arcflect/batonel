@@ -1,0 +1,9 @@
+name: create_user
+module: user
+role: usecase
+path: src/application/usecases/create_user.rs
+status: planned
+responsibilities:
+  - TODO
+must_not:
+  - TODO

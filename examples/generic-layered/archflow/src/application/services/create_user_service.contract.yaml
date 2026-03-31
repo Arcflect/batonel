@@ -1,0 +1,8 @@
+name: create_user_service
+module: user
+role: service
+status: planned
+responsibilities:
+  - TODO
+must_not:
+  - TODO

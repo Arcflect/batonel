@@ -1,0 +1,8 @@
+name: create_user_controller
+module: user
+role: controller
+status: planned
+responsibilities:
+  - TODO
+must_not:
+  - TODO

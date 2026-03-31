@@ -1,4 +1,5 @@
 use crate::config::{ArtifactsPlanConfig, ContractConfig, PlacementRulesConfig, ProjectConfig};
+use crate::model::contract_validation;
 use crate::model::verify::{CheckResult, VerifyReport, VerifyStatus, VerifyTarget};
 use std::path::Path;
 
@@ -93,6 +94,13 @@ pub fn execute() {
                                 });
                             }
                         }
+
+                        // Check Field Completeness
+                        let field_results = contract_validation::validate_contract_fields(
+                            &contract_path,
+                            &artifact.name,
+                        );
+                        results.extend(field_results);
                     } else {
                         results.push(CheckResult {
                             check_id: "contract-exists".to_string(),
