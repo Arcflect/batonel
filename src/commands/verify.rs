@@ -12,6 +12,7 @@ pub fn execute() {
     check_root_file("project.arch.yaml", &mut results);
     check_root_file("placement.rules.yaml", &mut results);
     check_root_file("artifacts.plan.yaml", &mut results);
+    check_root_file("contracts.template.yaml", &mut results);
 
     // 2. Load Configs for deeper checks (only if root files exist)
     let project_config = ProjectConfig::load("project.arch.yaml").ok();
