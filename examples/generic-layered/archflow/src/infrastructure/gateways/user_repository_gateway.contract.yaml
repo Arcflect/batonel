@@ -1,6 +1,7 @@
 name: user_repository_gateway
 module: user
 role: gateway
+path: src/infrastructure/gateways/user_repository_gateway.rs
 status: planned
 responsibilities:
   - TODO

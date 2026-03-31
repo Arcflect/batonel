@@ -1,0 +1,9 @@
+name: create_user_handler
+module: user
+role: http_handler
+path: crates/adapters/http/src/handlers/create_user_handler.rs
+status: planned
+responsibilities:
+  - TODO
+must_not:
+  - TODO

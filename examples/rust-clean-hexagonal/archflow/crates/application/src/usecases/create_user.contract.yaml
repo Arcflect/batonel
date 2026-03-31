@@ -1,0 +1,9 @@
+name: create_user
+module: user
+role: usecase
+path: crates/application/src/usecases/create_user.rs
+status: planned
+responsibilities:
+  - TODO
+must_not:
+  - TODO

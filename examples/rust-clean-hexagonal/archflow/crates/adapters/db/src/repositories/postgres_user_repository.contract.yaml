@@ -1,0 +1,9 @@
+name: postgres_user_repository
+module: user
+role: repository_impl
+path: crates/adapters/db/src/repositories/postgres_user_repository.rs
+status: planned
+responsibilities:
+  - TODO
+must_not:
+  - TODO
