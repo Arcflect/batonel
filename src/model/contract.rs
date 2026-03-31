@@ -8,8 +8,7 @@ pub struct Contract {
     pub name: String,
     pub module: String,
     pub role: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub path: Option<String>,
+    pub path: String,
 
     pub responsibilities: Vec<String>,
     pub must_not: Vec<String>,
