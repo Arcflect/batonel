@@ -207,15 +207,41 @@ A weak prompt usually has:
 
 ---
 
+---
+
+## Output Modes
+
+Different AI models have different token constraints and verbosity preferences.
+
+### Standard Mode (`--mode standard`)
+Best for high-reasoning models (GPT-4, Gemini Pro, Claude 3). Includes full headers and detailed sections. This is the default mode.
+
+### Compact Mode (`--mode compact`)
+Best for lightweight/fast models or in-editor inline completion. Strips metadata headers and uses comma-separated formatting for dependencies to save tokens.
+
+---
+
+## Role-Aware Defaults
+
+Phase 3 introduces **Role-Aware Prompts**. Even if you leave your contract relatively simple, Archflow automatically injects "Completion Criteria" based on the architectural role.
+
+| Role | Default AI Guidance |
+| :--- | :--- |
+| **`entity`** | Strictly protects domain invariants. No infrastructure leak. |
+| **`usecase`** | Coordinates domain but implements zero DB or HTTP logic. |
+| **`handler`** | Only translates transport models; embeds zero business rules. |
+| **`repository`** | Translates between persistence data and pure domain models. |
+
+---
+
 ## Future directions
 
 In the future, prompts may also support:
 
-- role-specific prompt presets
-- model-specific output modes
-- compact and detailed prompt variants
 - prompt validation against contracts
 - editor and agent integration
+- dynamic prompt tailoring based on model feedback
+- automated handoff for background agents
 
 ---
 
@@ -338,6 +364,33 @@ Prompt は次のものと接続します。
 - **role**: prompt のメタデータの一部
 
 Prompt は Archflow のアーキテクチャモデルと AI ツールの間のブリッジです。
+
+---
+
+---
+
+## 出力モード
+
+AI モデルによってトークン制限や好みの冗長さが異なるため、2種類の出力モードを用意しています。
+
+### Standard モード (`--mode standard`)
+デフォルト設定です。GPT-4 や Gemini Pro、Claude 3 などの高性能モデルに適した、見出しや区切り線の多い詳細な Markdown 形式です。
+
+### Compact モード (`--mode compact`)
+軽量モデルやエディタ内補完に適しています。見出しを削り、依存関係などをカンマ区切りで 1 行にまとめることで、トークン消費を抑えます。
+
+---
+
+## ロールベースの自動最適化 (Phase 3)
+
+アーティファクトの **Role** に応じて、AI が守るべき「完了基準（Completion Criteria）」を自動的に注入します。
+
+| Role | デフォルトの AI 指示内容 |
+| :--- | :--- |
+| **`entity`** | ドメインの不変条件を厳格に守り、インフラ層の詳細は含めない。 |
+| **`usecase`** | 単一のフローを統制するが、DB や HTTP の具体的なロジックは書かない。 |
+| **`handler`** | トランスポートモデルの翻訳に専念し、ビジネスルールを混ぜない。 |
+| **`repository`** | 永続化データとドメインモデル間の変換を安全に行う。 |
 
 ---
 

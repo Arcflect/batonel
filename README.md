@@ -104,8 +104,12 @@ Core concepts:
 - [docs/concepts/artifact.md](./docs/concepts/artifact.md)
 - [docs/concepts/contract.md](./docs/concepts/contract.md)
 - [docs/concepts/prompt.md](./docs/concepts/prompt.md)
+- [docs/concepts/handoff.md](./docs/concepts/handoff.md)
 - [docs/concepts/scaffold.md](./docs/concepts/scaffold.md)
 - [docs/concepts/verify.md](./docs/concepts/verify.md)
+
+Usage:
+- [docs/usage.md](./docs/usage.md)
 
 Schema drafts:
 - [schemas/project.schema.yaml](./schemas/project.schema.yaml)
@@ -126,9 +130,11 @@ Recommended reading order:
 8. [docs/concepts/artifact.md](./docs/concepts/artifact.md)
 9. [docs/concepts/contract.md](./docs/concepts/contract.md)
 10. [docs/concepts/prompt.md](./docs/concepts/prompt.md)
-11. [docs/concepts/scaffold.md](./docs/concepts/scaffold.md)
-12. [docs/concepts/verify.md](./docs/concepts/verify.md)
-13. [docs/decisions/README.md](./docs/decisions/README.md)
+11. [docs/concepts/handoff.md](./docs/concepts/handoff.md)
+12. [docs/concepts/scaffold.md](./docs/concepts/scaffold.md)
+13. [docs/concepts/verify.md](./docs/concepts/verify.md)
+14. [docs/usage.md](./docs/usage.md)
+15. [docs/decisions/README.md](./docs/decisions/README.md)
 
 ---
 
@@ -180,6 +186,8 @@ Archflow は、設計を以下へ変換することを目指します。
 Archflow は、単なる仕様管理ツールでも、単なる AI 向け instruction ファイルでも、単なる lint ツールでもありません。
 
 **設計から実装への橋渡しを行う OSS** です。
+
+AI への正確な実装指示（AI Handoff）については、[docs/concepts/handoff.md](./docs/concepts/handoff.md) を参照してください。
 
 ## 例
 
