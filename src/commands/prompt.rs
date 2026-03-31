@@ -11,7 +11,7 @@ pub fn execute(target: &str, mode: OutputMode) {
         let placement_config = match PlacementRulesConfig::load("placement.rules.yaml") {
             Ok(config) => config,
             Err(e) => {
-                eprintln!("Error loading placement rules: {}", e);
+                eprintln!("Error: Loading placement rules failed: {}", e);
                 std::process::exit(1);
             }
         };
@@ -19,7 +19,7 @@ pub fn execute(target: &str, mode: OutputMode) {
         let artifacts_config = match ArtifactsPlanConfig::load("artifacts.plan.yaml") {
             Ok(config) => config,
             Err(e) => {
-                eprintln!("Error loading artifacts plan: {}", e);
+                eprintln!("Error: Loading artifacts plan failed: {}", e);
                 std::process::exit(1);
             }
         };
@@ -41,7 +41,7 @@ pub fn execute(target: &str, mode: OutputMode) {
             match crate::generator::resolver::resolve_artifact_path(artifact, &placement_config) {
                 Ok(p) => p,
                 Err(e) => {
-                    eprintln!("Error resolving artifact path: {}", e);
+                    eprintln!("Error: Resolving artifact path failed: {}", e);
                     std::process::exit(1);
                 }
             };
@@ -63,7 +63,7 @@ pub fn execute(target: &str, mode: OutputMode) {
         Ok(config) => config,
         Err(e) => {
             eprintln!(
-                "Error loading contract at {}: {}",
+                "Error: Loading contract at {} failed: {}",
                 contract_path.display(),
                 e
             );
