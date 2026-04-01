@@ -15,14 +15,18 @@ contract defaults, and implementation scaffolding.
 In Archflow, a **preset** is a reusable configuration package
 for a common architectural style or ecosystem.
 
-A preset may include:
+A minimal preset contains:
 
+- preset metadata (`name`, `summary`, `architecture_style`, `ecosystem`)
 - project defaults
 - placement rules
 - contract templates
-- artifact conventions
+
+A preset may optionally include:
+
+- a starter artifact plan
 - prompt defaults
-- example structures
+- references to example structures
 
 A preset helps users start faster without having to define every rule from scratch.
 
@@ -92,6 +96,48 @@ You can think of the relationship like this:
 
 Examples are descriptive.
 Presets are operational.
+
+---
+
+## Minimal preset model
+
+To keep Phase 5 minimal, a preset should be understood as having two parts.
+
+### 1. Metadata
+
+The minimum metadata needed for a preset is:
+
+- `name`: stable preset identifier
+- `summary`: short explanation of what the preset is for
+- `architecture_style`: the architectural style the preset represents
+- `ecosystem`: the intended language or ecosystem target, or `generic`
+
+### 2. Reusable defaults
+
+The minimum reusable content of a preset is:
+
+- project defaults
+- placement rules
+- contract templates by role
+
+This is enough to make a preset operational without turning it into a full project framework.
+
+### Optional additions
+
+A preset may later include:
+
+- a starter artifact plan
+- prompt defaults
+- links or provenance back to an example
+
+### Explicit non-goals
+
+A preset is not:
+
+- a complete application template
+- a replacement for examples
+- a replacement for contract sidecars
+- a packaging layer for runtime dependencies or framework internals
 
 ---
 

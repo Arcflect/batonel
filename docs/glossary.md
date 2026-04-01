@@ -185,15 +185,19 @@ Verification may include checking:
 
 ## Preset
 
-A reusable configuration package for a common architectural style or ecosystem.
+A reusable starting package for a common architectural style or ecosystem.
 
-A preset may include:
+A minimal preset contains:
 
+- preset metadata (`name`, `summary`, `architecture_style`, `ecosystem`)
 - project defaults
 - placement rules
 - contract templates
-- example artifacts
-- role conventions
+
+A preset may optionally include a starter artifact plan or prompt defaults.
+
+A preset is operational.
+An example is descriptive.
 
 Examples:
 - Rust clean / hexagonal preset
@@ -443,15 +447,19 @@ Verify には以下のチェックが含まれる場合があります。
 
 ### Preset（プリセット）
 
-一般的なアーキテクチャスタイルまたはエコシステム向けの再利用可能な設定パッケージ。
+一般的なアーキテクチャスタイルまたはエコシステム向けの再利用可能な出発点パッケージ。
 
-preset には次のものが含まれる場合があります。
+最小 preset は次を含みます。
 
-- プロジェクトのデフォルト
+- preset metadata（`name`、`summary`、`architecture_style`、`ecosystem`）
+- project defaults
 - 配置ルール
-- contract テンプレート
-- artifact の例
-- ロールの慣習
+- contract templates
+
+preset は、starter artifact plan や prompt defaults を任意で含めてもよいです。
+
+Preset は運用的です。
+Example は記述的です。
 
 例：
 - Rust クリーン / ヘキサゴナルプリセット
