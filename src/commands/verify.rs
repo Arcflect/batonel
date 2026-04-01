@@ -1,6 +1,7 @@
 use crate::config::{ArtifactsPlanConfig, ContractConfig, PlacementRulesConfig, ProjectConfig};
 use crate::model::contract_validation;
 use crate::model::prompt_validation;
+use crate::model::scaffold_validation;
 use crate::model::status_validation;
 use crate::model::verify::{CheckResult, VerifyReport, VerifyStatus, VerifyTarget};
 use std::collections::HashSet;
@@ -57,6 +58,20 @@ pub fn execute() {
                         role_config.and_then(|r| r.sidecar.as_ref().and_then(|s| s.contract_dir.as_deref())),
                         "contract.yaml",
                     );
+                    let prompt_path = crate::generator::resolver::resolve_sidecar_path(
+                        artifact,
+                        &path,
+                        role_config.and_then(|r| r.sidecar.as_ref().and_then(|s| s.prompt_dir.as_deref())),
+                        "prompt.md",
+                    );
+
+                    let scaffold_results = scaffold_validation::validate_scaffold_structure(
+                        &artifact.name,
+                        &path,
+                        &contract_path,
+                        &prompt_path,
+                    );
+                    results.extend(scaffold_results);
 
                     // Check physical contract existence
                     if contract_path.exists() {
@@ -172,12 +187,6 @@ pub fn execute() {
                     }
 
                     // Check Prompt presence
-                    let prompt_path = crate::generator::resolver::resolve_sidecar_path(
-                        artifact,
-                        &path,
-                        role_config.and_then(|r| r.sidecar.as_ref().and_then(|s| s.prompt_dir.as_deref())),
-                        "prompt.md",
-                    );
                     if prompt_path.exists() {
                         results.push(CheckResult {
                             check_id: "prompt-exists".to_string(),

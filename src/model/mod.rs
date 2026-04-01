@@ -5,5 +5,6 @@ pub mod placement;
 pub mod project;
 pub mod prompt;
 pub mod prompt_validation;
+pub mod scaffold_validation;
 pub mod status_validation;
 pub mod verify;
