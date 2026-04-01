@@ -31,6 +31,14 @@ pub fn execute() {
         println!();
 
         for artifact in &artifacts.artifacts {
+            // Check: role consistency (role-defined + role-path-match)
+            let (role_checks, role_found) =
+                check_role_consistency(&artifact.name, &artifact.role, artifact.path.as_deref(), &placement);
+            results.extend(role_checks);
+            if !role_found {
+                continue;
+            }
+
             // Check Contract alignment
             match crate::generator::resolver::resolve_artifact_path(artifact, &placement) {
                 Ok(path) => {
@@ -302,4 +310,162 @@ fn find_all_contracts<P: AsRef<Path>>(dir: P) -> Vec<PathBuf> {
         }
     }
     contracts
+}
+
+/// Checks role-to-path consistency for a single artifact.
+///
+/// Returns `(results, role_found)` where `role_found` is `false` when the
+/// artifact's role is missing from the placement rules — the caller should
+/// skip further checks for that artifact.
+fn check_role_consistency(
+    artifact_name: &str,
+    artifact_role: &str,
+    explicit_path: Option<&str>,
+    placement: &PlacementRulesConfig,
+) -> (Vec<CheckResult>, bool) {
+    let mut results = Vec::new();
+
+    let role_config = match placement.roles.get(artifact_role) {
+        Some(rc) => {
+            results.push(CheckResult {
+                check_id: "role-defined".to_string(),
+                target: VerifyTarget::Artifact { name: artifact_name.to_string() },
+                status: VerifyStatus::Pass,
+                message: format!(
+                    "Role '{}' is defined in placement rules for '{}'",
+                    artifact_role, artifact_name
+                ),
+            });
+            rc
+        }
+        None => {
+            results.push(CheckResult {
+                check_id: "role-defined".to_string(),
+                target: VerifyTarget::Artifact { name: artifact_name.to_string() },
+                status: VerifyStatus::Fail,
+                message: format!(
+                    "Role '{}' used by artifact '{}' is not defined in placement rules",
+                    artifact_role, artifact_name
+                ),
+            });
+            return (results, false);
+        }
+    };
+
+    if let Some(explicit) = explicit_path {
+        let file_name = match &role_config.file_extension {
+            Some(ext) => format!("{}.{}", artifact_name, ext),
+            None => artifact_name.to_string(),
+        };
+        let mut expected = PathBuf::from(&role_config.path);
+        expected.push(&file_name);
+        let expected_str = expected.to_string_lossy().to_string();
+
+        if explicit != expected_str {
+            results.push(CheckResult {
+                check_id: "role-path-match".to_string(),
+                target: VerifyTarget::Artifact { name: artifact_name.to_string() },
+                status: VerifyStatus::Warn,
+                message: format!(
+                    "Artifact '{}' has explicit path '{}' which deviates from role '{}' expected path '{}'",
+                    artifact_name, explicit, artifact_role, expected_str
+                ),
+            });
+        } else {
+            results.push(CheckResult {
+                check_id: "role-path-match".to_string(),
+                target: VerifyTarget::Artifact { name: artifact_name.to_string() },
+                status: VerifyStatus::Pass,
+                message: format!(
+                    "Explicit path for '{}' matches role-based expectation",
+                    artifact_name
+                ),
+            });
+        }
+    }
+
+    (results, true)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::placement::RolePlacement;
+    use std::collections::HashMap;
+
+    fn make_placement(role: &str, path: &str, ext: Option<&str>) -> PlacementRulesConfig {
+        let mut roles = HashMap::new();
+        roles.insert(
+            role.to_string(),
+            RolePlacement {
+                path: path.to_string(),
+                file_extension: ext.map(|s| s.to_string()),
+                sidecar: None,
+            },
+        );
+        PlacementRulesConfig { roles }
+    }
+
+    #[test]
+    fn role_defined_pass_when_role_exists() {
+        let placement = make_placement("service", "src/services", Some("rs"));
+        let (results, role_found) =
+            check_role_consistency("UserService", "service", None, &placement);
+        assert!(role_found);
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0].check_id, "role-defined");
+        assert_eq!(results[0].status, VerifyStatus::Pass);
+    }
+
+    #[test]
+    fn role_defined_fail_when_role_missing() {
+        let placement = make_placement("service", "src/services", Some("rs"));
+        let (results, role_found) =
+            check_role_consistency("UserService", "unknown-role", None, &placement);
+        assert!(!role_found);
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0].check_id, "role-defined");
+        assert_eq!(results[0].status, VerifyStatus::Fail);
+    }
+
+    #[test]
+    fn role_path_match_pass_when_explicit_path_matches_role() {
+        let placement = make_placement("service", "src/services", Some("rs"));
+        let (results, role_found) = check_role_consistency(
+            "UserService",
+            "service",
+            Some("src/services/UserService.rs"),
+            &placement,
+        );
+        assert!(role_found);
+        assert_eq!(results.len(), 2);
+        assert_eq!(results[1].check_id, "role-path-match");
+        assert_eq!(results[1].status, VerifyStatus::Pass);
+    }
+
+    #[test]
+    fn role_path_match_warn_when_explicit_path_deviates() {
+        let placement = make_placement("service", "src/services", Some("rs"));
+        let (results, role_found) = check_role_consistency(
+            "UserService",
+            "service",
+            Some("custom/path/UserService.rs"),
+            &placement,
+        );
+        assert!(role_found);
+        assert_eq!(results.len(), 2);
+        assert_eq!(results[1].check_id, "role-path-match");
+        assert_eq!(results[1].status, VerifyStatus::Warn);
+    }
+
+    #[test]
+    fn no_role_path_check_when_no_explicit_path() {
+        let placement = make_placement("service", "src/services", Some("rs"));
+        let (results, role_found) =
+            check_role_consistency("UserService", "service", None, &placement);
+        assert!(role_found);
+        // Only role-defined check, no role-path-match
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0].check_id, "role-defined");
+    }
 }
