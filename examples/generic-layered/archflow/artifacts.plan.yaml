@@ -2,12 +2,14 @@ artifacts:
   - name: user
     module: user
     role: entity
+    status: planned
     outputs:
       - User
 
   - name: create_user_service
     module: user
     role: service
+    status: planned
     inputs:
       - CreateUserInput
     outputs:
@@ -16,12 +18,14 @@ artifacts:
   - name: user_repository
     module: user
     role: repository_interface
+    status: planned
     outputs:
       - UserRepository
 
   - name: create_user_controller
     module: user
     role: controller
+    status: planned
     inputs:
       - CreateUserRequest
     outputs:
@@ -30,5 +34,6 @@ artifacts:
   - name: user_repository_gateway
     module: user
     role: gateway
+    status: planned
     outputs:
       - UserRepositoryGateway

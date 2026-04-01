@@ -2,12 +2,14 @@ artifacts:
   - name: user
     module: user
     role: entity
+    status: planned
     outputs:
       - User
 
   - name: create_user
     module: user
     role: usecase
+    status: planned
     inputs:
       - CreateUserCommand
     outputs:
@@ -16,12 +18,14 @@ artifacts:
   - name: user_repository
     module: user
     role: repository_port
+    status: planned
     outputs:
       - UserRepository
 
   - name: create_user_handler
     module: user
     role: http_handler
+    status: planned
     inputs:
       - CreateUserHttpRequest
     outputs:
@@ -30,5 +34,6 @@ artifacts:
   - name: postgres_user_repository
     module: user
     role: repository_impl
+    status: planned
     outputs:
       - PostgresUserRepository
