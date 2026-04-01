@@ -71,3 +71,38 @@ Human-readable Markdown with clear headers and full context.
 ```bash
 cargo run --manifest-path [PATH_TO_CARGO_TOML] -- prompt [ARTIFACT] --mode standard
 ```
+
+---
+
+## Minimal CI Example: `archflow verify`
+
+Use the workflow file below as a minimal GitHub Actions example:
+
+- `.github/workflows/archflow-verify-example.yml`
+
+This example runs `archflow verify` for each bundled example fixture:
+
+- `examples/minimal/archflow`
+- `examples/generic-layered/archflow`
+- `examples/rust-clean-hexagonal/archflow`
+
+Each matrix run also uploads the execution log as a workflow artifact:
+
+- `archflow-verify-log-examples-minimal-archflow`
+- `archflow-verify-log-examples-generic-layered-archflow`
+- `archflow-verify-log-examples-rust-clean-hexagonal-archflow`
+
+Core command pattern used in CI:
+
+```bash
+cd examples/minimal/archflow
+cargo run --manifest-path ../../../Cargo.toml -- verify
+```
+
+Expected behavior:
+
+- exit code `0`: verification succeeded (with or without warnings)
+- exit code `1`: verification failed (at least one `Fail` check)
+
+This is intentionally minimal and demonstrates the automation path without
+introducing a full CI platform design.
