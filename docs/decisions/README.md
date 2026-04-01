@@ -144,6 +144,10 @@ The initial set of decisions focuses on core Archflow direction:
 - `0006` Verify starts with structure and contract consistency
 - `0007` Archflow remains sidecar-first before code-aware analysis
 - `0008` Minimal CLI error handling policy for Phase 2
+- `0009` Minimal CLI error handling policy for Phase 3
+- `0010` Guard contract-first behavior in prompt generation
+- `0011` Minimal verification model
+- `0012` Minimal error handling policy for Phase 4 verification
 
 These decisions establish the early shape of the project.
 
@@ -303,6 +307,10 @@ Archflow は概念が多いプロジェクトです。
 - `0006` Verify は構造と contract の整合から始まる
 - `0007` Archflow はコード認識分析の前に sidecar ファースト のままである
 - `0008` Phase 2 における最小 CLI エラーハンドリングポリシー
+- `0009` Phase 3 における最小 CLI エラーハンドリングポリシー
+- `0010` prompt 生成における contract-first 挙動の保護
+- `0011` 最小限の verification モデル
+- `0012` Phase 4 verification における最小エラーハンドリングポリシー
 
 これらの決定はプロジェクトの初期形状を確立します。
 
