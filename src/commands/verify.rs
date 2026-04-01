@@ -1,5 +1,6 @@
 use crate::config::{ArtifactsPlanConfig, ContractConfig, PlacementRulesConfig, ProjectConfig};
 use crate::model::contract_validation;
+use crate::model::prompt_validation;
 use crate::model::verify::{CheckResult, VerifyReport, VerifyStatus, VerifyTarget};
 use std::collections::HashSet;
 use std::fs;
@@ -164,6 +165,15 @@ pub fn execute() {
                             status: VerifyStatus::Pass,
                             message: format!("Prompt exists for {}", artifact.name),
                         });
+
+                        // Check prompt naming + prompt-to-contract identity alignment
+                        let prompt_identity_results = prompt_validation::validate_prompt_identity(
+                            &prompt_path,
+                            &artifact.name,
+                            &artifact.role,
+                            &artifact.module,
+                        );
+                        results.extend(prompt_identity_results);
                     } else {
                         results.push(CheckResult {
                             check_id: "prompt-exists".to_string(),
