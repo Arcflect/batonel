@@ -101,6 +101,33 @@ For deeper customization, edit generated config files directly.
 
 ---
 
+## Preset customization boundaries
+
+Presets are starting points, not locked architecture truth.
+
+### Expected customization after bootstrap
+
+You are expected to customize:
+
+- `project.arch.yaml`: project name, module names, feature naming
+- `placement.rules.yaml`: path prefixes and file extensions
+- `contracts.template.yaml`: responsibilities and must_not constraints
+- `artifacts.plan.yaml`: starter artifact list
+
+### How core pieces can evolve
+
+- placement rules can evolve with repository structure
+- roles can be added, split, or renamed when boundaries become clearer
+- contract templates can be refined by team architecture policy
+
+### Keep these guardrails
+
+- preserve coherent role meaning across placement and contracts
+- preserve contract-first and sidecar-first behavior
+- avoid turning preset defaults into immutable doctrine
+
+---
+
 ## How presets relate to examples
 
 Examples are teaching assets.
@@ -153,3 +180,4 @@ Avoid framework-specific detail in early contracts.
 - [docs/decisions/0016-define-preset-packaging-approach.md](docs/decisions/0016-define-preset-packaging-approach.md)
 - [docs/decisions/0017-formalize-example-to-preset-mapping.md](docs/decisions/0017-formalize-example-to-preset-mapping.md)
 - [docs/decisions/0018-design-minimal-project-bootstrap-flow-from-presets.md](docs/decisions/0018-design-minimal-project-bootstrap-flow-from-presets.md)
+- [docs/decisions/0019-define-preset-customization-boundaries.md](docs/decisions/0019-define-preset-customization-boundaries.md)

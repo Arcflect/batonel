@@ -473,6 +473,31 @@ not force one fixed structure.
 
 A good preset accelerates setup without removing flexibility.
 
+## Customization boundaries
+
+Preset customization is expected and encouraged.
+
+Common override targets:
+
+- `project.arch.yaml`: project name, module names, feature naming
+- `placement.rules.yaml`: path prefixes, file extensions, role-to-path details
+- `contracts.template.yaml`: responsibilities, must_not constraints, implementation size guidance
+- `artifacts.plan.yaml`: starter artifact inventory
+
+How model parts can evolve:
+
+- placement rules can adapt to repository structure
+- roles can be added/split/renamed when boundary clarity improves
+- contract templates can be tightened or relaxed by team policy
+
+Guardrails to keep while customizing:
+
+- presets are starting points, not rigid truth
+- role meaning should remain coherent across placement and contract templates
+- contract-first and sidecar-first principles remain intact
+
+This keeps presets practical without becoming dogmatic.
+
 ---
 
 ## Presets and examples should coexist
@@ -913,6 +938,31 @@ Preset は常にカスタマイズ可能であるべきです。
 これは Archflow が意図を保全するためのものであり、1 つの固定された構造を強制するためではないため重要です。
 
 良い preset はセットアップを加速させ、柔軟性を失わせません。
+
+### カスタマイズ境界
+
+preset のカスタマイズは、期待されるかつ推奨される行為です。
+
+よくある override 対象:
+
+- `project.arch.yaml`: project 名、module 名、feature 命名
+- `placement.rules.yaml`: path prefix、file extension、role-to-path 詳細
+- `contracts.template.yaml`: responsibilities、must_not 制約、実装サイズ指針
+- `artifacts.plan.yaml`: starter artifact inventory
+
+モデル要素の進化方法:
+
+- placement rules は repository 構造に合わせて適応できる
+- roles は境界の明確化に応じて追加/分割/改名できる
+- contract templates はチーム方針で強化または緩和できる
+
+カスタマイズ時に維持するガードレール:
+
+- preset は固定真理ではなく出発点である
+- role の意味は placement と contract template 間で一貫させる
+- contract-first と sidecar-first 原則を維持する
+
+これにより、preset はドグマ化せずに実用性を維持できます。
 
 ---
 
