@@ -251,6 +251,48 @@ Likely preset characteristics:
 
 ---
 
+## Formal example-to-preset mapping
+
+To reduce ambiguity, Archflow uses the following canonical mapping:
+
+| Example | Preset direction | Preset id |
+|---|---|---|
+| `minimal` | minimal starter preset | `minimal` |
+| `generic-layered` | language-agnostic layered preset | `generic-layered` |
+| `rust-clean-hexagonal` | Rust clean/hexagonal preset | `rust-clean-hexagonal` |
+
+This mapping is directional: examples remain educational assets,
+while preset ids define reusable package identities.
+
+### What becomes reusable defaults
+
+When evolving an example into a preset candidate, reusable defaults are:
+
+- `project.arch.yaml` defaults
+- `placement.rules.yaml` defaults
+- `contracts.template.yaml` defaults
+- optional `artifacts.plan.yaml` only when broadly reusable
+
+### What remains illustrative
+
+The following stay example-first and should not be assumed reusable by default:
+
+- tutorial narration and teaching-focused explanation
+- one-off sample artifact names chosen only for pedagogical flow
+- expected output snapshots tied to demonstration
+
+### Transition rules
+
+An example can be promoted toward a supported preset only when:
+
+- preset id naming is stable and matches packaging conventions
+- role and placement defaults are internally consistent
+- contract template defaults are reusable beyond one scenario
+- content fits the self-contained preset package shape under `presets/<preset-id>/`
+- maintainers judge it broadly useful as a starter
+
+---
+
 ## What a preset may contain
 
 A preset may eventually package some or all of the following:
@@ -644,6 +686,48 @@ Archflow には現在これらの examples が含まれています。
 - ワークスペース対応のパス慣習
 - domain、application、adapters の強い分離
 - より明示的な依存境界のデフォルト
+
+---
+
+### example-to-preset マッピングの正式化
+
+曖昧さを減らすため、Archflow は次の正式マッピングを使います。
+
+| Example | Preset direction | Preset id |
+|---|---|---|
+| `minimal` | 最小スターター preset | `minimal` |
+| `generic-layered` | 言語非依存レイヤード preset | `generic-layered` |
+| `rust-clean-hexagonal` | Rust clean/hexagonal preset | `rust-clean-hexagonal` |
+
+このマッピングは方向性を示すものです。
+example は教育用アセットとして残り、preset id は再利用パッケージの識別子を定義します。
+
+#### 再利用可能デフォルトになるもの
+
+example を preset 候補へ進化させる際、再利用可能デフォルトは次です。
+
+- `project.arch.yaml` の defaults
+- `placement.rules.yaml` の defaults
+- `contracts.template.yaml` の defaults
+- 広く再利用できる場合に限る optional `artifacts.plan.yaml`
+
+#### 説明用途のまま残るもの
+
+次は example 優先で維持し、デフォルトで再利用可能とみなさないこと。
+
+- チュートリアルの叙述や教示向け説明
+- 教示フローのためだけに選ばれた単発サンプル artifact 名
+- デモに結び付いた expected output スナップショット
+
+#### 移行ルール
+
+example が supported preset へ進めるのは次を満たす場合のみです。
+
+- preset id の命名が安定し、packaging 規約に一致している
+- role と配置の defaults が内部的に整合している
+- contract template defaults が 1 シナリオを超えて再利用可能である
+- 内容が `presets/<preset-id>/` 配下の自己完結 package 形状に適合する
+- メンテナーがスターターとして広く有用と判断する
 
 ---
 
