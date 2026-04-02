@@ -1,0 +1,12 @@
+name: rust-clean-hexagonal
+summary: Rust clean/hexagonal starter preset for architecture-first projects
+architecture_style: clean-hexagonal
+ecosystem: rust
+source_example: examples/rust-clean-hexagonal
+includes:
+  required:
+    - project.arch.yaml
+    - placement.rules.yaml
+    - contracts.template.yaml
+  optional:
+    - artifacts.plan.yaml

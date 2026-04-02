@@ -87,6 +87,10 @@ Best for:
 - clean architecture / hexagonal architecture users
 - teams that care about strong module boundaries
 
+Preset path:
+
+- `presets/rust-clean-hexagonal/`
+
 Directory focus:
 
 - `crates/domain/`
