@@ -1,0 +1,48 @@
+name: Plan Scaffold Prompt Preview (Example)
+
+on:
+  workflow_dispatch:
+    inputs:
+      artifact:
+        description: "Artifact name for prompt preview"
+        required: true
+        default: "create_user"
+      mode:
+        description: "Prompt output mode"
+        required: true
+        default: "compact"
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Archflow CLI (example)
+        run: |
+          cargo install archflow --locked || \
+          cargo install --git https://github.com/Arcflect/archflow --locked
+
+      - name: Run plan
+        working-directory: archflow
+        run: archflow plan
+
+      - name: Run scaffold
+        working-directory: archflow
+        run: archflow scaffold
+
+      - name: Generate prompt preview
+        working-directory: archflow
+        run: |
+          archflow prompt "${{ github.event.inputs.artifact }}" --mode "${{ github.event.inputs.mode }}" > prompt-preview.md
+
+      - name: Upload prompt preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: archflow-prompt-preview-${{ github.event.inputs.artifact }}
+          path: archflow/prompt-preview.md

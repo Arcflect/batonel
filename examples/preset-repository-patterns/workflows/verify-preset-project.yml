@@ -1,0 +1,35 @@
+name: Verify Preset Project (Example)
+
+on:
+  pull_request:
+    paths:
+      - "archflow/**"
+      - "src/**"
+      - "crates/**"
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Archflow CLI (example)
+        run: |
+          cargo install archflow --locked || \
+          cargo install --git https://github.com/Arcflect/archflow --locked
+
+      - name: Run archflow verify
+        working-directory: archflow
+        run: archflow verify 2>&1 | tee archflow-verify.log
+
+      - name: Upload verify log
+        uses: actions/upload-artifact@v4
+        with:
+          name: archflow-verify-log
+          path: archflow/archflow-verify.log
