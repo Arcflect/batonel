@@ -158,6 +158,7 @@ The initial set of decisions focuses on core Archflow direction:
 - `0020` Align presets with examples, docs, and schemas
 - `0021` Minimal error handling policy for preset-based onboarding
 - `0022` Guard examples-first behavior during preset implementation
+- `0023` Guard sidecar-first and contract-first behavior in presets
 
 These decisions establish the early shape of the project.
 
@@ -331,6 +332,7 @@ Archflow は概念が多いプロジェクトです。
 - `0020` preset を examples・docs・schema と整合させる
 - `0021` preset ベースオンボーディング向け最小エラーハンドリングポリシー
 - `0022` preset 実装時に examples-first 振る舞いを守る
+- `0023` preset における sidecar-first と contract-first 振る舞いを守る
 
 これらの決定はプロジェクトの初期形状を確立します。
 

@@ -126,6 +126,11 @@ You are expected to customize:
 - preserve contract-first and sidecar-first behavior
 - avoid turning preset defaults into immutable doctrine
 
+Interpretation for day-1 onboarding:
+
+- preset files are not just path templates; they encode boundary intent via contracts
+- generated sidecar outputs remain first-class artifacts in normal project flow
+
 ---
 
 ## Minimal error behavior for onboarding
@@ -196,3 +201,4 @@ Avoid framework-specific detail in early contracts.
 - [docs/decisions/0019-define-preset-customization-boundaries.md](docs/decisions/0019-define-preset-customization-boundaries.md)
 - [docs/decisions/0021-minimal-error-handling-policy-for-preset-based-onboarding.md](docs/decisions/0021-minimal-error-handling-policy-for-preset-based-onboarding.md)
 - [docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md](docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md)
+- [docs/decisions/0023-guard-sidecar-first-and-contract-first-behavior-in-presets.md](docs/decisions/0023-guard-sidecar-first-and-contract-first-behavior-in-presets.md)

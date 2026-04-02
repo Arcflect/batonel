@@ -548,6 +548,25 @@ If a divergence is intentional, record it explicitly in a decision file.
 
 This keeps presets practical while preserving examples as teaching-first assets.
 
+## Guardrails for sidecar-first and contract-first preset behavior
+
+Preset packaging must preserve architectural meaning, not only folder layout.
+
+Required model behavior for supported presets:
+
+- include reusable contract defaults via `contracts.template.yaml`
+- treat placement rules as supportive structure, not boundary source of truth
+- keep normal flow connected to sidecar outputs through `plan`, `scaffold`, `prompt`, and `verify`
+
+Preset design should be rejected when it:
+
+- reduces preset identity to directory shape only
+- treats sidecar files as optional output noise
+- implies contracts can be skipped after preset initialization
+
+This keeps preset onboarding aligned with contract-centered and sidecar-first
+Archflow behavior.
+
 ---
 
 ## How this connects to current repository structure
@@ -581,6 +600,7 @@ for future presets.
 Related guardrail decision:
 
 - [docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md](docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md)
+- [docs/decisions/0023-guard-sidecar-first-and-contract-first-behavior-in-presets.md](docs/decisions/0023-guard-sidecar-first-and-contract-first-behavior-in-presets.md)
 
 ---
 
