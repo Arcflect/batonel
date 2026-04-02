@@ -92,6 +92,7 @@ If you want to understand the model, roadmap, and design decisions in more detai
 - [docs/schema-guide.md](./docs/schema-guide.md)
 - [docs/architecture-flow.md](./docs/architecture-flow.md)
 - [docs/presets.md](./docs/presets.md)
+- [docs/preset-onboarding.md](./docs/preset-onboarding.md)
 - [docs/contributing-areas.md](./docs/contributing-areas.md)
 - [docs/glossary.md](./docs/glossary.md)
 - [docs/decisions/README.md](./docs/decisions/README.md)

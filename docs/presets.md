@@ -8,6 +8,10 @@ The goal is to clarify that presets are not rigid architecture templates.
 They are reusable starting points for project structure, role conventions,
 contract defaults, and implementation scaffolding.
 
+For quick startup instructions aimed at new users, see:
+
+- [docs/preset-onboarding.md](docs/preset-onboarding.md)
+
 ---
 
 ## Overview
