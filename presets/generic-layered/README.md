@@ -41,5 +41,6 @@ same role boundaries:
 
 ## Notes
 
-- The default `file_extension` is `txt` to remain language-agnostic.
+- Default `file_extension` values follow the current `examples/generic-layered` defaults (`rs`) for alignment.
+- Teams can override `file_extension` immediately for their ecosystem after bootstrap.
 - This preset is a broad starter package, not a framework-specific template.

@@ -294,6 +294,17 @@ To reduce ambiguity, Archflow uses the following canonical mapping:
 This mapping is directional: examples remain educational assets,
 while preset ids define reusable package identities.
 
+### Alignment with examples and schemas
+
+Implemented presets should stay aligned with:
+
+- mapped example defaults (role set, path defaults, file extension defaults)
+- preset docs and onboarding guidance
+- schema expectations for root config files consumed by `archflow init --preset`
+
+If a divergence is intentional, it should be documented by decision record
+instead of remaining implicit.
+
 ### What becomes reusable defaults
 
 When evolving an example into a preset candidate, reusable defaults are:
