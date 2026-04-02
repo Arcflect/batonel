@@ -150,6 +150,30 @@ Artifacts included:
 
 ---
 
+## Example-to-preset mapping
+
+The current examples map to future preset directions as follows:
+
+| Example | Preset direction | Preset id | Reusable defaults | Illustrative-only parts |
+|---|---|---|---|---|
+| `minimal` | minimal starter preset | `minimal` | simple project defaults, small role set, minimal contract defaults | onboarding-oriented artifact naming and tutorial narration |
+| `generic-layered` | language-agnostic layered preset | `generic-layered` | layered role map, neutral placement defaults, reusable layered contract defaults | explanatory layering walkthrough and demo-specific naming |
+| `rust-clean-hexagonal` | Rust clean/hexagonal preset | `rust-clean-hexagonal` | Rust-oriented role map, workspace-aware placement defaults, clean/hexagonal contract defaults | Rust example storytelling and sample-specific adapter naming |
+
+This mapping clarifies direction only.
+It does not mean all presets are fully implemented now.
+
+### Transition rules
+
+An example should be promoted to a supported preset only when:
+
+- naming is stable and matches the preset id
+- role and placement defaults are internally consistent
+- contract template defaults are broadly reusable
+- the package can be represented as a self-contained preset directory
+
+---
+
 ## Recommended reading order
 
 If you are new to Archflow, read the examples in this order:
