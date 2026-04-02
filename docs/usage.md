@@ -147,3 +147,16 @@ Expected behavior:
 
 This is intentionally minimal and demonstrates the automation path without
 introducing a full CI platform design.
+
+---
+
+## Preset-Based Workflow Examples
+
+For small workflow examples aimed at preset-based repositories, see:
+
+- `examples/preset-repository-patterns/workflows/README.md`
+- `examples/preset-repository-patterns/workflows/verify-preset-project.yml`
+- `examples/preset-repository-patterns/workflows/plan-scaffold-prompt-preview.yml`
+
+These files illustrate where `plan`, `scaffold`, `prompt`, and `verify` can fit
+in normal repository automation without introducing a large CI framework.

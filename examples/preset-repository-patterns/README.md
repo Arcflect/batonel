@@ -37,3 +37,17 @@ Each pattern includes:
 - a realistic top-level repository layout
 - mapping notes from preset defaults to directories
 - minimal adaptation hints
+
+---
+
+## GitHub Workflow Examples
+
+For minimal GitHub Actions examples that show where Archflow commands can fit,
+see:
+
+- `examples/preset-repository-patterns/workflows/`
+
+Included examples:
+
+- `examples/preset-repository-patterns/workflows/verify-preset-project.yml`
+- `examples/preset-repository-patterns/workflows/plan-scaffold-prompt-preview.yml`
