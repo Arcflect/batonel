@@ -7,6 +7,47 @@ Ensure the binary is built and available. You can run it via `cargo run` from th
 
 ---
 
+## Preset Bootstrap: `archflow init`
+
+Use `archflow init` as the minimal startup command.
+
+Default initialization (no preset):
+
+```bash
+cargo run -- init
+```
+
+Preset-based initialization:
+
+```bash
+# Generic layered starter
+cargo run -- init --preset generic-layered
+
+# Rust clean/hexagonal starter
+cargo run -- init --preset rust-clean-hexagonal
+```
+
+Optional immediate override:
+
+```bash
+cargo run -- init --preset generic-layered --project-name my-app
+```
+
+Generated files in current directory:
+
+- `project.arch.yaml`
+- `placement.rules.yaml`
+- `contracts.template.yaml`
+- `artifacts.plan.yaml` (when included by the chosen preset)
+
+Behavior notes:
+
+- existing files are skipped (not overwritten)
+- unknown preset id fails with an error and available preset ids
+- deeper customization is done by editing generated files after init
+
+---
+
 ## 1. Minimal Example
 A flat architecture with simple domain and application layers.
 

@@ -186,6 +186,32 @@ This packaging keeps the preset:
 
 ---
 
+## Minimal bootstrap flow from presets
+
+Preset-based startup should be aligned with `archflow init`.
+
+Minimal flow:
+
+1. run `archflow init --preset <preset-id>`
+2. generate root config files from `presets/<preset-id>/`
+3. keep existing files untouched (skip if already present)
+4. continue with `archflow plan` and `archflow scaffold`
+
+Generated files:
+
+- `project.arch.yaml`
+- `placement.rules.yaml`
+- `contracts.template.yaml`
+- optional `artifacts.plan.yaml` (when included in preset)
+
+Immediate override scope is intentionally minimal:
+
+- `--project-name <name>`
+
+For deeper customization, users edit generated config files directly after init.
+
+---
+
 ## Current examples and future preset direction
 
 Archflow currently includes these examples:
@@ -925,6 +951,32 @@ Preset は常にカスタマイズ可能であるべきです。
 - preset ディレクトリ名は lowercase kebab-case を使う
 - manifest の `name` はディレクトリ名と一致させる
 - 名前は 1 つの organization 固有プロジェクトではなく、architecture style または ecosystem を説明するものにする
+
+---
+
+### preset からの最小ブートストラップフロー
+
+preset ベースの開始フローは `archflow init` と整合させます。
+
+最小フロー:
+
+1. `archflow init --preset <preset-id>` を実行
+2. `presets/<preset-id>/` から root config ファイルを生成
+3. 既存ファイルは変更せず（存在時は skip）
+4. `archflow plan` と `archflow scaffold` を続けて実行
+
+生成されるファイル:
+
+- `project.arch.yaml`
+- `placement.rules.yaml`
+- `contracts.template.yaml`
+- preset に含まれる場合の optional `artifacts.plan.yaml`
+
+即時 override 範囲は意図的に最小です。
+
+- `--project-name <name>`
+
+より深いカスタマイズは init 後に生成された config ファイルを直接編集します。
 
 ---
 

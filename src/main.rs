@@ -11,8 +11,8 @@ fn main() {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Init => {
-            commands::init::execute();
+        Commands::Init { preset, project_name } => {
+            commands::init::execute(preset.as_deref(), project_name.as_deref());
         }
         Commands::Plan => {
             commands::plan::execute();

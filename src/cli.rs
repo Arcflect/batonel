@@ -27,7 +27,14 @@ impl std::fmt::Display for OutputMode {
 #[derive(Subcommand)]
 pub enum Commands {
     /// Initialize a new Archflow project configuration
-    Init,
+    Init {
+        /// Preset id under presets/ (e.g. generic-layered, rust-clean-hexagonal)
+        #[arg(long)]
+        preset: Option<String>,
+        /// Override project.name in project.arch.yaml during initialization
+        #[arg(long)]
+        project_name: Option<String>,
+    },
     /// Plan the architecture based on contracts and schemas
     Plan,
     /// Scaffold code structure and artifact sidecars
