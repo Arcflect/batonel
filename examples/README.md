@@ -266,3 +266,21 @@ As Archflow evolves, these examples may expand to include:
 - more presets
 - verification examples
 - CLI usage examples
+
+---
+
+## Preset Adoption Repository Patterns
+
+For small but realistic onboarding patterns that show how presets map to
+repository structures, see:
+
+- `examples/preset-repository-patterns/`
+
+Direct pattern links:
+
+- `examples/preset-repository-patterns/minimal-starter/`
+- `examples/preset-repository-patterns/generic-layered-service/`
+- `examples/preset-repository-patterns/rust-clean-hexagonal-workspace/`
+
+These pattern guides are not full applications.
+They are repository-shape onboarding aids for preset-based startup.
