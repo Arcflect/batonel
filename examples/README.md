@@ -12,6 +12,10 @@ Each example is organized in the same way:
 These examples are not meant to be full applications.
 They are designed to make the Archflow model easy to understand.
 
+They are documentation-first assets.
+Preset implementation should be derived from stabilized example defaults,
+not the other way around.
+
 ---
 
 ## What these examples show
@@ -170,6 +174,10 @@ The current examples map to future preset directions as follows:
 
 This mapping clarifies direction only.
 It does not mean all presets are fully implemented now.
+
+Guardrail decision for implementation sequencing:
+
+- [docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md](docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md)
 
 ### Transition rules
 

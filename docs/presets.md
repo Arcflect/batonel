@@ -528,6 +528,26 @@ Presets reduce bootstrap effort and provide reusable defaults.
 A project may begin from a preset,
 while the examples continue to serve as documentation and comparison material.
 
+## Guardrails for examples-first implementation sequence
+
+Preset work must stay downstream from examples-first progression.
+
+When implementing or expanding presets, keep this sequence:
+
+1. stabilize and document the example behavior first
+2. classify affected content into reusable defaults vs illustrative-only parts
+3. operationalize only the reusable defaults in `presets/<preset-id>/`
+
+Before merging preset work, check:
+
+- no new preset id is introduced without mapped and stabilized example direction
+- no preset-only semantics are added without docs/example explanation
+- no preset-to-example drift is introduced implicitly
+
+If a divergence is intentional, record it explicitly in a decision file.
+
+This keeps presets practical while preserving examples as teaching-first assets.
+
 ---
 
 ## How this connects to current repository structure
@@ -557,6 +577,10 @@ Current implemented presets:
 
 For now, the important thing is to treat examples as the conceptual foundation
 for future presets.
+
+Related guardrail decision:
+
+- [docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md](docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md)
 
 ---
 

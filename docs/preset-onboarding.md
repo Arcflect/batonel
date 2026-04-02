@@ -195,3 +195,4 @@ Avoid framework-specific detail in early contracts.
 - [docs/decisions/0018-design-minimal-project-bootstrap-flow-from-presets.md](docs/decisions/0018-design-minimal-project-bootstrap-flow-from-presets.md)
 - [docs/decisions/0019-define-preset-customization-boundaries.md](docs/decisions/0019-define-preset-customization-boundaries.md)
 - [docs/decisions/0021-minimal-error-handling-policy-for-preset-based-onboarding.md](docs/decisions/0021-minimal-error-handling-policy-for-preset-based-onboarding.md)
+- [docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md](docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md)
