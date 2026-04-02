@@ -156,6 +156,7 @@ The initial set of decisions focuses on core Archflow direction:
 - `0018` Design minimal project bootstrap flow from presets
 - `0019` Define preset customization boundaries
 - `0020` Align presets with examples, docs, and schemas
+- `0021` Minimal error handling policy for preset-based onboarding
 
 These decisions establish the early shape of the project.
 
@@ -327,6 +328,7 @@ Archflow は概念が多いプロジェクトです。
 - `0018` preset からの最小プロジェクトブートストラップフローを設計する
 - `0019` preset カスタマイズ境界を定義する
 - `0020` preset を examples・docs・schema と整合させる
+- `0021` preset ベースオンボーディング向け最小エラーハンドリングポリシー
 
 これらの決定はプロジェクトの初期形状を確立します。
 

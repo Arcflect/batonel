@@ -25,6 +25,10 @@ pub fn execute(preset: Option<&str>, project_name: Option<&str>) {
     let mut content = original_content;
     if filename == "project.arch.yaml" {
       if let Some(name) = project_name {
+        if let Err(err) = validate_project_name(name) {
+          eprintln!("  [!] Invalid --project-name value: {}", err);
+          std::process::exit(1);
+        }
         match override_project_name(&content, name) {
           Ok(updated) => content = updated,
           Err(err) => {
@@ -271,9 +275,16 @@ modules:
     serde_yaml::to_string(&value).map_err(|e| format!("failed to serialize updated YAML: {}", e))
 }
 
+fn validate_project_name(project_name: &str) -> Result<(), String> {
+  if project_name.trim().is_empty() {
+    return Err("project name cannot be empty".to_string());
+  }
+  Ok(())
+}
+
 #[cfg(test)]
 mod tests {
-  use super::override_project_name;
+  use super::{override_project_name, validate_project_name};
   use serde_yaml::Value;
 
   #[test]
@@ -309,5 +320,11 @@ mod tests {
       .and_then(Value::as_str)
       .expect("project.name must exist");
     assert_eq!(name, "new-name");
+  }
+
+  #[test]
+  fn validate_project_name_rejects_empty_value() {
+    let err = validate_project_name("   ").expect_err("empty value should be rejected");
+    assert_eq!(err, "project name cannot be empty");
   }
 }

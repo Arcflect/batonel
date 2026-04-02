@@ -44,6 +44,7 @@ Behavior notes:
 
 - existing files are skipped (not overwritten)
 - unknown preset id fails with an error and available preset ids
+- empty/whitespace `--project-name` fails with an explicit error
 - deeper customization is done by editing generated files after init
 
 ---

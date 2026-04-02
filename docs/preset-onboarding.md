@@ -128,6 +128,19 @@ You are expected to customize:
 
 ---
 
+## Minimal error behavior for onboarding
+
+Preset onboarding keeps error behavior clear and minimal.
+
+- unknown preset id: fail with available preset ids
+- incomplete preset definition (missing required files): fail with file detail
+- unsupported selection under current minimal support rule: fail explicitly
+- invalid immediate override (`--project-name` empty/whitespace): fail explicitly
+
+All onboarding failures exit with code `1`.
+
+---
+
 ## How presets relate to examples
 
 Examples are teaching assets.
@@ -181,3 +194,4 @@ Avoid framework-specific detail in early contracts.
 - [docs/decisions/0017-formalize-example-to-preset-mapping.md](docs/decisions/0017-formalize-example-to-preset-mapping.md)
 - [docs/decisions/0018-design-minimal-project-bootstrap-flow-from-presets.md](docs/decisions/0018-design-minimal-project-bootstrap-flow-from-presets.md)
 - [docs/decisions/0019-define-preset-customization-boundaries.md](docs/decisions/0019-define-preset-customization-boundaries.md)
+- [docs/decisions/0021-minimal-error-handling-policy-for-preset-based-onboarding.md](docs/decisions/0021-minimal-error-handling-policy-for-preset-based-onboarding.md)
