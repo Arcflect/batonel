@@ -214,6 +214,80 @@ Expected behavior:
 
 ---
 
+## Multi-Repo Compliance Export: `archflow compliance-report`
+
+`compliance-report` aggregates audit outcomes across multiple repositories and exports machine-readable metrics.
+
+### JSON export
+
+```bash
+cargo run -- compliance-report \
+  --repos examples/minimal/archflow \
+  --repos examples/generic-layered/archflow \
+  --format json \
+  --output compliance-report.json
+```
+
+JSON report includes:
+
+- per-repository status and error/warning counts
+- organization-level totals (`total_errors`, `total_warnings`, `failed_count`)
+- rule-level summary (`rule_summaries`) aggregated across all repositories
+
+### CSV export
+
+```bash
+cargo run -- compliance-report \
+  --repos examples/minimal/archflow \
+  --repos examples/generic-layered/archflow \
+  --format csv \
+  --output compliance-report.csv
+```
+
+CSV contains normalized sections:
+
+- `summary`: global totals
+- `repo`: one row per repository
+- `rule`: one row per rule-level aggregate
+- `trend` / `trend_rule`: delta metrics when a baseline report is provided
+
+### Repos file mode
+
+You can pass repository targets via a newline-delimited file:
+
+```bash
+cargo run -- compliance-report \
+  --repos-file repos.txt \
+  --format json \
+  --output compliance-report.json
+```
+
+`repos.txt` rules:
+
+- one repository path per line
+- blank lines ignored
+- lines starting with `#` treated as comments
+
+### Severity trends and rule deltas
+
+Use `--baseline-json` to compute trend deltas vs a previous JSON export:
+
+```bash
+cargo run -- compliance-report \
+  --repos-file repos.txt \
+  --format json \
+  --output compliance-report-current.json \
+  --baseline-json compliance-report-previous.json
+```
+
+Trend metrics include:
+
+- `error_delta`, `warning_delta`, `finding_delta`
+- `failed_repo_delta`, `passed_repo_delta`
+- per-rule deltas (`rule_trends`) with error/warning/total change
+
+---
+
 ## Conservative Remediation: `archflow fix`
 
 `archflow fix` introduces conservative automation boundaries.

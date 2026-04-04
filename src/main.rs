@@ -5,7 +5,7 @@ mod generator;
 pub mod model;
 
 use clap::Parser;
-use cli::{Cli, Commands, GuardHook};
+use cli::{Cli, Commands, ComplianceReportFormat, GuardHook};
 
 fn main() {
     let cli = Cli::parse();
@@ -75,6 +75,29 @@ fn main() {
                 org_policy.as_deref(),
                 team_policy.as_deref(),
                 project_policy.as_deref(),
+            );
+        }
+        Commands::ComplianceReport {
+            repos,
+            repos_file,
+            format,
+            output,
+            baseline_json,
+        } => {
+            let report_format = match format {
+                ComplianceReportFormat::Json => {
+                    commands::compliance_report::ReportFormat::Json
+                }
+                ComplianceReportFormat::Csv => {
+                    commands::compliance_report::ReportFormat::Csv
+                }
+            };
+            commands::compliance_report::execute_cli(
+                &repos,
+                repos_file.as_deref(),
+                report_format,
+                &output,
+                baseline_json.as_deref(),
             );
         }
         Commands::PresetMigrationPlan {

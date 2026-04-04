@@ -22,6 +22,12 @@ pub enum GuardHook {
     Ci,
 }
 
+#[derive(Clone, Debug, ValueEnum)]
+pub enum ComplianceReportFormat {
+    Json,
+    Csv,
+}
+
 impl std::fmt::Display for OutputMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -166,5 +172,23 @@ pub enum Commands {
         /// Path to project-level policy file (default: policy.profile.yaml)
         #[arg(long)]
         project_policy: Option<String>,
+    },
+    /// Aggregate compliance across multiple repositories and export JSON/CSV metrics
+    ComplianceReport {
+        /// Repository directories to audit (repeat flag to include multiple repositories)
+        #[arg(long)]
+        repos: Vec<String>,
+        /// Optional newline-delimited file listing repository directories
+        #[arg(long)]
+        repos_file: Option<String>,
+        /// Export format
+        #[arg(long, value_enum, default_value = "json")]
+        format: ComplianceReportFormat,
+        /// Output file path for the generated report
+        #[arg(long, default_value = "compliance-report.json")]
+        output: String,
+        /// Optional baseline JSON export to compute severity/rule trend deltas
+        #[arg(long)]
+        baseline_json: Option<String>,
     },
 }

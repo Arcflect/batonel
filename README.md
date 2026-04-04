@@ -109,6 +109,25 @@ Run baseline audit checks (strict mode fails on warnings):
 cargo run -- audit --strict
 ```
 
+Export multi-repo compliance metrics (JSON/CSV):
+
+```bash
+# JSON export
+cargo run -- compliance-report \
+  --repos examples/minimal/archflow \
+  --repos examples/generic-layered/archflow \
+  --format json \
+  --output compliance-report.json
+
+# CSV export with trend comparison against a previous JSON baseline
+cargo run -- compliance-report \
+  --repos examples/minimal/archflow \
+  --repos examples/generic-layered/archflow \
+  --format csv \
+  --output compliance-report.csv \
+  --baseline-json compliance-report.json
+```
+
 Preview conservative remediation candidates:
 
 ```bash

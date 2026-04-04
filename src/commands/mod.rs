@@ -1,4 +1,5 @@
 pub mod audit;
+pub mod compliance_report;
 pub mod fix;
 pub mod guard;
 pub mod init;

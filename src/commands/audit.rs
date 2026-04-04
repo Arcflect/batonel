@@ -4,10 +4,11 @@ use crate::config::{
 };
 use crate::model::artifact::Artifact;
 use crate::model::placement::RolePlacement;
+use serde::{Deserialize, Serialize};
 use std::path::Path;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum Severity {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Severity {
     Error,
     Warn,
 }
@@ -21,112 +22,144 @@ impl Severity {
     }
 }
 
-#[derive(Debug, Clone)]
-struct AuditFinding {
-    rule_id: &'static str,
-    severity: Severity,
-    target: String,
-    message: String,
-    remediation: String,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AuditFinding {
+    pub rule_id: String,
+    pub severity: Severity,
+    pub target: String,
+    pub message: String,
+    pub remediation: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AuditReport {
+    pub repository: String,
+    pub findings: Vec<AuditFinding>,
+    pub errors: usize,
+    pub warnings: usize,
 }
 
 pub fn execute(strict: bool) {
+    let report = match run_for_root(Path::new(".")) {
+        Ok(report) => report,
+        Err(err) => {
+            eprintln!("[!] {}", err);
+            std::process::exit(1);
+        }
+    };
+
+    render_report(&report.findings);
+
+    if report.errors > 0 || (strict && report.warnings > 0) {
+        std::process::exit(1);
+    }
+}
+
+pub fn run_for_root(root: &Path) -> Result<AuditReport, String> {
     let mut findings = Vec::new();
 
     // Resolve effective policy by loading org/team/project layers in precedence order.
-    let effective_policy = match override_policy::load_effective_policy() {
+    let effective_policy = match override_policy::resolve(
+        Some(&root.join(override_policy::ORG_POLICY_PATH)),
+        Some(&root.join(override_policy::TEAM_POLICY_PATH)),
+        Some(&root.join(override_policy::PROJECT_POLICY_PATH)),
+    ) {
         Ok(ep) => ep,
         Err(err) => {
             findings.push(AuditFinding {
-                rule_id: "policy-profile-valid",
+                rule_id: "policy-profile-valid".to_string(),
                 severity: Severity::Error,
                 target: "policy.profile.yaml".to_string(),
                 message: format!("policy resolution failed: {}; hint: run `archflow policy-resolve` to diagnose", err),
                 remediation: "Fix the policy layer files identified by `archflow policy-resolve`."
                     .to_string(),
             });
-            render_report(&findings);
-            std::process::exit(1);
+            return Ok(build_report(root, findings));
         }
     };
     let policy_config = effective_policy.to_policy_profile_config();
 
     for required_file in &policy_config.required_files {
-        check_required_root_file(required_file, &mut findings, &policy_config);
+        check_required_root_file(root, required_file, &mut findings, &policy_config);
     }
 
     if findings.iter().any(|f| f.severity == Severity::Error) {
-        render_report(&findings);
-        std::process::exit(1);
+        return Ok(build_report(root, findings));
     }
 
-    let project_config = match ProjectConfig::load("project.arch.yaml") {
+    let project_config = match ProjectConfig::load(root.join("project.arch.yaml")) {
         Ok(config) => config,
         Err(err) => {
             findings.push(AuditFinding {
-                rule_id: "project-config-valid",
+                rule_id: "project-config-valid".to_string(),
                 severity: Severity::Error,
                 target: "project.arch.yaml".to_string(),
                 message: format!("project configuration is invalid: {}", err),
                 remediation: "Fix project.arch.yaml based on the validation message and rerun `archflow audit`.".to_string(),
             });
-            render_report(&findings);
-            std::process::exit(1);
+            return Ok(build_report(root, findings));
         }
     };
 
-    let placement_config = match PlacementRulesConfig::load("placement.rules.yaml") {
+    let placement_config = match PlacementRulesConfig::load(root.join("placement.rules.yaml")) {
         Ok(config) => config,
         Err(err) => {
             findings.push(AuditFinding {
-                rule_id: "placement-config-valid",
+                rule_id: "placement-config-valid".to_string(),
                 severity: Severity::Error,
                 target: "placement.rules.yaml".to_string(),
                 message: format!("placement rules are invalid: {}", err),
                 remediation: "Fix placement.rules.yaml and ensure each role has a valid path and optional extension.".to_string(),
             });
-            render_report(&findings);
-            std::process::exit(1);
+            return Ok(build_report(root, findings));
         }
     };
 
-    let artifacts_config = match ArtifactsPlanConfig::load("artifacts.plan.yaml") {
+    let artifacts_config = match ArtifactsPlanConfig::load(root.join("artifacts.plan.yaml")) {
         Ok(config) => config,
         Err(err) => {
             findings.push(AuditFinding {
-                rule_id: "artifacts-plan-valid",
+                rule_id: "artifacts-plan-valid".to_string(),
                 severity: Severity::Error,
                 target: "artifacts.plan.yaml".to_string(),
                 message: format!("artifacts plan is invalid: {}", err),
                 remediation: "Fix artifacts.plan.yaml and ensure each artifact has name/module/role.".to_string(),
             });
-            render_report(&findings);
-            std::process::exit(1);
+            return Ok(build_report(root, findings));
         }
     };
 
     findings.extend(run_policy_audit(
+        root,
         &policy_config,
         &project_config,
         &placement_config,
         &artifacts_config,
     ));
 
-    render_report(&findings);
+    Ok(build_report(root, findings))
+}
 
-    let has_errors = findings
+fn build_report(root: &Path, findings: Vec<AuditFinding>) -> AuditReport {
+    let errors = findings
         .iter()
-        .any(|finding| finding.severity == Severity::Error);
-    let has_warnings = findings
+        .filter(|finding| finding.severity == Severity::Error)
+        .count();
+    let warnings = findings
         .iter()
-        .any(|finding| finding.severity == Severity::Warn);
+        .filter(|finding| finding.severity == Severity::Warn)
+        .count();
 
-    if has_errors || (strict && has_warnings) {
-        std::process::exit(1);
+    AuditReport {
+        repository: root.display().to_string(),
+        findings,
+        errors,
+        warnings,
     }
 }
 
 fn check_required_root_file(
+    root: &Path,
     filename: &str,
     findings: &mut Vec<AuditFinding>,
     policy_config: &PolicyProfileConfig,
@@ -135,9 +168,9 @@ fn check_required_root_file(
         return;
     }
 
-    if !Path::new(filename).exists() {
+    if !root.join(filename).exists() {
         findings.push(AuditFinding {
-            rule_id: "required-root-file",
+            rule_id: "required-root-file".to_string(),
             severity: Severity::Error,
             target: filename.to_string(),
             message: format!("missing required root file: {}", filename),
@@ -147,6 +180,7 @@ fn check_required_root_file(
 }
 
 fn run_policy_audit(
+    root: &Path,
     policy_config: &PolicyProfileConfig,
     project_config: &ProjectConfig,
     placement_config: &PlacementRulesConfig,
@@ -159,7 +193,7 @@ fn run_policy_audit(
             let target = format!("module:{}", module.name);
             if !policy_config.is_overridden("module-name-policy", &target) {
                 findings.push(AuditFinding {
-                    rule_id: "module-name-policy",
+                    rule_id: "module-name-policy".to_string(),
                     severity: Severity::Error,
                     target,
                     message: format!(
@@ -181,7 +215,7 @@ fn run_policy_audit(
             && !policy_config.is_overridden("artifact-name-policy", &artifact_target)
         {
             findings.push(AuditFinding {
-                rule_id: "artifact-name-policy",
+                rule_id: "artifact-name-policy".to_string(),
                 severity: Severity::Error,
                 target: artifact_target.clone(),
                 message: format!(
@@ -197,7 +231,7 @@ fn run_policy_audit(
         if !project_config.has_module(&artifact.module) {
             if !policy_config.is_overridden("artifact-module-defined", &artifact_target) {
                 findings.push(AuditFinding {
-                    rule_id: "artifact-module-defined",
+                    rule_id: "artifact-module-defined".to_string(),
                     severity: Severity::Error,
                     target: artifact_target.clone(),
                     message: format!(
@@ -217,7 +251,7 @@ fn run_policy_audit(
             None => {
                 if !policy_config.is_overridden("artifact-role-defined", &artifact_target) {
                     findings.push(AuditFinding {
-                        rule_id: "artifact-role-defined",
+                        rule_id: "artifact-role-defined".to_string(),
                         severity: Severity::Error,
                         target: artifact_target.clone(),
                         message: format!(
@@ -235,6 +269,7 @@ fn run_policy_audit(
         };
 
         findings.extend(check_policy_forbidden_dependencies(
+            root,
             policy_config,
             artifact,
             role_config,
@@ -247,7 +282,7 @@ fn run_policy_audit(
                 && !policy_config.is_overridden("artifact-path-aligns-role", &artifact_target)
             {
                 findings.push(AuditFinding {
-                    rule_id: "artifact-path-aligns-role",
+                    rule_id: "artifact-path-aligns-role".to_string(),
                     severity: Severity::Warn,
                     target: artifact_target,
                     message: format!(
@@ -264,6 +299,7 @@ fn run_policy_audit(
 }
 
 fn check_policy_forbidden_dependencies(
+    root: &Path,
     policy_config: &PolicyProfileConfig,
     artifact: &Artifact,
     role_config: &RolePlacement,
@@ -294,7 +330,7 @@ fn check_policy_forbidden_dependencies(
         "contract.yaml",
     );
 
-    let contract = match ContractConfig::load(&contract_path) {
+    let contract = match ContractConfig::load(root.join(&contract_path)) {
         Ok(config) => config.contract,
         Err(_) => return findings,
     };
@@ -303,7 +339,7 @@ fn check_policy_forbidden_dependencies(
     for required_entry in forbidden_entries {
         if !contract_forbidden.iter().any(|entry| entry == required_entry) {
             findings.push(AuditFinding {
-                rule_id: "policy-forbidden-dependencies-covered",
+                rule_id: "policy-forbidden-dependencies-covered".to_string(),
                 severity: Severity::Error,
                 target: artifact_target.clone(),
                 message: format!(
@@ -444,7 +480,13 @@ mod tests {
             }],
         };
 
-        let findings = run_policy_audit(&policy, &project, &placement, &artifacts);
+        let findings = run_policy_audit(
+            std::path::Path::new("."),
+            &policy,
+            &project,
+            &placement,
+            &artifacts,
+        );
 
         assert_eq!(findings.len(), 2);
         assert!(findings.iter().any(|f| f.rule_id == "artifact-module-defined" && f.severity == Severity::Error));
@@ -478,7 +520,13 @@ mod tests {
             }],
         };
 
-        let findings = run_policy_audit(&policy, &project, &placement, &artifacts);
+        let findings = run_policy_audit(
+            std::path::Path::new("."),
+            &policy,
+            &project,
+            &placement,
+            &artifacts,
+        );
 
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].rule_id, "artifact-path-aligns-role");
@@ -509,7 +557,13 @@ mod tests {
             }],
         };
 
-        let findings = run_policy_audit(&policy, &project, &placement, &artifacts);
+        let findings = run_policy_audit(
+            std::path::Path::new("."),
+            &policy,
+            &project,
+            &placement,
+            &artifacts,
+        );
 
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].rule_id, "artifact-role-defined");
