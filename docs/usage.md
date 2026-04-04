@@ -206,6 +206,42 @@ Expected behavior:
 
 ---
 
+## Conservative Remediation: `archflow fix`
+
+`archflow fix` introduces conservative automation boundaries.
+
+Policy in this phase:
+
+- auto-fix only low-risk structural gaps (currently: missing root config files)
+- keep semantic or architectural decisions as review-required
+- include patch previews for review-required findings
+
+Dry-run preview (recommended default workflow):
+
+```bash
+cargo run -- fix --dry-run
+```
+
+Limited apply mode (low-risk fixes only):
+
+```bash
+cargo run -- fix --apply
+```
+
+Current classification examples:
+
+- auto-fixable:
+	- missing `project.arch.yaml` / `placement.rules.yaml` / `artifacts.plan.yaml` / `contracts.template.yaml`
+- review-required:
+	- artifact references undefined module
+	- artifact uses undefined role
+	- explicit artifact path deviates from role default path
+
+`--apply` never auto-applies review-required findings. Instead it emits patch-oriented
+previews and exits non-zero so human review remains mandatory.
+
+---
+
 ## Preset-Based Workflow Examples
 
 For small workflow examples aimed at preset-based repositories, see:

@@ -109,6 +109,12 @@ Run baseline audit checks (strict mode fails on warnings):
 cargo run -- audit --strict
 ```
 
+Preview conservative remediation candidates:
+
+```bash
+cargo run -- fix --dry-run
+```
+
 Onboarding e2e check script:
 
 ```bash

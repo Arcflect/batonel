@@ -33,5 +33,8 @@ fn main() {
         Commands::Audit { strict } => {
             commands::audit::execute(strict);
         }
+        Commands::Fix { dry_run, apply } => {
+            commands::fix::execute(dry_run, apply);
+        }
     }
 }

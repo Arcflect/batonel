@@ -58,4 +58,13 @@ pub enum Commands {
         #[arg(long)]
         strict: bool,
     },
+    /// Apply conservative automatic remediations with dry-run preview
+    Fix {
+        /// Preview candidate fixes without writing files
+        #[arg(long)]
+        dry_run: bool,
+        /// Apply only low-risk fixes; review-required findings are never auto-applied
+        #[arg(long)]
+        apply: bool,
+    },
 }
