@@ -1,4 +1,6 @@
-use crate::config::{ArtifactsPlanConfig, PlacementRulesConfig, ProjectConfig};
+use crate::config::{
+    ArtifactsPlanConfig, ContractConfig, PlacementRulesConfig, PolicyProfileConfig, ProjectConfig,
+};
 use crate::model::artifact::Artifact;
 use crate::model::placement::RolePlacement;
 use std::path::Path;
@@ -30,10 +32,26 @@ struct AuditFinding {
 pub fn execute(strict: bool) {
     let mut findings = Vec::new();
 
-    check_required_root_file("project.arch.yaml", &mut findings);
-    check_required_root_file("placement.rules.yaml", &mut findings);
-    check_required_root_file("artifacts.plan.yaml", &mut findings);
-    check_required_root_file("contracts.template.yaml", &mut findings);
+    let policy_config = match PolicyProfileConfig::load_or_default("policy.profile.yaml") {
+        Ok(config) => config,
+        Err(err) => {
+            findings.push(AuditFinding {
+                rule_id: "policy-profile-valid",
+                severity: Severity::Error,
+                target: "policy.profile.yaml".to_string(),
+                message: format!("policy profile is invalid: {}", err),
+                remediation:
+                    "Fix policy.profile.yaml or remove it to fallback to the minimum default policy profile."
+                        .to_string(),
+            });
+            render_report(&findings);
+            std::process::exit(1);
+        }
+    };
+
+    for required_file in &policy_config.required_files {
+        check_required_root_file(required_file, &mut findings, &policy_config);
+    }
 
     if findings.iter().any(|f| f.severity == Severity::Error) {
         render_report(&findings);
@@ -85,7 +103,8 @@ pub fn execute(strict: bool) {
         }
     };
 
-    findings.extend(run_baseline_audit(
+    findings.extend(run_policy_audit(
+        &policy_config,
         &project_config,
         &placement_config,
         &artifacts_config,
@@ -105,7 +124,15 @@ pub fn execute(strict: bool) {
     }
 }
 
-fn check_required_root_file(filename: &str, findings: &mut Vec<AuditFinding>) {
+fn check_required_root_file(
+    filename: &str,
+    findings: &mut Vec<AuditFinding>,
+    policy_config: &PolicyProfileConfig,
+) {
+    if policy_config.is_overridden("required-root-file", filename) {
+        return;
+    }
+
     if !Path::new(filename).exists() {
         findings.push(AuditFinding {
             rule_id: "required-root-file",
@@ -117,57 +144,110 @@ fn check_required_root_file(filename: &str, findings: &mut Vec<AuditFinding>) {
     }
 }
 
-fn run_baseline_audit(
+fn run_policy_audit(
+    policy_config: &PolicyProfileConfig,
     project_config: &ProjectConfig,
     placement_config: &PlacementRulesConfig,
     artifacts_config: &ArtifactsPlanConfig,
 ) -> Vec<AuditFinding> {
     let mut findings = Vec::new();
 
+    for module in &project_config.modules {
+        if !matches_naming_rule(&module.name, &policy_config.naming.module) {
+            let target = format!("module:{}", module.name);
+            if !policy_config.is_overridden("module-name-policy", &target) {
+                findings.push(AuditFinding {
+                    rule_id: "module-name-policy",
+                    severity: Severity::Error,
+                    target,
+                    message: format!(
+                        "module '{}' does not satisfy naming rule '{:?}'",
+                        module.name, policy_config.naming.module
+                    ),
+                    remediation:
+                        "Rename the module to satisfy policy naming rules or add a targeted override in policy.profile.yaml."
+                            .to_string(),
+                });
+            }
+        }
+    }
+
     for artifact in &artifacts_config.artifacts {
-        if !project_config.has_module(&artifact.module) {
+        let artifact_target = format!("artifact:{}", artifact.name);
+
+        if !matches_naming_rule(&artifact.name, &policy_config.naming.artifact)
+            && !policy_config.is_overridden("artifact-name-policy", &artifact_target)
+        {
             findings.push(AuditFinding {
-                rule_id: "artifact-module-defined",
+                rule_id: "artifact-name-policy",
                 severity: Severity::Error,
-                target: format!("artifact:{}", artifact.name),
+                target: artifact_target.clone(),
                 message: format!(
-                    "artifact '{}' references undefined module '{}'",
-                    artifact.name, artifact.module
+                    "artifact '{}' does not satisfy naming rule '{:?}'",
+                    artifact.name, policy_config.naming.artifact
                 ),
-                remediation: format!(
-                    "Add module '{}' to project.arch.yaml or update artifact '{}' to an existing module.",
-                    artifact.module, artifact.name
-                ),
+                remediation:
+                    "Rename the artifact in artifacts.plan.yaml or add a targeted override in policy.profile.yaml."
+                        .to_string(),
             });
+        }
+
+        if !project_config.has_module(&artifact.module) {
+            if !policy_config.is_overridden("artifact-module-defined", &artifact_target) {
+                findings.push(AuditFinding {
+                    rule_id: "artifact-module-defined",
+                    severity: Severity::Error,
+                    target: artifact_target.clone(),
+                    message: format!(
+                        "artifact '{}' references undefined module '{}'",
+                        artifact.name, artifact.module
+                    ),
+                    remediation: format!(
+                        "Add module '{}' to project.arch.yaml or update artifact '{}' to an existing module.",
+                        artifact.module, artifact.name
+                    ),
+                });
+            }
         }
 
         let role_config = match placement_config.roles.get(&artifact.role) {
             Some(role_config) => role_config,
             None => {
-                findings.push(AuditFinding {
-                    rule_id: "artifact-role-defined",
-                    severity: Severity::Error,
-                    target: format!("artifact:{}", artifact.name),
-                    message: format!(
-                        "artifact '{}' uses undefined role '{}'",
-                        artifact.name, artifact.role
-                    ),
-                    remediation: format!(
-                        "Define role '{}' in placement.rules.yaml or change artifact '{}' role.",
-                        artifact.role, artifact.name
-                    ),
-                });
+                if !policy_config.is_overridden("artifact-role-defined", &artifact_target) {
+                    findings.push(AuditFinding {
+                        rule_id: "artifact-role-defined",
+                        severity: Severity::Error,
+                        target: artifact_target.clone(),
+                        message: format!(
+                            "artifact '{}' uses undefined role '{}'",
+                            artifact.name, artifact.role
+                        ),
+                        remediation: format!(
+                            "Define role '{}' in placement.rules.yaml or change artifact '{}' role.",
+                            artifact.role, artifact.name
+                        ),
+                    });
+                }
                 continue;
             }
         };
 
+        findings.extend(check_policy_forbidden_dependencies(
+            policy_config,
+            artifact,
+            role_config,
+            placement_config,
+        ));
+
         if let Some(explicit_path) = artifact.path.as_deref() {
             let expected = expected_role_path(artifact, role_config);
-            if explicit_path != expected {
+            if explicit_path != expected
+                && !policy_config.is_overridden("artifact-path-aligns-role", &artifact_target)
+            {
                 findings.push(AuditFinding {
                     rule_id: "artifact-path-aligns-role",
                     severity: Severity::Warn,
-                    target: format!("artifact:{}", artifact.name),
+                    target: artifact_target,
                     message: format!(
                         "explicit path '{}' deviates from role '{}' expected path '{}'",
                         explicit_path, artifact.role, expected
@@ -179,6 +259,92 @@ fn run_baseline_audit(
     }
 
     findings
+}
+
+fn check_policy_forbidden_dependencies(
+    policy_config: &PolicyProfileConfig,
+    artifact: &Artifact,
+    role_config: &RolePlacement,
+    placement_config: &PlacementRulesConfig,
+) -> Vec<AuditFinding> {
+    let mut findings = Vec::new();
+    let forbidden_entries = match policy_config.forbidden_entries_for_role(&artifact.role) {
+        Some(entries) => entries,
+        None => return findings,
+    };
+
+    let artifact_target = format!("artifact:{}", artifact.name);
+    if policy_config.is_overridden("policy-forbidden-dependencies-covered", &artifact_target) {
+        return findings;
+    }
+
+    let artifact_path = match crate::generator::resolver::resolve_artifact_path(artifact, placement_config) {
+        Ok(path) => path,
+        Err(_) => return findings,
+    };
+    let contract_path = crate::generator::resolver::resolve_sidecar_path(
+        artifact,
+        &artifact_path,
+        role_config
+            .sidecar
+            .as_ref()
+            .and_then(|sidecar| sidecar.contract_dir.as_deref()),
+        "contract.yaml",
+    );
+
+    let contract = match ContractConfig::load(&contract_path) {
+        Ok(config) => config.contract,
+        Err(_) => return findings,
+    };
+
+    let contract_forbidden = contract.forbidden_dependencies.unwrap_or_default();
+    for required_entry in forbidden_entries {
+        if !contract_forbidden.iter().any(|entry| entry == required_entry) {
+            findings.push(AuditFinding {
+                rule_id: "policy-forbidden-dependencies-covered",
+                severity: Severity::Error,
+                target: artifact_target.clone(),
+                message: format!(
+                    "role '{}' requires forbidden dependency '{}' in contract, but '{}' does not declare it",
+                    artifact.role, required_entry, artifact.name
+                ),
+                remediation:
+                    "Add the required forbidden dependency entry to the artifact contract, or add a targeted override in policy.profile.yaml."
+                        .to_string(),
+            });
+        }
+    }
+
+    findings
+}
+
+fn matches_naming_rule(value: &str, rule: &crate::config::policy::NamingRule) -> bool {
+    match rule {
+        crate::config::policy::NamingRule::KebabCase => is_kebab_case(value),
+        crate::config::policy::NamingRule::LowercaseIdentifier => is_lowercase_identifier(value),
+    }
+}
+
+fn is_kebab_case(value: &str) -> bool {
+    !value.is_empty()
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
+        && !value.starts_with('-')
+        && !value.ends_with('-')
+        && !value.contains("--")
+}
+
+fn is_lowercase_identifier(value: &str) -> bool {
+    !value.is_empty()
+        && value.bytes().all(|byte| {
+            byte.is_ascii_lowercase()
+                || byte.is_ascii_digit()
+                || byte == b'-'
+                || byte == b'_'
+        })
+        && !value.starts_with(['-', '_'])
+        && !value.ends_with(['-', '_'])
 }
 
 fn expected_role_path(artifact: &Artifact, role: &RolePlacement) -> String {
@@ -231,8 +397,8 @@ fn render_report(findings: &[AuditFinding]) {
 
 #[cfg(test)]
 mod tests {
-    use super::{run_baseline_audit, Severity};
-    use crate::config::{ArtifactsPlanConfig, PlacementRulesConfig, ProjectConfig};
+    use super::{run_policy_audit, Severity};
+    use crate::config::{ArtifactsPlanConfig, PlacementRulesConfig, PolicyProfileConfig, ProjectConfig};
     use crate::model::artifact::Artifact;
     use crate::model::placement::RolePlacement;
     use crate::model::project::{Module, Project};
@@ -262,6 +428,7 @@ mod tests {
     fn baseline_audit_reports_undefined_module_and_role() {
         let project = base_project();
         let placement = PlacementRulesConfig { roles: HashMap::new() };
+        let policy = PolicyProfileConfig::default_minimum();
         let artifacts = ArtifactsPlanConfig {
             artifacts: vec![Artifact {
                 name: "create_order".to_string(),
@@ -275,7 +442,7 @@ mod tests {
             }],
         };
 
-        let findings = run_baseline_audit(&project, &placement, &artifacts);
+        let findings = run_policy_audit(&policy, &project, &placement, &artifacts);
 
         assert_eq!(findings.len(), 2);
         assert!(findings.iter().any(|f| f.rule_id == "artifact-module-defined" && f.severity == Severity::Error));
@@ -285,6 +452,7 @@ mod tests {
     #[test]
     fn baseline_audit_warns_for_path_deviation() {
         let project = base_project();
+        let policy = PolicyProfileConfig::default_minimum();
         let mut roles = HashMap::new();
         roles.insert(
             "usecase".to_string(),
@@ -308,11 +476,40 @@ mod tests {
             }],
         };
 
-        let findings = run_baseline_audit(&project, &placement, &artifacts);
+        let findings = run_policy_audit(&policy, &project, &placement, &artifacts);
 
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].rule_id, "artifact-path-aligns-role");
         assert_eq!(findings[0].severity, Severity::Warn);
         assert!(!findings[0].remediation.is_empty());
+    }
+
+    #[test]
+    fn baseline_audit_honors_policy_override() {
+        let project = base_project();
+        let placement = PlacementRulesConfig { roles: HashMap::new() };
+        let mut policy = PolicyProfileConfig::default_minimum();
+        policy.overrides.push(crate::config::policy::PolicyOverride {
+            rule_id: "artifact-module-defined".to_string(),
+            targets: vec!["artifact:create_order".to_string()],
+            reason: "legacy migration".to_string(),
+        });
+        let artifacts = ArtifactsPlanConfig {
+            artifacts: vec![Artifact {
+                name: "create_order".to_string(),
+                module: "order".to_string(),
+                role: "usecase".to_string(),
+                path: None,
+                inputs: None,
+                outputs: None,
+                status: None,
+                tags: None,
+            }],
+        };
+
+        let findings = run_policy_audit(&policy, &project, &placement, &artifacts);
+
+        assert_eq!(findings.len(), 1);
+        assert_eq!(findings[0].rule_id, "artifact-role-defined");
     }
 }

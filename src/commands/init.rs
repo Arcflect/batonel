@@ -200,7 +200,31 @@ modules:
   "#
         .to_string(),
         ),
+        (
+            "policy.profile.yaml".to_string(),
+            default_policy_profile_contents(),
+        ),
     ]
+  }
+
+  fn default_policy_profile_contents() -> String {
+    r#"version: 1
+
+required_files:
+  - project.arch.yaml
+  - placement.rules.yaml
+  - artifacts.plan.yaml
+  - contracts.template.yaml
+
+naming:
+  module: lowercase-identifier
+  artifact: lowercase-identifier
+
+forbidden_dependencies: []
+
+overrides: []
+"#
+    .to_string()
   }
 
   fn collect_preset_files(preset_id: &str) -> Result<Vec<(String, String)>, String> {
@@ -253,7 +277,8 @@ modules:
       files.push((filename.to_string(), contents));
     }
 
-    let optional = ["artifacts.plan.yaml"];
+    let optional = ["artifacts.plan.yaml", "policy.profile.yaml"];
+    let mut has_policy_profile = false;
     for filename in optional {
       let source = preset_dir.join(filename);
       if source.exists() {
@@ -265,7 +290,17 @@ modules:
           )
         })?;
         files.push((filename.to_string(), contents));
+        if filename == "policy.profile.yaml" {
+          has_policy_profile = true;
+        }
       }
+    }
+
+    if !has_policy_profile {
+      files.push((
+        "policy.profile.yaml".to_string(),
+        default_policy_profile_contents(),
+      ));
     }
 
     Ok(files)
@@ -477,7 +512,8 @@ mod tests {
         "project.arch.yaml",
         "placement.rules.yaml",
         "artifacts.plan.yaml",
-        "contracts.template.yaml"
+        "contracts.template.yaml",
+        "policy.profile.yaml"
       ]
     );
     assert_eq!(actions[0].kind, InitActionKind::Create);

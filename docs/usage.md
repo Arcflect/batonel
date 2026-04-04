@@ -42,6 +42,7 @@ Generated files in current directory:
 - `placement.rules.yaml`
 - `contracts.template.yaml`
 - `artifacts.plan.yaml` (when included by the chosen preset)
+- `policy.profile.yaml`
 
 Behavior notes:
 
@@ -191,6 +192,12 @@ Audit output includes rule-level diagnostics:
 - `rule_id`
 - `severity` (`error` or `warn`)
 - remediation hints
+
+Policy baseline behavior:
+
+- loads `policy.profile.yaml` when present
+- falls back to built-in minimum policy profile when missing
+- supports project-level exceptions via explicit `overrides`
 
 Core command pattern used in CI:
 

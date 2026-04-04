@@ -1,0 +1,87 @@
+schema:
+  name: policy-profile
+  version: 0.1.0
+  description: >
+    Defines minimum governance policy controls for Archflow repositories.
+
+required:
+  - version
+  - required_files
+  - naming
+
+fields:
+  version:
+    type: integer
+    required: true
+    description: Supported policy profile version. Current value: 1.
+
+  required_files:
+    type: list[string]
+    required: true
+    description: Required repository files validated by `archflow audit`.
+
+  naming:
+    type: map
+    required: true
+    description: Naming controls for modules and artifacts.
+    fields:
+      module:
+        type: string
+        required: true
+        description: Naming rule for module names. Supported values: kebab-case, lowercase-identifier.
+      artifact:
+        type: string
+        required: true
+        description: Naming rule for artifact names. Supported values: kebab-case, lowercase-identifier.
+
+  forbidden_dependencies:
+    type: list[map]
+    required: false
+    description: Role-level forbidden dependency entries that each contract must declare.
+    item_fields:
+      role:
+        type: string
+        required: true
+        description: Artifact role this policy applies to.
+      forbidden_entries:
+        type: list[string]
+        required: true
+        description: Entries that must exist in each matching artifact's forbidden_dependencies field.
+
+  overrides:
+    type: list[map]
+    required: false
+    description: Project-level exception list for explicit audit rule/target suppression.
+    item_fields:
+      rule_id:
+        type: string
+        required: true
+        description: Audit rule id to override.
+      targets:
+        type: list[string]
+        required: true
+        description: Explicit targets (e.g., artifact:create_user).
+      reason:
+        type: string
+        required: true
+        description: Human-readable justification for the override.
+
+example:
+  version: 1
+  required_files:
+    - project.arch.yaml
+    - placement.rules.yaml
+    - artifacts.plan.yaml
+    - contracts.template.yaml
+  naming:
+    module: lowercase-identifier
+    artifact: lowercase-identifier
+  forbidden_dependencies:
+    - role: usecase
+      forbidden_entries:
+        - src/infrastructure
+  overrides:
+    - rule_id: artifact-path-aligns-role
+      targets:
+        - artifact:create_legacy_user
+      reason: temporary migration path
