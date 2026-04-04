@@ -19,4 +19,7 @@ pub enum ConfigError {
         #[source]
         source: serde_yaml::Error,
     },
+
+    #[error("Invalid configuration at {path}: {message}")]
+    Validation { path: PathBuf, message: String },
 }

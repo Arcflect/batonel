@@ -54,6 +54,15 @@ fn build_plan_output(
     let mut error_count = 0;
 
     for artifact in &artifacts_config.artifacts {
+        if !project_config.has_module(&artifact.module) {
+            lines.push(format!(
+                "  ! {} [{}]: Error: module '{}' is not defined in project.arch.yaml",
+                artifact.name, artifact.role, artifact.module
+            ));
+            error_count += 1;
+            continue;
+        }
+
         match crate::generator::resolve_artifact_path(artifact, placement_config) {
             Ok(path) => {
                 lines.push(format!(
@@ -97,6 +106,10 @@ mod tests {
     #[test]
     fn build_plan_output_keeps_success_and_error_lines_in_input_order() {
         let project_config = ProjectConfig {
+            archflow: Some(crate::config::project::ArchflowMetadata {
+                schema_version: crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION.to_string(),
+                preset: None,
+            }),
             project: Project {
                 name: "demo".to_string(),
                 architecture_style: "layered".to_string(),
@@ -152,5 +165,45 @@ mod tests {
         assert!(lines[7].contains("create_user [usecase] -> src/application/usecases/create_user.rs"));
         assert!(lines[8].contains("user_view [missing-role]: Error: Role 'missing-role' not found in placement rules"));
         assert_eq!(lines.last().expect("summary line must exist"), "Plan result: 1 planned, 1 errors.");
+    }
+
+    #[test]
+    fn build_plan_output_reports_unknown_artifact_module_before_path_resolution() {
+        let project_config = ProjectConfig {
+            archflow: Some(crate::config::project::ArchflowMetadata {
+                schema_version: crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION.to_string(),
+                preset: None,
+            }),
+            project: Project {
+                name: "demo-app".to_string(),
+                architecture_style: "layered".to_string(),
+                language: "rust".to_string(),
+            },
+            workspace: None,
+            modules: vec![Module {
+                name: "user".to_string(),
+                features: None,
+            }],
+            metadata: None,
+        };
+
+        let placement_config = PlacementRulesConfig { roles: HashMap::new() };
+        let artifacts_config = ArtifactsPlanConfig {
+            artifacts: vec![Artifact {
+                name: "create_order".to_string(),
+                module: "order".to_string(),
+                role: "usecase".to_string(),
+                path: None,
+                inputs: None,
+                outputs: None,
+                status: None,
+                tags: None,
+            }],
+        };
+
+        let (lines, error_count) = build_plan_output(&project_config, &placement_config, &artifacts_config);
+
+        assert_eq!(error_count, 1);
+        assert!(lines[7].contains("module 'order' is not defined in project.arch.yaml"));
     }
 }

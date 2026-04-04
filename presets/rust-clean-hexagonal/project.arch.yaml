@@ -1,3 +1,8 @@
+archflow:
+  schema_version: "1"
+  preset:
+    id: rust-clean-hexagonal
+
 project:
   name: rust-clean-hexagonal-app
   architecture_style: clean-hexagonal

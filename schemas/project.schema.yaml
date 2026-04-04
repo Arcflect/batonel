@@ -5,9 +5,29 @@ schema:
     Defines the top-level project context for Archflow.
 
 required:
+  - archflow
   - project
 
 fields:
+  archflow:
+    type: map
+    required: true
+    description: Archflow-specific schema metadata for this project contract.
+    fields:
+      schema_version:
+        type: string
+        required: true
+        description: Supported project contract schema version. Current value: "1".
+      preset:
+        type: map
+        required: false
+        description: Optional source preset identity for initialized projects.
+        fields:
+          id:
+            type: string
+            required: true
+            description: Lowercase kebab-case preset identifier.
+
   project:
     type: map
     required: true
@@ -69,6 +89,11 @@ notes:
   - Workspace is optional and ecosystem-dependent.
 
 example:
+  archflow:
+    schema_version: "1"
+    preset:
+      id: rust-clean-hexagonal
+
   project:
     name: sample-app
     architecture_style: clean-hexagonal

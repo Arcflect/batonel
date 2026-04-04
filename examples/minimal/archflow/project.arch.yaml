@@ -1,3 +1,6 @@
+archflow:
+  schema_version: "1"
+
 project:
   name: minimal-app
   architecture_style: simple

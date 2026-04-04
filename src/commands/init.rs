@@ -1,7 +1,9 @@
-use std::fs;
 use std::collections::BTreeSet;
+use std::fs;
 use std::path::{Path, PathBuf};
 use serde_yaml::{Mapping, Value};
+
+use crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum InitActionKind {
@@ -92,6 +94,7 @@ fn plan_init_actions(
   for (filename, original_content) in files {
     let mut content = original_content;
     if filename == "project.arch.yaml" {
+      content = ensure_project_arch_metadata(&content, preset)?;
       if let Some(name) = project_name {
         validate_project_name(name)
           .map_err(|err| format!("Invalid --project-name value: {}", err))?;
@@ -129,7 +132,10 @@ fn default_init_files() -> Vec<(String, String)> {
   vec![
     (
       "project.arch.yaml".to_string(),
-      r#"project:
+      format!(r#"archflow:
+  schema_version: "{}"
+
+project:
   name: archflow-app
   architecture_style: simple
   language: generic
@@ -139,8 +145,7 @@ modules:
     features:
       - create_user
       - user_entity
-"#
-            .to_string(),
+"#, SUPPORTED_PROJECT_SCHEMA_VERSION),
         ),
         (
             "placement.rules.yaml".to_string(),
@@ -300,6 +305,44 @@ modules:
     ]
   }
 
+fn ensure_project_arch_metadata(contents: &str, preset: Option<&str>) -> Result<String, String> {
+  let mut value: Value = serde_yaml::from_str(contents)
+    .map_err(|e| format!("invalid YAML in project.arch.yaml: {}", e))?;
+
+  let root = value
+    .as_mapping_mut()
+    .ok_or_else(|| "root YAML document must be a mapping".to_string())?;
+
+  let archflow_key = Value::String("archflow".to_string());
+  if !root.contains_key(&archflow_key) {
+    root.insert(archflow_key.clone(), Value::Mapping(Mapping::new()));
+  }
+
+  let archflow = root
+    .get_mut(&archflow_key)
+    .and_then(Value::as_mapping_mut)
+    .ok_or_else(|| "archflow must be a mapping".to_string())?;
+
+  archflow.insert(
+    Value::String("schema_version".to_string()),
+    Value::String(SUPPORTED_PROJECT_SCHEMA_VERSION.to_string()),
+  );
+
+  if let Some(preset_id) = preset {
+    let mut preset_mapping = Mapping::new();
+    preset_mapping.insert(
+      Value::String("id".to_string()),
+      Value::String(preset_id.to_string()),
+    );
+    archflow.insert(
+      Value::String("preset".to_string()),
+      Value::Mapping(preset_mapping),
+    );
+  }
+
+  serde_yaml::to_string(&value).map_err(|e| format!("failed to serialize updated YAML: {}", e))
+}
+
   fn override_project_name(contents: &str, project_name: &str) -> Result<String, String> {
     let mut value: Value = serde_yaml::from_str(contents)
       .map_err(|e| format!("invalid YAML in project.arch.yaml: {}", e))?;
@@ -335,7 +378,11 @@ fn validate_project_name(project_name: &str) -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
-  use super::{plan_init_actions, override_project_name, validate_project_name, InitActionKind};
+  use super::{
+    ensure_project_arch_metadata, plan_init_actions, override_project_name, validate_project_name,
+    InitActionKind,
+  };
+  use crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION;
   use serde_yaml::Value;
   use std::env;
   use std::fs;
@@ -408,6 +455,10 @@ mod tests {
 
     let actions = plan_init_actions(None, Some("demo-service")).expect("plan should succeed");
     let filenames: Vec<_> = actions.iter().map(|action| action.filename.as_str()).collect();
+    let placement_action = actions
+      .iter()
+      .find(|action| action.filename == "placement.rules.yaml")
+      .expect("placement action should exist");
 
     assert_eq!(
       filenames,
@@ -419,7 +470,7 @@ mod tests {
       ]
     );
     assert_eq!(actions[0].kind, InitActionKind::Create);
-    assert_eq!(actions[1].kind, InitActionKind::SkipExisting);
+    assert_eq!(placement_action.kind, InitActionKind::SkipExisting);
     assert!(actions[0].content.contains("name: demo-service"));
   }
 
@@ -430,5 +481,36 @@ mod tests {
 
     let err = plan_init_actions(None, Some("   ")).expect_err("invalid name should fail");
     assert_eq!(err, "Invalid --project-name value: project name cannot be empty");
+  }
+
+  #[test]
+  fn ensure_project_arch_metadata_injects_schema_version_and_preset_id() {
+    let input = r#"project:
+  name: sample-app
+  architecture_style: layered
+  language: generic
+
+modules:
+  - name: user
+"#;
+
+    let updated = ensure_project_arch_metadata(input, Some("generic-layered"))
+      .expect("metadata injection should succeed");
+    let value: Value = serde_yaml::from_str(&updated).expect("yaml should parse");
+
+    let schema_version = value
+      .get("archflow")
+      .and_then(|entry| entry.get("schema_version"))
+      .and_then(Value::as_str)
+      .expect("schema version should exist");
+    let preset_id = value
+      .get("archflow")
+      .and_then(|entry| entry.get("preset"))
+      .and_then(|entry| entry.get("id"))
+      .and_then(Value::as_str)
+      .expect("preset id should exist");
+
+    assert_eq!(schema_version, SUPPORTED_PROJECT_SCHEMA_VERSION);
+    assert_eq!(preset_id, "generic-layered");
   }
 }

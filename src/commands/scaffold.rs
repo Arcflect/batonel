@@ -37,6 +37,15 @@ pub fn execute() {
     let mut error_count = 0;
 
     for artifact in &artifacts_config.artifacts {
+        if !project_config.has_module(&artifact.module) {
+            eprintln!(
+                "  [!] {} [{}]: Module Error: module '{}' is not defined in project.arch.yaml",
+                artifact.name, artifact.role, artifact.module
+            );
+            error_count += 1;
+            continue;
+        }
+
         match crate::generator::resolve_artifact_path(artifact, &placement_config) {
             Ok(path) => {
                 let role_config = placement_config.roles.get(&artifact.role);
