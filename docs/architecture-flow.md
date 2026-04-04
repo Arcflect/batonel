@@ -63,6 +63,16 @@ The main input files are:
 
 These files define the architecture before code is written.
 
+### Bootstrap path (Phase6 onboarding)
+
+Before entering the interpretation flow, a practical bootstrap path is:
+
+1. `archflow init --preset <preset-id> --project-name <name>`
+2. optional preview: `archflow init ... --dry-run`
+3. `archflow plan`
+
+This path is intentionally small and reproducible for CI and local onboarding.
+
 ### 1. Project context
 
 The project definition establishes the architectural frame.
@@ -558,6 +568,16 @@ Archflow に伝えることは次のとおりです。
 ---
 
 ### コアの解釈フロー
+
+#### ブートストラップ導線（Phase6 onboarding）
+
+解釈フローに入る前に、実務上の最小導線は次のとおりです。
+
+1. `archflow init --preset <preset-id> --project-name <name>`
+2. 必要に応じて `archflow init ... --dry-run` で事前確認
+3. `archflow plan`
+
+この導線は、ローカルとCIの両方で再現可能であることを重視しています。
 
 入力ファイルが揃ったら、Archflow はそれらを層ごとに解釈します。
 

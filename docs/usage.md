@@ -25,6 +25,9 @@ cargo run -- init --preset generic-layered
 
 # Rust clean/hexagonal starter
 cargo run -- init --preset rust-clean-hexagonal
+
+# Dry-run preview (no files are written)
+cargo run -- init --preset generic-layered --project-name my-app --dry-run
 ```
 
 Optional immediate override:
@@ -46,6 +49,26 @@ Behavior notes:
 - unknown preset id fails with an error and available preset ids
 - empty/whitespace `--project-name` fails with an explicit error
 - deeper customization is done by editing generated files after init
+
+Onboarding e2e check for core presets:
+
+```bash
+bash scripts/onboarding_e2e_init_plan.sh --preset generic-layered --project-name e2e-generic-service
+bash scripts/onboarding_e2e_init_plan.sh --preset rust-clean-hexagonal --project-name e2e-rust-service
+```
+
+The check validates:
+
+- `init --dry-run` does not write files
+- `init` generates the expected root config files
+- `plan` output is stable across identical repeated runs
+
+---
+
+日本語メモ（Onboarding e2e）:
+
+- `scripts/onboarding_e2e_init_plan.sh` は、core preset に対する `init -> plan` の最小e2e検証です。
+- `--dry-run` の非破壊性、初期ファイル生成、`plan` 出力の再現性を確認します。
 
 ---
 

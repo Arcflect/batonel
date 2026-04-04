@@ -83,6 +83,32 @@ Included examples:
 - [`generic-layered`](./examples/generic-layered/README.md)
 - [`rust-clean-hexagonal`](./examples/rust-clean-hexagonal/README.md)
 
+## Quickstart (init -> plan)
+
+Use one of the core presets, then run `plan`:
+
+```bash
+# Generic layered path
+cargo run -- init --preset generic-layered --project-name my-service
+cargo run -- plan
+
+# Rust clean/hexagonal path
+cargo run -- init --preset rust-clean-hexagonal --project-name my-rust-service
+cargo run -- plan
+```
+
+Preview before writing files:
+
+```bash
+cargo run -- init --preset generic-layered --project-name my-service --dry-run
+```
+
+Onboarding e2e check script:
+
+```bash
+bash scripts/onboarding_e2e_init_plan.sh --preset generic-layered --project-name e2e-generic-service
+```
+
 ## Docs / ドキュメント
 
 If you want to understand the model, roadmap, and design decisions in more detail, start here:
@@ -201,6 +227,32 @@ Archflowには、アーキテクチャが配置ルール、アーティファク
 - [`minimal`](./examples/minimal/README.md)
 - [`generic-layered`](./examples/generic-layered/README.md)
 - [`rust-clean-hexagonal`](./examples/rust-clean-hexagonal/README.md)
+
+## クイックスタート（init -> plan）
+
+core preset のどちらかを選び、`plan` まで実行します。
+
+```bash
+# Generic layered
+cargo run -- init --preset generic-layered --project-name my-service
+cargo run -- plan
+
+# Rust clean/hexagonal
+cargo run -- init --preset rust-clean-hexagonal --project-name my-rust-service
+cargo run -- plan
+```
+
+生成前に確認したい場合:
+
+```bash
+cargo run -- init --preset generic-layered --project-name my-service --dry-run
+```
+
+オンボーディングe2e検証スクリプト:
+
+```bash
+bash scripts/onboarding_e2e_init_plan.sh --preset generic-layered --project-name e2e-generic-service
+```
 
 ---
 

@@ -175,6 +175,40 @@ The current examples map to future preset directions as follows:
 This mapping clarifies direction only.
 It does not mean all presets are fully implemented now.
 
+---
+
+## Canonical onboarding validation (core presets)
+
+Use these commands to validate the onboarding path from `init` to `plan`:
+
+```bash
+bash scripts/onboarding_e2e_init_plan.sh --preset generic-layered --project-name e2e-generic-service
+bash scripts/onboarding_e2e_init_plan.sh --preset rust-clean-hexagonal --project-name e2e-rust-service
+```
+
+This check ensures:
+
+- `init --dry-run` is non-destructive
+- `init` generates expected root config files
+- `plan` output is deterministic for identical inputs
+
+---
+
+## 正準オンボーディング検証（core preset）
+
+`init` から `plan` までの導線を次のコマンドで検証できます。
+
+```bash
+bash scripts/onboarding_e2e_init_plan.sh --preset generic-layered --project-name e2e-generic-service
+bash scripts/onboarding_e2e_init_plan.sh --preset rust-clean-hexagonal --project-name e2e-rust-service
+```
+
+この検証では次を確認します。
+
+- `init --dry-run` が非破壊であること
+- `init` が期待どおりの root 設定ファイルを生成すること
+- 同一入力に対する `plan` 出力が決定論的であること
+
 Guardrail decision for implementation sequencing:
 
 - [docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md](docs/decisions/0022-guard-examples-first-behavior-during-preset-implementation.md)
