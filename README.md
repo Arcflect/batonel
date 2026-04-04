@@ -158,6 +158,7 @@ Schema drafts:
 - [schemas/artifacts-plan.schema.yaml](./schemas/artifacts-plan.schema.yaml)
 - [schemas/contract.schema.yaml](./schemas/contract.schema.yaml)
 - [schemas/prompt.schema.yaml](./schemas/prompt.schema.yaml)
+- [schemas/policy-profile.schema.yaml](./schemas/policy-profile.schema.yaml)
 
 Recommended reading order:
 1. [examples/README.md](./examples/README.md)

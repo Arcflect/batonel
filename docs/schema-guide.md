@@ -41,6 +41,7 @@ Archflow currently defines the following schema drafts:
 - `schemas/artifacts-plan.schema.yaml`
 - `schemas/contract.schema.yaml`
 - `schemas/prompt.schema.yaml`
+- `schemas/policy-profile.schema.yaml`
 
 Not all of these need to be written by a user directly.
 
@@ -56,10 +57,11 @@ In a normal workflow, users usually write these files first:
 1. `project.arch.yaml`
 2. `placement.rules.yaml`
 3. `artifacts.plan.yaml`
+4. `policy.profile.yaml`
 
 Optionally, users may also write:
 
-4. `contracts.template.yaml`
+5. `contracts.template.yaml`
 
 These files are the main inputs for Archflow planning and scaffold generation.
 
@@ -201,6 +203,7 @@ A more complete and recommended setup is:
 - `project.arch.yaml`
 - `placement.rules.yaml`
 - `artifacts.plan.yaml`
+- `policy.profile.yaml`
 - `contracts.template.yaml`
 
 This gives Archflow enough information to support:
@@ -222,6 +225,7 @@ This is the recommended starting point for most projects.
 | `placement.rules.yaml` | yes | no | map roles to paths |
 | `artifacts.plan.yaml` | yes | no | define which artifacts should exist |
 | `contracts.template.yaml` | often | no | define default role-based contract behavior |
+| `policy.profile.yaml` | recommended | no | define minimum governance policy and explicit overrides |
 | `*.contract.yaml` | sometimes | often | define artifact-specific responsibilities and constraints |
 | `*.prompt.md` or prompt data | rarely | often | define AI handoff instructions |
 

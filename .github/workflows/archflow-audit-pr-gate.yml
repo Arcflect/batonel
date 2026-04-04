@@ -6,6 +6,8 @@ on:
       - "src/**"
       - "schemas/**"
       - "examples/**"
+      - "presets/**"
+      - "docs/**"
       - ".github/workflows/archflow-audit-pr-gate.yml"
   workflow_dispatch:
 
