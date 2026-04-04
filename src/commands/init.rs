@@ -3,9 +3,22 @@ use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 use serde_yaml::{Mapping, Value};
 
-pub fn execute(preset: Option<&str>, project_name: Option<&str>) {
-  let files = match collect_init_files(preset) {
-    Ok(files) => files,
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum InitActionKind {
+  Create,
+  SkipExisting,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct InitAction {
+  filename: String,
+  content: String,
+  kind: InitActionKind,
+}
+
+pub fn execute(preset: Option<&str>, project_name: Option<&str>, dry_run: bool) {
+  let actions = match plan_init_actions(preset, project_name) {
+    Ok(actions) => actions,
     Err(err) => {
       eprintln!("  [!] {}", err);
       std::process::exit(1);
@@ -19,51 +32,89 @@ pub fn execute(preset: Option<&str>, project_name: Option<&str>) {
   }
   println!("=======================");
 
+  if dry_run {
+    println!("  [i] Dry run mode enabled. No files will be written.");
+  }
+
   let mut generated_count = 0;
+  let mut skipped_count = 0;
 
-  for (filename, original_content) in files {
-    let mut content = original_content;
-    if filename == "project.arch.yaml" {
-      if let Some(name) = project_name {
-        if let Err(err) = validate_project_name(name) {
-          eprintln!("  [!] Invalid --project-name value: {}", err);
-          std::process::exit(1);
-        }
-        match override_project_name(&content, name) {
-          Ok(updated) => content = updated,
-          Err(err) => {
-            eprintln!("  [!] Failed to override project name in {}: {}", filename, err);
-            std::process::exit(1);
-          }
-        }
+  for action in actions {
+    match action.kind {
+      InitActionKind::Create if dry_run => {
+        println!("  [plan] create {}", action.filename);
+        generated_count += 1;
       }
-    }
-
-    let path = Path::new(&filename);
-    if path.exists() {
-      println!("  [~] {} already exists, skipping.", filename);
-    } else {
-      match fs::write(path, &content) {
+      InitActionKind::SkipExisting if dry_run => {
+        println!("  [plan] skip {} (already exists)", action.filename);
+        skipped_count += 1;
+      }
+      InitActionKind::Create => match fs::write(Path::new(&action.filename), &action.content) {
         Ok(_) => {
-          println!("  [+] Generated {}", filename);
+          println!("  [+] Generated {}", action.filename);
           generated_count += 1;
         }
         Err(e) => {
-          eprintln!("  [!] Failed to generate {}: {}", filename, e);
+          eprintln!("  [!] Failed to generate {}: {}", action.filename, e);
           std::process::exit(1);
         }
+      },
+      InitActionKind::SkipExisting => {
+        println!("  [~] {} already exists, skipping.", action.filename);
+        skipped_count += 1;
       }
     }
   }
 
   println!();
-  if generated_count > 0 {
+  if dry_run {
+    println!(
+      "Dry run complete. {} file(s) would be generated, {} file(s) would be skipped.",
+      generated_count, skipped_count
+    );
+    println!("Review the plan above, then run the same command without --dry-run to generate files.");
+  } else if generated_count > 0 {
     println!("Initialization complete! Explore your configuration files, then run:");
     println!("  archflow plan");
     println!("  archflow scaffold");
   } else {
     println!("Initialization finished. No new configuration files were generated.");
   }
+}
+
+fn plan_init_actions(
+  preset: Option<&str>,
+  project_name: Option<&str>,
+) -> Result<Vec<InitAction>, String> {
+  let files = collect_init_files(preset)?;
+  let mut actions = Vec::with_capacity(files.len());
+
+  for (filename, original_content) in files {
+    let mut content = original_content;
+    if filename == "project.arch.yaml" {
+      if let Some(name) = project_name {
+        validate_project_name(name)
+          .map_err(|err| format!("Invalid --project-name value: {}", err))?;
+        content = override_project_name(&content, name).map_err(|err| {
+          format!("Failed to override project name in {}: {}", filename, err)
+        })?;
+      }
+    }
+
+    let kind = if Path::new(&filename).exists() {
+      InitActionKind::SkipExisting
+    } else {
+      InitActionKind::Create
+    };
+
+    actions.push(InitAction {
+      filename,
+      content,
+      kind,
+    });
+  }
+
+  Ok(actions)
 }
 
 fn collect_init_files(preset: Option<&str>) -> Result<Vec<(String, String)>, String> {
@@ -284,8 +335,29 @@ fn validate_project_name(project_name: &str) -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
-  use super::{override_project_name, validate_project_name};
+  use super::{plan_init_actions, override_project_name, validate_project_name, InitActionKind};
   use serde_yaml::Value;
+  use std::env;
+  use std::fs;
+  use tempfile::tempdir;
+
+  struct CurrentDirGuard {
+    original: std::path::PathBuf,
+  }
+
+  impl CurrentDirGuard {
+    fn set_to(path: &std::path::Path) -> Self {
+      let original = env::current_dir().expect("current dir should resolve");
+      env::set_current_dir(path).expect("current dir should be changed for test");
+      Self { original }
+    }
+  }
+
+  impl Drop for CurrentDirGuard {
+    fn drop(&mut self) {
+      let _ = env::set_current_dir(&self.original);
+    }
+  }
 
   #[test]
   fn override_project_name_updates_existing_name() {
@@ -326,5 +398,37 @@ mod tests {
   fn validate_project_name_rejects_empty_value() {
     let err = validate_project_name("   ").expect_err("empty value should be rejected");
     assert_eq!(err, "project name cannot be empty");
+  }
+
+  #[test]
+  fn plan_init_actions_preserves_default_file_order_and_marks_existing_files() {
+    let temp = tempdir().expect("tempdir should be created");
+    let _guard = CurrentDirGuard::set_to(temp.path());
+    fs::write("placement.rules.yaml", "existing").expect("existing file should be created");
+
+    let actions = plan_init_actions(None, Some("demo-service")).expect("plan should succeed");
+    let filenames: Vec<_> = actions.iter().map(|action| action.filename.as_str()).collect();
+
+    assert_eq!(
+      filenames,
+      vec![
+        "project.arch.yaml",
+        "placement.rules.yaml",
+        "artifacts.plan.yaml",
+        "contracts.template.yaml"
+      ]
+    );
+    assert_eq!(actions[0].kind, InitActionKind::Create);
+    assert_eq!(actions[1].kind, InitActionKind::SkipExisting);
+    assert!(actions[0].content.contains("name: demo-service"));
+  }
+
+  #[test]
+  fn plan_init_actions_rejects_invalid_project_name_before_writing() {
+    let temp = tempdir().expect("tempdir should be created");
+    let _guard = CurrentDirGuard::set_to(temp.path());
+
+    let err = plan_init_actions(None, Some("   ")).expect_err("invalid name should fail");
+    assert_eq!(err, "Invalid --project-name value: project name cannot be empty");
   }
 }

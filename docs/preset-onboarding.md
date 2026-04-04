@@ -58,6 +58,9 @@ archflow init --preset generic-layered --project-name my-service
 
 # Rust clean/hexagonal baseline
 archflow init --preset rust-clean-hexagonal --project-name my-rust-service
+
+# Preview generated files without writing them
+archflow init --preset generic-layered --project-name my-service --dry-run
 ```
 
 Generated files in the current directory:
@@ -90,6 +93,7 @@ The first onboarding flow intentionally keeps overrides minimal.
 Supported at init time:
 
 - `--project-name <name>`
+- `--dry-run`
 
 Not included at init time:
 
@@ -143,6 +147,11 @@ Preset onboarding keeps error behavior clear and minimal.
 - invalid immediate override (`--project-name` empty/whitespace): fail explicitly
 
 All onboarding failures exit with code `1`.
+
+Deterministic preview behavior:
+
+- `--dry-run` prints the file actions in a stable order without writing files
+- `archflow plan` prints artifact results in a single ordered stream so successes and errors remain reviewable in sequence
 
 ---
 

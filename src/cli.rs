@@ -34,6 +34,9 @@ pub enum Commands {
         /// Override project.name in project.arch.yaml during initialization
         #[arg(long)]
         project_name: Option<String>,
+        /// Preview generated files without writing them to disk
+        #[arg(long)]
+        dry_run: bool,
     },
     /// Plan the architecture based on contracts and schemas
     Plan,
