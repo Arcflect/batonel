@@ -155,6 +155,7 @@ jobs:
         with:
           tag_name: ${{ steps.release_tag.outputs.value }}
           name: Archflow ${{ steps.release_tag.outputs.value }}
+          draft: false
           files: |
             dist/release-assets/*.tar.gz
             dist/release-assets/*.sha256
