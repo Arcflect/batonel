@@ -1,0 +1,52 @@
+name: PR Title Check
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title.trim()
+
+            // Allowed:
+            // feat: summary
+            // fix!: summary
+            // docs: summary
+            const pattern = /^(feat|fix|refactor|perf|docs|test|build|ci|chore|security)(!)?: .+$/i
+
+            if (!pattern.test(title)) {
+              core.setFailed([
+                `Invalid PR title: "${title}"`,
+                ``,
+                `Expected format:`,
+                `  type: summary`,
+                `  type!: summary`,
+                ``,
+                `Allowed types:`,
+                `  feat, fix, refactor, perf, docs, test, build, ci, chore, security`,
+                ``,
+                `Examples:`,
+                `  feat: add init command`,
+                `  fix: avoid workspace version mismatch`,
+                `  refactor: split lexer and parser`,
+                `  perf: reduce allocations during scan`,
+                `  build: pin MSRV to 1.85`,
+                `  ci: verify tag matches Cargo.toml`,
+                `  feat!: change config schema`,
+              ].join('\n'))
+            }
+
+            core.info(`PR title is valid: ${title}`)
