@@ -1,0 +1,46 @@
+name: Verify Tag Matches Cargo.toml
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify tag matches Cargo.toml version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          python - <<'PY'
+          import os
+          import sys
+          import tomllib
+          from pathlib import Path
+
+          tag = os.environ["TAG"]
+          tag_version = tag[1:] if tag.startswith("v") else tag
+
+          cargo_toml = Path("Cargo.toml")
+          data = tomllib.loads(cargo_toml.read_text(encoding="utf-8"))
+
+          package = data.get("package")
+          if not package or "version" not in package:
+              print("Root Cargo.toml does not contain [package].version.")
+              print("If this repository is a workspace, change this workflow to read the crate Cargo.toml you release.")
+              sys.exit(1)
+
+          cargo_version = package["version"]
+
+          if cargo_version != tag_version:
+              print(f"Tag version '{tag_version}' does not match Cargo.toml version '{cargo_version}'.")
+              sys.exit(1)
+
+          print(f"OK: tag '{tag}' matches Cargo.toml version '{cargo_version}'.")
+          PY
