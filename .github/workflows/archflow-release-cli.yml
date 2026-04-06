@@ -1,9 +1,8 @@
 name: Archflow Release CLI
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       tag:
@@ -47,8 +46,8 @@ jobs:
         id: release_tag
         shell: bash
         run: |
-          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
-            echo "value=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            echo "value=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
           else
             echo "value=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
           fi
@@ -126,8 +125,8 @@ jobs:
         id: release_tag
         shell: bash
         run: |
-          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
-            echo "value=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            echo "value=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
           else
             echo "value=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
           fi
@@ -150,12 +149,10 @@ jobs:
           cat *.sha256 > checksums.txt
           popd >/dev/null
 
-      - name: Publish GitHub Release
+      - name: Upload assets to release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.release_tag.outputs.value }}
-          name: Archflow ${{ steps.release_tag.outputs.value }}
-          draft: false
           files: |
             dist/release-assets/*.tar.gz
             dist/release-assets/*.sha256

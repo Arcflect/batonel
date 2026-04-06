@@ -1,9 +1,8 @@
 name: Verify Tag Matches Cargo.toml
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -16,7 +15,7 @@ jobs:
 
       - name: Verify tag matches Cargo.toml version
         env:
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ github.event.release.tag_name }}
         run: |
           python - <<'PY'
           import os
