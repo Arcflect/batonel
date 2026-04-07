@@ -13,6 +13,9 @@ on:
 permissions:
   contents: write
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build:
     name: Build (${{ matrix.target }})
@@ -32,11 +35,11 @@ jobs:
             binary_name: archflow
             archive_ext: tar.gz
             smoke_test: false
-          - os: macos-13
+          - os: macos-latest
             target: x86_64-apple-darwin
             binary_name: archflow
             archive_ext: tar.gz
-            smoke_test: true
+            smoke_test: false
 
     steps:
       - name: Checkout
