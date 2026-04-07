@@ -89,7 +89,11 @@ jobs:
         shell: bash
         run: |
           TARGET_ROOT="${CARGO_TARGET_DIR:-target}"
-          BIN="${TARGET_ROOT}/${{ matrix.target }}/release/${{ matrix.binary_name }}"
+          if [[ "$TARGET_ROOT" = /* ]]; then
+            BIN="${TARGET_ROOT}/${{ matrix.target }}/release/${{ matrix.binary_name }}"
+          else
+            BIN="${GITHUB_WORKSPACE}/${TARGET_ROOT}/${{ matrix.target }}/release/${{ matrix.binary_name }}"
+          fi
 
           if [[ ! -f "$BIN" ]]; then
             echo "release binary not found: $BIN" >&2
