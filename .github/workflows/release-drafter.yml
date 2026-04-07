@@ -14,8 +14,66 @@ jobs:
   update_release_draft:
     runs-on: ubuntu-latest
     steps:
-      - uses: release-drafter/release-drafter@v7
+      - uses: actions/checkout@v4
+
+      - id: drafter
+        uses: release-drafter/release-drafter@v7
         with:
           config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync Cargo version from release draft
+        shell: bash
+        env:
+          RESOLVED_VERSION: ${{ steps.drafter.outputs.resolved_version }}
+        run: |
+          if [[ -z "${RESOLVED_VERSION}" ]]; then
+            echo "release-drafter did not output resolved_version" >&2
+            exit 1
+          fi
+
+          python - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          version = os.environ["RESOLVED_VERSION"]
+
+          cargo_toml = Path("Cargo.toml")
+          toml_text = cargo_toml.read_text(encoding="utf-8")
+          toml_text_new, toml_count = re.subn(
+              r'(?m)^version = "[0-9]+\.[0-9]+\.[0-9]+"$',
+              f'version = "{version}"',
+              toml_text,
+              count=1,
+          )
+          if toml_count != 1:
+              raise SystemExit("failed to update Cargo.toml version")
+          cargo_toml.write_text(toml_text_new, encoding="utf-8")
+
+          cargo_lock = Path("Cargo.lock")
+          lock_text = cargo_lock.read_text(encoding="utf-8")
+          pattern = re.compile(
+              r'(\[\[package\]\]\nname = "archflow"\nversion = ")[0-9]+\.[0-9]+\.[0-9]+("\n)',
+              re.MULTILINE,
+          )
+          lock_text_new, lock_count = pattern.subn(rf'\g<1>{version}\g<2>', lock_text, count=1)
+          if lock_count != 1:
+              raise SystemExit("failed to update Cargo.lock version for archflow package")
+          cargo_lock.write_text(lock_text_new, encoding="utf-8")
+          PY
+
+      - name: Commit version sync
+        shell: bash
+        run: |
+          if git diff --quiet -- Cargo.toml Cargo.lock; then
+            echo "No version changes to commit"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Cargo.toml Cargo.lock
+          git commit -m "chore: sync version with release drafter"
+          git push
