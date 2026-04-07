@@ -1,6 +1,6 @@
 [package]
 name = "archflow"
-version = "0.1.1"
+version = "1.0.0"
 edition = "2021"
 description = "Architecture-to-Execution Bridge"
 license = "MIT"
