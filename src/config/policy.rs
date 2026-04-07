@@ -1,8 +1,12 @@
 use serde::{Deserialize, Serialize};
+#[cfg(test)]
 use std::collections::HashSet;
+#[cfg(test)]
 use std::fs;
+#[cfg(test)]
 use std::path::Path;
 
+#[cfg(test)]
 use super::error::ConfigError;
 
 pub const SUPPORTED_POLICY_PROFILE_VERSION: u32 = 1;
@@ -45,6 +49,7 @@ pub struct PolicyOverride {
 }
 
 impl PolicyProfileConfig {
+    #[cfg(test)]
     pub fn load_or_default<P: AsRef<Path>>(path: P) -> Result<Self, ConfigError> {
         let path = path.as_ref();
         if !path.exists() {
@@ -97,6 +102,7 @@ impl PolicyProfileConfig {
             .map(|policy| policy.forbidden_entries.as_slice())
     }
 
+    #[cfg(test)]
     fn validate<P: AsRef<Path>>(&self, path: P) -> Result<(), ConfigError> {
         let path = path.as_ref().to_path_buf();
 
