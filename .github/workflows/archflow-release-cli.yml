@@ -267,6 +267,7 @@ jobs:
         with:
           name: archflow-release-aarch64-apple-darwin
           path: dist/*
+          overwrite: true
 
   publish:
     name: Publish GitHub Release
@@ -276,6 +277,7 @@ jobs:
       - build-macos-arm64-primary
       - build-macos-arm64-fallback
     if: |
+      always() &&
       needs.build.result == 'success' &&
       (needs.build-macos-arm64-primary.result == 'success' || needs.build-macos-arm64-fallback.result == 'success')
 
