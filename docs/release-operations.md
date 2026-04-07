@@ -26,12 +26,12 @@ The release tag is created by GitHub when the draft is published — no manual `
 
 1. Merge all PRs for this release to `main` (PR titles follow `type: summary` format; labels are auto-applied).
    Release Drafter automatically updates the draft release body on each merge.
-   In the same workflow, if version files need updates, an automated version-sync PR is created.
+   In the same workflow, if version files need updates, an automated version-sync branch is pushed.
 
 2. Open GitHub → Releases and confirm the draft:
    - Verify the resolved version (e.g., `v0.2.0`) and the generated changelog.
 
-3. Merge the auto-generated version-sync PR (e.g. `chore/release-version-sync-v0.2.0`) into `main`.
+3. Open and merge a PR from the auto-generated version-sync branch (e.g. `chore/release-version-sync-v0.2.0`) into `main`.
    - This satisfies branch protection rules (changes through PR, signed merge policies, etc.).
 
 4. In GitHub → Releases, open the draft and click **Publish release**.
@@ -41,7 +41,7 @@ The release tag is created by GitHub when the draft is published — no manual `
      - `archflow-release-cli.yml`: builds binaries, runs smoke tests, uploads assets to the published release.
 
 > **Important**: `archflow --version` output is determined by `Cargo.toml` at compile time.
-> If the version-sync PR has not been merged yet, do not publish the release. Merge it first.
+> If the version-sync branch is present but its PR has not been merged yet, do not publish the release. Merge first.
 
 ## 3. Installation channels
 
@@ -116,7 +116,7 @@ Cache strategy:
 
 | Workflow | Trigger | Purpose |
 |---|---|---|
-| `release-drafter.yml` | push to `main` | Updates draft release body and opens a version-sync PR when `Cargo.toml` / `Cargo.lock` updates are needed |
+| `release-drafter.yml` | push to `main` | Updates draft release body and pushes a version-sync branch when `Cargo.toml` / `Cargo.lock` updates are needed |
 | `pr-title-check.yml` | pull_request | Validates PR title format (`type: summary`) |
 | `pr-auto-label.yml` | pull_request_target | Auto-applies labels based on branch/title/files |
 | `verify-tag-version.yml` | release `published` | Validates `Cargo.toml` version matches the release tag |
