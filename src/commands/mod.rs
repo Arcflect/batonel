@@ -1,6 +1,7 @@
 pub mod audit;
 pub mod compliance_report;
 pub mod fix;
+pub mod triage;
 pub mod guard;
 pub mod init;
 pub mod plan;

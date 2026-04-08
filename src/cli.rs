@@ -173,6 +173,15 @@ pub enum Commands {
         #[arg(long)]
         project_policy: Option<String>,
     },
+    /// Triage audit violations by priority and generate a prioritized remediation plan
+    Triage {
+        /// Limit output to the top N remediation groups
+        #[arg(long)]
+        top: Option<usize>,
+        /// Emit the triage plan as JSON instead of human-readable text
+        #[arg(long)]
+        json: bool,
+    },
     /// Aggregate compliance across multiple repositories and export JSON/CSV metrics
     ComplianceReport {
         /// Repository directories to audit (repeat flag to include multiple repositories)

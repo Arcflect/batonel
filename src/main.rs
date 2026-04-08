@@ -132,5 +132,8 @@ fn main() {
                 dry_run,
             );
         }
+        Commands::Triage { top, json } => {
+            commands::triage::execute(top, json);
+        }
     }
 }
