@@ -3,29 +3,24 @@ use crate::model::artifact::Artifact;
 use crate::model::placement::RolePlacement;
 use std::path::Path;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum FixClass {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub enum FixClass {
     AutoFixable,
     ReviewRequired,
 }
 
 #[derive(Debug, Clone)]
-struct FixFinding {
-    rule_id: &'static str,
-    class: FixClass,
-    target: String,
-    message: String,
-    remediation: String,
-    patch_preview: Option<String>,
+pub struct FixFinding {
+    pub rule_id: &'static str,
+    pub class: FixClass,
+    pub target: String,
+    pub message: String,
+    pub remediation: String,
+    pub patch_preview: Option<String>,
 }
 
-pub fn execute(dry_run: bool, apply: bool) {
-    if dry_run && apply {
-        eprintln!("[!] --dry-run and --apply cannot be used together");
-        std::process::exit(1);
-    }
-
-    let effective_dry_run = !apply || dry_run;
+/// Collect all fix candidates for the given project root without applying anything.
+pub fn collect_findings(root: &Path) -> Vec<FixFinding> {
     let mut findings = Vec::new();
 
     let required_files = [
@@ -35,36 +30,42 @@ pub fn execute(dry_run: bool, apply: bool) {
         "contracts.template.yaml",
     ];
 
-    let missing_files: Vec<&str> = required_files
+    for filename in required_files
         .iter()
         .copied()
-        .filter(|filename| !Path::new(filename).exists())
-        .collect();
-
-    for filename in &missing_files {
+        .filter(|f| !root.join(f).exists())
+    {
         findings.push(FixFinding {
             rule_id: "required-root-file",
             class: FixClass::AutoFixable,
-            target: (*filename).to_string(),
+            target: filename.to_string(),
             message: format!("missing required root file: {}", filename),
             remediation: "Generate missing root files via `archflow init` (non-destructive for existing files).".to_string(),
             patch_preview: None,
         });
     }
 
-    let project_config = ProjectConfig::load("project.arch.yaml").ok();
-    let placement_config = PlacementRulesConfig::load("placement.rules.yaml").ok();
-    let artifacts_config = ArtifactsPlanConfig::load("artifacts.plan.yaml").ok();
+    let project_config = ProjectConfig::load(root.join("project.arch.yaml")).ok();
+    let placement_config = PlacementRulesConfig::load(root.join("placement.rules.yaml")).ok();
+    let artifacts_config = ArtifactsPlanConfig::load(root.join("artifacts.plan.yaml")).ok();
 
     if let (Some(project), Some(placement), Some(artifacts)) =
         (project_config, placement_config, artifacts_config)
     {
-        findings.extend(classify_review_required_findings(
-            &project,
-            &placement,
-            &artifacts,
-        ));
+        findings.extend(classify_review_required_findings(&project, &placement, &artifacts));
     }
+
+    findings
+}
+
+pub fn execute(dry_run: bool, apply: bool) {
+    if dry_run && apply {
+        eprintln!("[!] --dry-run and --apply cannot be used together");
+        std::process::exit(1);
+    }
+
+    let effective_dry_run = !apply || dry_run;
+    let findings = collect_findings(Path::new("."));
 
     render_fix_report(&findings, effective_dry_run, apply);
 
