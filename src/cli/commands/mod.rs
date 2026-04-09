@@ -36,6 +36,9 @@ pub fn handle(command: Commands) {
                 dry_run,
             };
             let output = crate::app::usecase::InitProjectUseCase::execute(input);
+            if let Some(preset) = output.resolved_preset.as_deref() {
+                println!("Resolved preset: {}", preset);
+            }
             render_usecase_result(output.success, "init project");
         }
         Commands::Plan => {
