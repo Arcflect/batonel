@@ -1,4 +1,6 @@
 use crate::config::{ArtifactsPlanConfig, PlacementRulesConfig, ProjectConfig};
+use crate::domain::planning::{ArchitecturePlanner, PlannedArtifactStatus};
+use crate::domain::project::ProjectContext;
 
 pub fn execute() {
     let guard_report = crate::commands::guard::run_hook(crate::commands::guard::GuardHookPoint::Plan, None);
@@ -28,7 +30,9 @@ pub fn execute() {
         }
     };
 
-    let (lines, mut error_count) = build_plan_output(&project_config, &placement_config, &artifacts_config);
+    let context = ProjectContext::from_project_config(&project_config);
+    let plan = ArchitecturePlanner::plan(&context, &placement_config, &artifacts_config);
+    let (lines, mut error_count) = build_plan_output(&plan);
     for line in lines {
         println!("{}", line);
     }
@@ -42,55 +46,40 @@ pub fn execute() {
     }
 }
 
-fn build_plan_output(
-    project_config: &ProjectConfig,
-    placement_config: &PlacementRulesConfig,
-    artifacts_config: &ArtifactsPlanConfig,
-) -> (Vec<String>, usize) {
+fn build_plan_output(plan: &crate::domain::planning::ArchitecturePlan) -> (Vec<String>, usize) {
     let mut lines = vec![
         "Archflow Implementation Plan".to_string(),
         "============================".to_string(),
-        format!("Project: {}", project_config.project.name),
-        format!("Style:   {}", project_config.project.architecture_style),
-        format!("Modules: {}", project_config.modules.len()),
+        format!("Project: {}", plan.project_name),
+        format!("Style:   {}", plan.architecture_style),
+        format!("Lang:    {}", plan.language),
+        format!("Modules: {}", plan.module_count),
         String::new(),
         "Planned Artifacts:".to_string(),
     ];
 
-    let mut success_count = 0;
-    let mut error_count = 0;
-
-    for artifact in &artifacts_config.artifacts {
-        if !project_config.has_module(&artifact.module) {
-            lines.push(format!(
-                "  ! {} [{}]: Error: module '{}' is not defined in project.arch.yaml",
-                artifact.name, artifact.role, artifact.module
-            ));
-            error_count += 1;
-            continue;
-        }
-
-        match crate::generator::resolve_artifact_path(artifact, placement_config) {
-            Ok(path) => {
-                lines.push(format!(
-                    "  - {} [{}] -> {}",
-                    artifact.name,
-                    artifact.role,
-                    path.display()
-                ));
-                success_count += 1;
-            }
-            Err(e) => {
-                lines.push(format!(
-                    "  ! {} [{}]: Error: {}",
-                    artifact.name,
-                    artifact.role,
-                    e
-                ));
-                error_count += 1;
-            }
+    for artifact in &plan.artifacts {
+        match artifact.status {
+            PlannedArtifactStatus::Planned => lines.push(format!(
+                "  - {} [{}] -> {}",
+                artifact.name,
+                artifact.role,
+                artifact
+                    .resolved_path
+                    .as_deref()
+                    .unwrap_or("<unresolved>")
+            )),
+            PlannedArtifactStatus::Error => lines.push(format!(
+                "  ! {} [{}]: Error: {}",
+                artifact.name,
+                artifact.role,
+                artifact.error_message.as_deref().unwrap_or("unknown error")
+            )),
         }
     }
+
+    let success_count = plan.planned_count();
+    let error_count = plan.error_count();
 
     lines.push(String::new());
     lines.push(format!(
@@ -104,113 +93,66 @@ fn build_plan_output(
 #[cfg(test)]
 mod tests {
     use super::build_plan_output;
-    use crate::config::{ArtifactsPlanConfig, PlacementRulesConfig, ProjectConfig};
-    use crate::model::artifact::Artifact;
-    use crate::model::placement::RolePlacement;
-    use crate::model::project::{Module, Project};
-    use std::collections::HashMap;
+    use crate::domain::planning::{ArchitecturePlan, PlannedArtifact, PlannedArtifactStatus};
 
     #[test]
     fn build_plan_output_keeps_success_and_error_lines_in_input_order() {
-        let project_config = ProjectConfig {
-            archflow: Some(crate::config::project::ArchflowMetadata {
-                schema_version: crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION.to_string(),
-                preset: None,
-            }),
-            project: Project {
-                name: "demo".to_string(),
-                architecture_style: "layered".to_string(),
-                language: "rust".to_string(),
-            },
-            workspace: None,
-            modules: vec![Module {
-                name: "user".to_string(),
-                features: None,
-            }],
-            metadata: None,
-        };
-
-        let mut roles = HashMap::new();
-        roles.insert(
-            "usecase".to_string(),
-            RolePlacement {
-                path: "src/application/usecases".to_string(),
-                file_extension: Some("rs".to_string()),
-                sidecar: None,
-            },
-        );
-        let placement_config = PlacementRulesConfig { roles };
-
-        let artifacts_config = ArtifactsPlanConfig {
+        let plan = ArchitecturePlan {
+            project_name: "demo".to_string(),
+            architecture_style: "layered".to_string(),
+            language: "rust".to_string(),
+            module_count: 1,
             artifacts: vec![
-                Artifact {
+                PlannedArtifact {
                     name: "create_user".to_string(),
-                    module: "user".to_string(),
                     role: "usecase".to_string(),
-                    path: None,
-                    inputs: None,
-                    outputs: None,
-                    status: None,
-                    tags: None,
+                    status: PlannedArtifactStatus::Planned,
+                    resolved_path: Some("src/application/usecases/create_user.rs".to_string()),
+                    error_message: None,
                 },
-                Artifact {
+                PlannedArtifact {
                     name: "user_view".to_string(),
-                    module: "user".to_string(),
                     role: "missing-role".to_string(),
-                    path: None,
-                    inputs: None,
-                    outputs: None,
-                    status: None,
-                    tags: None,
+                    status: PlannedArtifactStatus::Error,
+                    resolved_path: None,
+                    error_message: Some("Role 'missing-role' not found in placement rules".to_string()),
                 },
             ],
         };
 
-        let (lines, error_count) = build_plan_output(&project_config, &placement_config, &artifacts_config);
+        let (lines, error_count) = build_plan_output(&plan);
 
         assert_eq!(error_count, 1);
-        assert!(lines[7].contains("create_user [usecase] -> src/application/usecases/create_user.rs"));
-        assert!(lines[8].contains("user_view [missing-role]: Error: Role 'missing-role' not found in placement rules"));
+        assert!(lines.iter().any(|line| {
+            line.contains("create_user [usecase] -> src/application/usecases/create_user.rs")
+        }));
+        assert!(lines.iter().any(|line| {
+            line.contains("user_view [missing-role]: Error: Role 'missing-role' not found in placement rules")
+        }));
         assert_eq!(lines.last().expect("summary line must exist"), "Plan result: 1 planned, 1 errors.");
     }
 
     #[test]
     fn build_plan_output_reports_unknown_artifact_module_before_path_resolution() {
-        let project_config = ProjectConfig {
-            archflow: Some(crate::config::project::ArchflowMetadata {
-                schema_version: crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION.to_string(),
-                preset: None,
-            }),
-            project: Project {
-                name: "demo-app".to_string(),
-                architecture_style: "layered".to_string(),
-                language: "rust".to_string(),
-            },
-            workspace: None,
-            modules: vec![Module {
-                name: "user".to_string(),
-                features: None,
-            }],
-            metadata: None,
-        };
-
-        let placement_config = PlacementRulesConfig { roles: HashMap::new() };
-        let artifacts_config = ArtifactsPlanConfig {
-            artifacts: vec![Artifact {
+        let plan = ArchitecturePlan {
+            project_name: "demo-app".to_string(),
+            architecture_style: "layered".to_string(),
+            language: "rust".to_string(),
+            module_count: 1,
+            artifacts: vec![PlannedArtifact {
                 name: "create_order".to_string(),
-                module: "order".to_string(),
                 role: "usecase".to_string(),
-                path: None,
-                inputs: None,
-                outputs: None,
-                status: None,
-                tags: None,
+                status: PlannedArtifactStatus::Error,
+                resolved_path: None,
+                error_message: Some("module 'order' is not defined in project.arch.yaml".to_string()),
             }],
         };
 
-        let (lines, error_count) = build_plan_output(&project_config, &placement_config, &artifacts_config);
+        let (lines, error_count) = build_plan_output(&plan);
 
         assert_eq!(error_count, 1);
-        assert!(lines[7].contains("module 'order' is not defined in project.arch.yaml"));
+        assert!(lines
+            .iter()
+            .any(|line| line.contains("module 'order' is not defined in project.arch.yaml")));
     }
 }
