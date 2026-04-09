@@ -1,11 +1,10 @@
 use crate::model::project::{Module, Project, Workspace};
 use serde::{Deserialize, Serialize};
-use serde_yaml;
 use std::collections::BTreeSet;
-use std::fs;
 use std::path::Path;
 
 use super::error::ConfigError;
+use super::raw::{RawArchflowMetadata, RawPresetReference, RawProjectConfig};
 
 pub const SUPPORTED_PROJECT_SCHEMA_VERSION: &str = "1";
 
@@ -37,24 +36,24 @@ impl ProjectConfig {
     /// Loads the project configuration from a given file path.
     pub fn load<P: AsRef<Path>>(path: P) -> Result<Self, ConfigError> {
         let path = path.as_ref();
+        let contents = crate::config::loader::load_text(path)?;
+        let raw = crate::config::parser::parse_project_raw(&contents, path)?;
+        Self::from_raw(raw, path)
+    }
 
-        if !path.exists() {
-            return Err(ConfigError::NotFound(path.to_path_buf()));
-        }
-
-        let contents = fs::read_to_string(path).map_err(|e| ConfigError::Io {
-            path: path.to_path_buf(),
-            source: e,
-        })?;
-
-        let config: ProjectConfig =
-            serde_yaml::from_str(&contents).map_err(|e| ConfigError::Parse {
-                path: path.to_path_buf(),
-                source: e,
-            })?;
+    pub fn from_raw<P: AsRef<Path>>(raw: RawProjectConfig, path: P) -> Result<Self, ConfigError> {
+        let config = ProjectConfig {
+            archflow: raw.archflow.map(|a| ArchflowMetadata {
+                schema_version: a.schema_version,
+                preset: a.preset.map(|p| PresetReference { id: p.id }),
+            }),
+            project: raw.project,
+            workspace: raw.workspace,
+            modules: raw.modules,
+            metadata: raw.metadata,
+        };
 
         config.validate(path)?;
-
         Ok(config)
     }
 
@@ -204,6 +203,21 @@ impl ProjectConfig {
         }
 
         Ok(())
+    }
+}
+
+impl From<PresetReference> for RawPresetReference {
+    fn from(value: PresetReference) -> Self {
+        RawPresetReference { id: value.id }
+    }
+}
+
+impl From<ArchflowMetadata> for RawArchflowMetadata {
+    fn from(value: ArchflowMetadata) -> Self {
+        RawArchflowMetadata {
+            schema_version: value.schema_version,
+            preset: value.preset.map(Into::into),
+        }
     }
 }
 

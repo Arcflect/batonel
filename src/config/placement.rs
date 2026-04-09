@@ -1,11 +1,10 @@
 use crate::model::placement::RolePlacement;
 use serde::{Deserialize, Serialize};
-use serde_yaml;
 use std::collections::HashMap;
-use std::fs;
 use std::path::Path;
 
 use super::error::ConfigError;
+use super::raw::{RawPlacementRulesConfig, RawRolePlacement, RawSidecarPlacement};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PlacementRulesConfig {
@@ -16,22 +15,49 @@ impl PlacementRulesConfig {
     /// Loads the placement rules configuration from a given file path.
     pub fn load<P: AsRef<Path>>(path: P) -> Result<Self, ConfigError> {
         let path = path.as_ref();
+        let contents = crate::config::loader::load_text(path)?;
+        let raw = crate::config::parser::parse_placement_raw(&contents, path)?;
+        Ok(Self::from_raw(raw))
+    }
 
-        if !path.exists() {
-            return Err(ConfigError::NotFound(path.to_path_buf()));
+    pub fn from_raw(raw: RawPlacementRulesConfig) -> Self {
+        let roles = raw
+            .roles
+            .into_iter()
+            .map(|(name, role)| {
+                let sidecar = role.sidecar.map(|s| crate::model::placement::SidecarPlacement {
+                    contract_dir: s.contract_dir,
+                    prompt_dir: s.prompt_dir,
+                });
+                (
+                    name,
+                    RolePlacement {
+                        path: role.path,
+                        file_extension: role.file_extension,
+                        sidecar,
+                    },
+                )
+            })
+            .collect();
+        Self { roles }
+    }
+}
+
+impl From<crate::model::placement::SidecarPlacement> for RawSidecarPlacement {
+    fn from(value: crate::model::placement::SidecarPlacement) -> Self {
+        RawSidecarPlacement {
+            contract_dir: value.contract_dir,
+            prompt_dir: value.prompt_dir,
         }
+    }
+}
 
-        let contents = fs::read_to_string(path).map_err(|e| ConfigError::Io {
-            path: path.to_path_buf(),
-            source: e,
-        })?;
-
-        let config: PlacementRulesConfig =
-            serde_yaml::from_str(&contents).map_err(|e| ConfigError::Parse {
-                path: path.to_path_buf(),
-                source: e,
-            })?;
-
-        Ok(config)
+impl From<RolePlacement> for RawRolePlacement {
+    fn from(value: RolePlacement) -> Self {
+        RawRolePlacement {
+            path: value.path,
+            file_extension: value.file_extension,
+            sidecar: value.sidecar.map(Into::into),
+        }
     }
 }

@@ -1,10 +1,9 @@
 use crate::model::artifact::Artifact;
 use serde::{Deserialize, Serialize};
-use serde_yaml;
-use std::fs;
 use std::path::Path;
 
 use super::error::ConfigError;
+use super::raw::{RawArtifact, RawArtifactsPlanConfig};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ArtifactsPlanConfig {
@@ -15,22 +14,41 @@ impl ArtifactsPlanConfig {
     /// Loads the artifacts plan configuration from a given file path.
     pub fn load<P: AsRef<Path>>(path: P) -> Result<Self, ConfigError> {
         let path = path.as_ref();
+        let contents = crate::config::loader::load_text(path)?;
+        let raw = crate::config::parser::parse_artifacts_raw(&contents, path)?;
+        Ok(Self::from_raw(raw))
+    }
 
-        if !path.exists() {
-            return Err(ConfigError::NotFound(path.to_path_buf()));
+    pub fn from_raw(raw: RawArtifactsPlanConfig) -> Self {
+        let artifacts = raw
+            .artifacts
+            .into_iter()
+            .map(|a| Artifact {
+                name: a.name,
+                module: a.module,
+                role: a.role,
+                path: a.path,
+                inputs: a.inputs,
+                outputs: a.outputs,
+                status: a.status,
+                tags: a.tags,
+            })
+            .collect();
+        Self { artifacts }
+    }
+}
+
+impl From<Artifact> for RawArtifact {
+    fn from(value: Artifact) -> Self {
+        RawArtifact {
+            name: value.name,
+            module: value.module,
+            role: value.role,
+            path: value.path,
+            inputs: value.inputs,
+            outputs: value.outputs,
+            status: value.status,
+            tags: value.tags,
         }
-
-        let contents = fs::read_to_string(path).map_err(|e| ConfigError::Io {
-            path: path.to_path_buf(),
-            source: e,
-        })?;
-
-        let config: ArtifactsPlanConfig =
-            serde_yaml::from_str(&contents).map_err(|e| ConfigError::Parse {
-                path: path.to_path_buf(),
-                source: e,
-            })?;
-
-        Ok(config)
     }
 }
