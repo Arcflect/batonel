@@ -43,10 +43,18 @@ pub fn execute() {
     for item in generation_plan.items {
         match item.status {
             ArtifactGenerationStatus::Ready => {
-                let path = item
-                    .resolved_path
-                    .expect("generation plan item with Ready status must have path");
                 let artifact = item.artifact;
+                let path = match item.resolved_path {
+                    Some(path) => path,
+                    None => {
+                        eprintln!(
+                            "  [!] {} [{}]: Planning Error: missing resolved path",
+                            artifact.name, artifact.role
+                        );
+                        error_count += 1;
+                        continue;
+                    }
+                };
                 let role_config = placement_config.roles.get(&artifact.role);
                 match crate::generator::scaffold::generate_artifact_with_sidecars(
                     &artifact,

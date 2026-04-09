@@ -31,7 +31,9 @@ pub struct PlanArchitectureOutput {
 pub struct PlanArchitectureUseCase;
 
 impl PlanArchitectureUseCase {
-    pub fn execute(input: PlanArchitectureInput) -> Result<PlanArchitectureOutput, String> {
+    pub fn execute(
+        input: PlanArchitectureInput,
+    ) -> Result<PlanArchitectureOutput, crate::app::error::PlanBuildError> {
         let _requested_format = input.format;
 
         let guard_report = crate::commands::guard::run_hook(
@@ -39,12 +41,24 @@ impl PlanArchitectureUseCase {
             None,
         );
 
-        let project = crate::config::ProjectConfig::load("project.arch.yaml")
-            .map_err(|e| format!("Error loading project: {}", e))?;
-        let placement = crate::config::PlacementRulesConfig::load("placement.rules.yaml")
-            .map_err(|e| format!("Error loading placement rules: {}", e))?;
-        let artifacts = crate::config::ArtifactsPlanConfig::load("artifacts.plan.yaml")
-            .map_err(|e| format!("Error loading artifacts plan: {}", e))?;
+        let project = crate::config::ProjectConfig::load("project.arch.yaml").map_err(|e| {
+            crate::app::error::ConfigLoadError::Load {
+                path: "project.arch.yaml".to_string(),
+                source: e,
+            }
+        })?;
+        let placement = crate::config::PlacementRulesConfig::load("placement.rules.yaml").map_err(|e| {
+            crate::app::error::ConfigLoadError::Load {
+                path: "placement.rules.yaml".to_string(),
+                source: e,
+            }
+        })?;
+        let artifacts = crate::config::ArtifactsPlanConfig::load("artifacts.plan.yaml").map_err(|e| {
+            crate::app::error::ConfigLoadError::Load {
+                path: "artifacts.plan.yaml".to_string(),
+                source: e,
+            }
+        })?;
 
         let context = crate::domain::project::ProjectContext::from_project_config(&project);
         let plan = crate::domain::planning::ArchitecturePlanner::plan(&context, &placement, &artifacts);

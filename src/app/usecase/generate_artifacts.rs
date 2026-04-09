@@ -9,8 +9,10 @@ pub struct GenerateArtifactsOutput {
 pub struct GenerateArtifactsUseCase;
 
 impl GenerateArtifactsUseCase {
-    pub fn execute(_input: GenerateArtifactsInput) -> GenerateArtifactsOutput {
+    pub fn execute(
+        _input: GenerateArtifactsInput,
+    ) -> Result<GenerateArtifactsOutput, crate::app::error::GenerationError> {
         crate::commands::scaffold::execute();
-        GenerateArtifactsOutput { success: true }
+        Ok(GenerateArtifactsOutput { success: true })
     }
 }

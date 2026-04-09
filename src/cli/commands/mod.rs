@@ -42,7 +42,13 @@ pub fn handle(command: Commands) {
                 project_name,
                 dry_run,
             };
-            let output = crate::app::usecase::InitProjectUseCase::execute(input);
+            let output = match crate::app::usecase::InitProjectUseCase::execute(input) {
+                Ok(output) => output,
+                Err(err) => {
+                    eprintln!("[!] init project failed: {}", err);
+                    std::process::exit(1);
+                }
+            };
             if let Some(preset) = output.resolved_preset.as_deref() {
                 println!("Resolved preset: {}", preset);
             }
@@ -89,9 +95,15 @@ pub fn handle(command: Commands) {
             render_usecase_result(usecase_output.success, "plan architecture");
         }
         Commands::Scaffold => {
-            let output = crate::app::usecase::GenerateArtifactsUseCase::execute(
+            let output = match crate::app::usecase::GenerateArtifactsUseCase::execute(
                 crate::app::usecase::GenerateArtifactsInput,
-            );
+            ) {
+                Ok(output) => output,
+                Err(err) => {
+                    eprintln!("[!] generate artifacts failed: {}", err);
+                    std::process::exit(1);
+                }
+            };
             render_usecase_result(output.success, "generate artifacts");
         }
         Commands::Prompt { target, mode } => {
@@ -99,10 +111,16 @@ pub fn handle(command: Commands) {
         }
         Commands::Verify => {
             let mut output_adapter = crate::infra::ConsoleOutputAdapter;
-            let output = crate::app::usecase::ValidateProjectUseCase::execute_with_output(
+            let output = match crate::app::usecase::ValidateProjectUseCase::execute_with_output(
                 crate::app::usecase::ValidateProjectInput,
                 &mut output_adapter,
-            );
+            ) {
+                Ok(output) => output,
+                Err(err) => {
+                    eprintln!("[!] validate project failed: {}", err);
+                    std::process::exit(1);
+                }
+            };
             render_usecase_result(output.success, "validate project");
         }
         Commands::Audit { strict } => {
