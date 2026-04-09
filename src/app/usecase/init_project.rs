@@ -54,3 +54,44 @@ fn is_kebab_case(value: &str) -> bool {
         && !value.ends_with('-')
         && !value.contains("--")
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{is_kebab_case, InitProjectInput, InitProjectUseCase};
+
+    #[test]
+    fn kebab_case_validator_accepts_and_rejects_expected_patterns() {
+        assert!(is_kebab_case("rust-clean-hexagonal"));
+        assert!(is_kebab_case("preset1"));
+        assert!(!is_kebab_case(""));
+        assert!(!is_kebab_case("Rust-Clean"));
+        assert!(!is_kebab_case("bad__name"));
+        assert!(!is_kebab_case("-starts-with-dash"));
+        assert!(!is_kebab_case("ends-with-dash-"));
+        assert!(!is_kebab_case("double--dash"));
+    }
+
+    #[test]
+    fn execute_rejects_empty_preset_id_before_running_init_flow() {
+        let result = InitProjectUseCase::execute(InitProjectInput {
+            preset: Some("   ".to_string()),
+            project_name: None,
+            dry_run: true,
+        });
+
+        let err = result.expect_err("empty preset id should be rejected");
+        assert!(err.to_string().contains("preset id must not be empty"));
+    }
+
+    #[test]
+    fn execute_rejects_non_kebab_case_preset_id() {
+        let result = InitProjectUseCase::execute(InitProjectInput {
+            preset: Some("Rust_Clean".to_string()),
+            project_name: None,
+            dry_run: true,
+        });
+
+        let err = result.expect_err("invalid preset id should be rejected");
+        assert!(err.to_string().contains("kebab-case"));
+    }
+}

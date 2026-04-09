@@ -13,20 +13,54 @@ impl ValidateProjectUseCase {
         _input: ValidateProjectInput,
         output: &mut dyn crate::ports::OutputPort,
     ) -> Result<ValidateProjectOutput, crate::app::error::ValidationError> {
-        let project = crate::config::ProjectConfig::load("project.arch.yaml").map_err(|e| {
+        Self::execute_with_output_and_verifier(_input, output, || {
+            crate::commands::verify::execute();
+        })
+    }
+
+    fn execute_with_output_and_verifier<F>(
+        _input: ValidateProjectInput,
+        output: &mut dyn crate::ports::OutputPort,
+        verify_runner: F,
+    ) -> Result<ValidateProjectOutput, crate::app::error::ValidationError>
+    where
+        F: FnOnce(),
+    {
+        Self::execute_with_paths_output_and_verifier(
+            _input,
+            "project.arch.yaml",
+            "placement.rules.yaml",
+            "artifacts.plan.yaml",
+            output,
+            verify_runner,
+        )
+    }
+
+    fn execute_with_paths_output_and_verifier<F>(
+        _input: ValidateProjectInput,
+        project_path: &str,
+        placement_path: &str,
+        artifacts_path: &str,
+        output: &mut dyn crate::ports::OutputPort,
+        verify_runner: F,
+    ) -> Result<ValidateProjectOutput, crate::app::error::ValidationError>
+    where
+        F: FnOnce(),
+    {
+        let project = crate::config::ProjectConfig::load(project_path).map_err(|e| {
             crate::app::error::ConfigLoadError::Load {
-                path: "project.arch.yaml".to_string(),
+                path: project_path.to_string(),
                 source: e,
             }
         })?;
-        let placement = crate::config::PlacementRulesConfig::load("placement.rules.yaml")
+        let placement = crate::config::PlacementRulesConfig::load(placement_path)
             .map_err(|e| crate::app::error::ConfigLoadError::Load {
-                path: "placement.rules.yaml".to_string(),
+                path: placement_path.to_string(),
                 source: e,
             })?;
-        let artifacts = crate::config::ArtifactsPlanConfig::load("artifacts.plan.yaml")
+        let artifacts = crate::config::ArtifactsPlanConfig::load(artifacts_path)
             .map_err(|e| crate::app::error::ConfigLoadError::Load {
-                path: "artifacts.plan.yaml".to_string(),
+                path: artifacts_path.to_string(),
                 source: e,
             })?;
 
@@ -64,7 +98,113 @@ impl ValidateProjectUseCase {
             }
         }
 
-        crate::commands::verify::execute();
+        verify_runner();
         Ok(ValidateProjectOutput { success: true })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{ValidateProjectInput, ValidateProjectUseCase};
+    use crate::ports::{OutputLevel, OutputPort};
+    use tempfile::tempdir;
+
+    #[derive(Default)]
+    struct FakeOutput {
+        lines: Vec<(OutputLevel, String)>,
+    }
+
+    impl OutputPort for FakeOutput {
+        fn write_line(&mut self, level: OutputLevel, message: &str) {
+            self.lines.push((level, message.to_string()));
+        }
+    }
+
+    #[test]
+    fn validate_returns_explicit_config_error_when_project_missing() {
+        let mut output = FakeOutput::default();
+        let result = ValidateProjectUseCase::execute_with_paths_output_and_verifier(
+            ValidateProjectInput,
+            "missing-project.arch.yaml",
+            "missing-placement.rules.yaml",
+            "missing-artifacts.plan.yaml",
+            &mut output,
+            || {},
+        );
+
+        let err = result.expect_err("expected config load error");
+        let msg = err.to_string();
+        assert!(msg.contains("missing-project.arch.yaml"));
+    }
+
+    #[test]
+    fn validate_emits_structural_violations_to_output_port() {
+        let temp = tempdir().expect("tempdir should be created");
+        let root = temp.path();
+        std::fs::write(
+            root.join("project.arch.yaml"),
+            r#"archflow:
+  schema_version: "1"
+project:
+  name: sample-app
+  architecture_style: layered
+  language: generic
+modules:
+  - name: user
+"#,
+        )
+        .expect("write project");
+
+        std::fs::write(
+            root.join("placement.rules.yaml"),
+            r#"roles:
+  usecase:
+    path: "src/application/usecases"
+    file_extension: rs
+"#,
+        )
+        .expect("write placement");
+
+        std::fs::write(
+            root.join("artifacts.plan.yaml"),
+            r#"artifacts:
+  - name: create_order
+    module: order
+    role: usecase
+"#,
+        )
+        .expect("write artifacts");
+
+        let mut output = FakeOutput::default();
+        let result = ValidateProjectUseCase::execute_with_paths_output_and_verifier(
+            ValidateProjectInput,
+            root.join("project.arch.yaml")
+                .to_str()
+                .expect("project path utf8"),
+            root.join("placement.rules.yaml")
+                .to_str()
+                .expect("placement path utf8"),
+            root.join("artifacts.plan.yaml")
+                .to_str()
+                .expect("artifacts path utf8"),
+            &mut output,
+            || {},
+        )
+        .expect("validate usecase should complete");
+
+        assert!(result.success);
+        assert!(
+            output
+                .lines
+                .iter()
+                .any(|(level, msg)| *level == OutputLevel::Warn
+                    && msg.contains("Structural validation"))
+        );
+        assert!(
+            output
+                .lines
+                .iter()
+                .any(|(_, msg)| msg.contains("artifact-module-defined"))
+        );
     }
 }

@@ -34,28 +34,46 @@ impl PlanArchitectureUseCase {
     pub fn execute(
         input: PlanArchitectureInput,
     ) -> Result<PlanArchitectureOutput, crate::app::error::PlanBuildError> {
+        Self::execute_with_paths_and_guard(
+            input,
+            "project.arch.yaml",
+            "placement.rules.yaml",
+            "artifacts.plan.yaml",
+            || {
+                crate::commands::guard::run_hook(crate::commands::guard::GuardHookPoint::Plan, None)
+            },
+        )
+    }
+
+    fn execute_with_paths_and_guard<F>(
+        input: PlanArchitectureInput,
+        project_path: &str,
+        placement_path: &str,
+        artifacts_path: &str,
+        guard_runner: F,
+    ) -> Result<PlanArchitectureOutput, crate::app::error::PlanBuildError>
+    where
+        F: FnOnce() -> crate::commands::guard::GuardReport,
+    {
         let _requested_format = input.format;
 
-        let guard_report = crate::commands::guard::run_hook(
-            crate::commands::guard::GuardHookPoint::Plan,
-            None,
-        );
+        let guard_report = guard_runner();
 
-        let project = crate::config::ProjectConfig::load("project.arch.yaml").map_err(|e| {
+        let project = crate::config::ProjectConfig::load(project_path).map_err(|e| {
             crate::app::error::ConfigLoadError::Load {
-                path: "project.arch.yaml".to_string(),
+                path: project_path.to_string(),
                 source: e,
             }
         })?;
-        let placement = crate::config::PlacementRulesConfig::load("placement.rules.yaml").map_err(|e| {
+        let placement = crate::config::PlacementRulesConfig::load(placement_path).map_err(|e| {
             crate::app::error::ConfigLoadError::Load {
-                path: "placement.rules.yaml".to_string(),
+                path: placement_path.to_string(),
                 source: e,
             }
         })?;
-        let artifacts = crate::config::ArtifactsPlanConfig::load("artifacts.plan.yaml").map_err(|e| {
+        let artifacts = crate::config::ArtifactsPlanConfig::load(artifacts_path).map_err(|e| {
             crate::app::error::ConfigLoadError::Load {
-                path: "artifacts.plan.yaml".to_string(),
+                path: artifacts_path.to_string(),
                 source: e,
             }
         })?;
@@ -96,5 +114,89 @@ impl PlanArchitectureUseCase {
             guard_warnings,
             success,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{PlanArchitectureInput, PlanArchitectureUseCase, PlanRenderFormat};
+    use tempfile::tempdir;
+
+    #[test]
+    fn returns_config_load_error_with_target_path() {
+        let result = PlanArchitectureUseCase::execute_with_paths_and_guard(
+            PlanArchitectureInput {
+                format: PlanRenderFormat::Json,
+            },
+            "missing-project.arch.yaml",
+            "missing-placement.rules.yaml",
+            "missing-artifacts.plan.yaml",
+            || crate::commands::guard::GuardReport { findings: vec![] },
+        );
+
+        let err = result.expect_err("expected missing config error");
+        assert!(err.to_string().contains("missing-project.arch.yaml"));
+    }
+
+    #[test]
+    fn builds_plan_successfully_with_minimal_valid_configuration() {
+        let temp = tempdir().expect("tempdir should be created");
+        let root = temp.path();
+
+        std::fs::write(
+            root.join("project.arch.yaml"),
+            r#"archflow:
+  schema_version: "1"
+project:
+  name: sample-app
+  architecture_style: layered
+  language: generic
+modules:
+  - name: user
+"#,
+        )
+        .expect("write project");
+
+        std::fs::write(
+            root.join("placement.rules.yaml"),
+            r#"roles:
+  usecase:
+    path: "src/application/usecases"
+    file_extension: rs
+"#,
+        )
+        .expect("write placement");
+
+        std::fs::write(
+            root.join("artifacts.plan.yaml"),
+            r#"artifacts:
+  - name: create_user
+    module: user
+    role: usecase
+"#,
+        )
+        .expect("write artifacts");
+
+        let output = PlanArchitectureUseCase::execute_with_paths_and_guard(
+            PlanArchitectureInput {
+                format: PlanRenderFormat::Text,
+            },
+            root.join("project.arch.yaml")
+                .to_str()
+                .expect("project path utf8"),
+            root.join("placement.rules.yaml")
+                .to_str()
+                .expect("placement path utf8"),
+            root.join("artifacts.plan.yaml")
+                .to_str()
+                .expect("artifacts path utf8"),
+            || crate::commands::guard::GuardReport { findings: vec![] },
+        )
+        .expect("plan should succeed");
+
+        assert!(output.success, "plan success should be true: {output:?}");
+        assert_eq!(output.guard_errors, 0);
+        assert_eq!(output.plan.error_count(), 0);
+        assert_eq!(output.plan.artifacts.len(), 1);
     }
 }
