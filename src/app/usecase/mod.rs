@@ -5,5 +5,10 @@ pub mod validate_project;
 
 pub use generate_artifacts::{GenerateArtifactsInput, GenerateArtifactsUseCase};
 pub use init_project::{InitProjectInput, InitProjectUseCase};
-pub use plan_architecture::{PlanArchitectureInput, PlanArchitectureUseCase};
+pub use plan_architecture::{
+	PlanArchitectureInput,
+	PlanArchitectureOutput,
+	PlanArchitectureUseCase,
+	PlanRenderFormat,
+};
 pub use validate_project::{ValidateProjectInput, ValidateProjectUseCase};

@@ -30,6 +30,13 @@ pub enum ComplianceReportFormat {
     Csv,
 }
 
+#[derive(Clone, Debug, ValueEnum)]
+pub enum PlanOutputFormat {
+    Text,
+    Json,
+    Markdown,
+}
+
 impl std::fmt::Display for OutputMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -54,7 +61,11 @@ pub enum Commands {
         dry_run: bool,
     },
     /// Plan the architecture based on contracts and schemas
-    Plan,
+    Plan {
+        /// Render format for the plan output
+        #[arg(long, value_enum, default_value = "text")]
+        format: PlanOutputFormat,
+    },
     /// Scaffold code structure and artifact sidecars
     Scaffold,
     /// Generate an AI handoff prompt for a specific artifact or contract

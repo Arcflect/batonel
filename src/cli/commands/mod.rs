@@ -1,9 +1,16 @@
-use crate::cli::{Commands, ComplianceReportFormat, GuardHook};
+use crate::cli::{Commands, ComplianceReportFormat, GuardHook, PlanOutputFormat};
 
 fn render_usecase_result(success: bool, context: &str) {
     if !success {
         eprintln!("[!] {} failed", context);
         std::process::exit(1);
+    }
+}
+
+fn write_rendered_output(renderer_output: &str) {
+    let mut output = crate::infra::ConsoleOutputAdapter;
+    for line in renderer_output.lines() {
+        crate::ports::OutputPort::write_line(&mut output, crate::ports::OutputLevel::Info, line);
     }
 }
 
@@ -41,11 +48,45 @@ pub fn handle(command: Commands) {
             }
             render_usecase_result(output.success, "init project");
         }
-        Commands::Plan => {
-            let output = crate::app::usecase::PlanArchitectureUseCase::execute(
-                crate::app::usecase::PlanArchitectureInput,
-            );
-            render_usecase_result(output.success, "plan architecture");
+        Commands::Plan { format } => {
+            let usecase_format = match format {
+                PlanOutputFormat::Text => crate::app::usecase::PlanRenderFormat::Text,
+                PlanOutputFormat::Json => crate::app::usecase::PlanRenderFormat::Json,
+                PlanOutputFormat::Markdown => crate::app::usecase::PlanRenderFormat::Markdown,
+            };
+
+            let usecase_output = match crate::app::usecase::PlanArchitectureUseCase::execute(
+                crate::app::usecase::PlanArchitectureInput {
+                    format: usecase_format,
+                },
+            ) {
+                Ok(result) => result,
+                Err(err) => {
+                    eprintln!("[!] plan architecture failed: {}", err);
+                    std::process::exit(1);
+                }
+            };
+
+            let rendered = match format {
+                PlanOutputFormat::Text => {
+                    crate::infra::PlanRendererAdapter::render_text(&usecase_output)
+                }
+                PlanOutputFormat::Json => {
+                    match crate::infra::PlanRendererAdapter::render_json(&usecase_output) {
+                        Ok(s) => s,
+                        Err(err) => {
+                            eprintln!("[!] failed to render json output: {}", err);
+                            std::process::exit(1);
+                        }
+                    }
+                }
+                PlanOutputFormat::Markdown => {
+                    crate::infra::PlanRendererAdapter::render_markdown(&usecase_output)
+                }
+            };
+
+            write_rendered_output(&rendered);
+            render_usecase_result(usecase_output.success, "plan architecture");
         }
         Commands::Scaffold => {
             let output = crate::app::usecase::GenerateArtifactsUseCase::execute(

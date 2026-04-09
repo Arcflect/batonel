@@ -1,10 +1,10 @@
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum PlannedArtifactStatus {
     Planned,
     Error,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct PlannedArtifact {
     pub name: String,
     pub role: String,
@@ -13,7 +13,7 @@ pub struct PlannedArtifact {
     pub error_message: Option<String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ArchitecturePlan {
     pub project_name: String,
     pub architecture_style: String,

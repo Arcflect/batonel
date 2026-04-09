@@ -2,6 +2,7 @@ use crate::config::{ArtifactsPlanConfig, PlacementRulesConfig, ProjectConfig};
 use crate::domain::planning::{ArchitecturePlanner, PlannedArtifactStatus};
 use crate::domain::project::ProjectContext;
 
+#[allow(dead_code)]
 pub fn execute() {
     let guard_report = crate::commands::guard::run_hook(crate::commands::guard::GuardHookPoint::Plan, None);
     crate::commands::guard::render_report(&guard_report);
@@ -46,6 +47,7 @@ pub fn execute() {
     }
 }
 
+#[allow(dead_code)]
 fn build_plan_output(plan: &crate::domain::planning::ArchitecturePlan) -> (Vec<String>, usize) {
     let mut lines = vec![
         "Archflow Implementation Plan".to_string(),
