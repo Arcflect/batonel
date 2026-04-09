@@ -147,4 +147,43 @@ mod tests {
             Some("src/application/usecases/create_user.rs")
         );
     }
+
+    #[test]
+    fn planner_keeps_explicit_artifact_path() {
+        let mut roles = HashMap::new();
+        roles.insert(
+            "usecase".to_string(),
+            RolePlacement {
+                path: "src/application/usecases".to_string(),
+                file_extension: Some("rs".to_string()),
+                sidecar: None,
+            },
+        );
+
+        let artifacts = ArtifactsPlanConfig {
+            artifacts: vec![Artifact {
+                name: "create_user".to_string(),
+                module: "user".to_string(),
+                role: "usecase".to_string(),
+                path: Some("src/custom/create_user.special.rs".to_string()),
+                inputs: None,
+                outputs: None,
+                status: None,
+                tags: None,
+            }],
+        };
+
+        let plan = ArchitecturePlanner::plan(
+            &context(),
+            &PlacementRulesConfig { roles },
+            &artifacts,
+        );
+
+        assert_eq!(plan.planned_count(), 1);
+        assert_eq!(plan.error_count(), 0);
+        assert_eq!(
+            plan.artifacts[0].resolved_path.as_deref(),
+            Some("src/custom/create_user.special.rs")
+        );
+    }
 }

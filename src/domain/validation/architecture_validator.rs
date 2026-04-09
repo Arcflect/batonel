@@ -148,4 +148,39 @@ mod tests {
         assert_eq!(result.warning_count(), 1);
         assert_eq!(result.violations[0].severity, ViolationSeverity::Warn);
     }
+
+    #[test]
+    fn validator_accepts_explicit_path_when_it_matches_role_resolution() {
+        let artifacts = ArtifactsPlanConfig {
+            artifacts: vec![Artifact {
+                name: "create_user".to_string(),
+                module: "user".to_string(),
+                role: "usecase".to_string(),
+                path: Some("src/application/usecases/create_user.rs".to_string()),
+                inputs: None,
+                outputs: None,
+                status: None,
+                tags: None,
+            }],
+        };
+
+        let mut roles = HashMap::new();
+        roles.insert(
+            "usecase".to_string(),
+            RolePlacement {
+                path: "src/application/usecases".to_string(),
+                file_extension: Some("rs".to_string()),
+                sidecar: None,
+            },
+        );
+
+        let result = ArchitectureValidator::validate(
+            &context(),
+            &PlacementRulesConfig { roles },
+            &artifacts,
+        );
+        assert_eq!(result.error_count(), 0);
+        assert_eq!(result.warning_count(), 0);
+        assert!(result.is_valid());
+    }
 }

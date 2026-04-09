@@ -34,4 +34,10 @@ mod tests {
         assert_eq!(preset.id, "generic-layered");
         assert!(preset.version.is_none());
     }
+
+    #[test]
+    fn resolve_returns_none_when_no_source_is_provided() {
+        let preset = PresetResolver::resolve(None, Some("1.0.0"), None);
+        assert!(preset.is_none());
+    }
 }
