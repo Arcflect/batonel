@@ -1,0 +1,203 @@
+name: Architecture PR Checklist
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+jobs:
+  require-architecture-checklist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Warn on missing architecture checklist for architecture-sensitive PRs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request
+            const body = pr.body || ''
+            const marker = '<!-- architecture-pr-checklist -->'
+
+            const files = await github.paginate(
+              github.rest.pulls.listFiles,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                per_page: 100,
+              }
+            )
+
+            const sensitivePatterns = [
+              /^src\//,
+              /^schemas\//,
+              /^examples\//,
+              /^presets\//,
+              /^ARCHITECTURE_RULES\.md$/,
+              /^docs\/architecture\//,
+              /^docs\/concepts\//,
+              /^docs\/schema-guide\.md$/,
+              /^\.github\/pull_request_template\.md$/,
+              /^\.github\/ISSUE_TEMPLATE\/architecture_rule_request\.yml$/,
+              /^\.github\/workflows\/archflow-audit-pr-gate\.yml$/,
+              /^\.github\/workflows\/architecture-pr-checklist\.yml$/,
+            ]
+
+            const touched = files.map(file => file.filename)
+            const architectureSensitiveFiles = touched.filter(filename =>
+              sensitivePatterns.some(pattern => pattern.test(filename))
+            )
+
+            if (architectureSensitiveFiles.length === 0) {
+              core.info('PR does not touch architecture-sensitive files; checklist enforcement skipped.')
+              return
+            }
+
+            const checkedArchitectureRules = /- \[[xX]\] Architecture rules still hold, or I documented the temporary deviation/.test(body)
+            const checkedFlow = /- \[[xX]\] New behavior follows `cli -> app -> domain\/ports` flow where practical/.test(body)
+            const checkedGenericBuckets = /- \[[xX]\] I did not introduce a generic bucket such as `helpers`, `common`, `services`, `manager`, or `processor`/.test(body)
+            const documentedDeviation = /temporary deviation|architecture debt|follow-up issue|legacy boundary/i.test(body)
+            const checklistItems = [
+              {
+                checked: checkedArchitectureRules,
+                label: 'Architecture rules still hold, or I documented the temporary deviation',
+              },
+              {
+                checked: checkedFlow,
+                label: 'New behavior follows `cli -> app -> domain/ports` flow where practical',
+              },
+              {
+                checked: checkedGenericBuckets,
+                label: 'I did not introduce a generic bucket such as `helpers`, `common`, `services`, `manager`, or `processor`',
+              },
+            ]
+            const missingChecklistItems = checklistItems
+              .filter(item => !item.checked)
+              .map(item => item.label)
+            const categorySummary = summarizeByCategory(architectureSensitiveFiles)
+
+            if (checkedArchitectureRules && checkedFlow && checkedGenericBuckets) {
+              core.info('Architecture checklist items are completed for an architecture-sensitive PR.')
+              await syncComment({
+                body: `${marker}\nArchitecture checklist looks complete for the current PR revision. This comment can be ignored.`,
+                deleteIfMatchesMarker: true,
+              })
+              return
+            }
+
+            if (documentedDeviation) {
+              core.info('Architecture-sensitive PR documents a temporary deviation or debt note.')
+              await syncComment({
+                body: `${marker}\nArchitecture-sensitive changes are accompanied by a temporary deviation or architecture debt note in the PR summary.`,
+                deleteIfMatchesMarker: true,
+              })
+              return
+            }
+
+            const warningMessage = [
+              'Architecture-sensitive files were changed, but the PR body does not yet complete the architecture checklist.',
+              '',
+              'Please update the PR body by checking the missing architecture items, or note the temporary deviation in the summary.',
+              '',
+              'Missing checklist items:',
+              ...missingChecklistItems.map(item => `  - ${item}`),
+              '',
+              'Touched categories:',
+              ...categorySummary.map(item => `  - ${item}`),
+            ].join('\n')
+
+            core.warning(warningMessage)
+            await syncComment({
+              body: [
+                marker,
+                'Architecture-sensitive files changed, but the PR body is missing the architecture checklist update.',
+                '',
+                'Please update the PR body by checking the missing architecture checklist items, or add a short temporary deviation note.',
+                '',
+                'Missing checklist items:',
+                ...missingChecklistItems.map(item => `- ${item}`),
+                '',
+                'Touched categories:',
+                ...categorySummary.map(item => `- ${item}`),
+              ].join('\n'),
+              deleteIfMatchesMarker: false,
+            })
+
+            function summarizeByCategory(fileNames) {
+              const counts = new Map()
+
+              for (const fileName of fileNames) {
+                const category = categorizeFile(fileName)
+                counts.set(category, (counts.get(category) || 0) + 1)
+              }
+
+              return [...counts.entries()]
+                .sort((a, b) => a[0].localeCompare(b[0]))
+                .map(([category, count]) => `${category}: ${count}`)
+            }
+
+            function categorizeFile(fileName) {
+              if (fileName.startsWith('src/')) return 'src'
+              if (fileName.startsWith('schemas/')) return 'schemas'
+              if (fileName.startsWith('examples/')) return 'examples'
+              if (fileName.startsWith('presets/')) return 'presets'
+              if (fileName.startsWith('docs/architecture/')) return 'docs/architecture'
+              if (fileName.startsWith('docs/concepts/')) return 'docs/concepts'
+              if (fileName === 'docs/schema-guide.md') return 'docs/schema-guide'
+              if (fileName.startsWith('.github/workflows/')) return '.github/workflows'
+              if (fileName.startsWith('.github/ISSUE_TEMPLATE/')) return '.github/ISSUE_TEMPLATE'
+              if (fileName === '.github/pull_request_template.md') return '.github/pull_request_template.md'
+              if (fileName === 'ARCHITECTURE_RULES.md') return 'ARCHITECTURE_RULES.md'
+              return 'other'
+            }
+
+            async function syncComment({ body, deleteIfMatchesMarker }) {
+              const comments = await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  per_page: 100,
+                }
+              )
+
+              const existing = comments.find(comment =>
+                comment.user?.type === 'Bot' && comment.body?.includes(marker)
+              )
+
+              if (deleteIfMatchesMarker) {
+                if (existing) {
+                  await github.rest.issues.deleteComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: existing.id,
+                  })
+                }
+                return
+              }
+
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                  body,
+                })
+                return
+              }
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body,
+              })
+            }

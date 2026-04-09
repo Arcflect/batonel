@@ -6,9 +6,20 @@
 ## Checklist
 
 - [ ] PR title follows: `type: summary`
+- [ ] Architecture rules still hold, or I documented the temporary deviation
+- [ ] New behavior follows `cli -> app -> domain/ports` flow where practical
+- [ ] I did not introduce a generic bucket such as `helpers`, `common`, `services`, `manager`, or `processor`
 - [ ] I added or updated tests if needed
 - [ ] I updated docs if needed
 - [ ] I checked release note impact
+
+If this PR changes architecture-sensitive code, review against:
+
+- `ARCHITECTURE_RULES.md`
+- `docs/architecture/current-state.md`
+- `docs/architecture/refactor-checklist.md`
+
+For architecture-sensitive PRs, complete the architecture checklist items above or explain the temporary deviation in the summary.
 
 ## Examples of valid PR titles
 

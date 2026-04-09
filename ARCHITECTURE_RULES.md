@@ -10,6 +10,12 @@ The project adopts a **Hexagonal Architecture (Ports and Adapters)** style on to
 This document is written for both humans and generative AI.
 When adding, editing, or refactoring code, these rules must be followed.
 
+For review and day-to-day implementation:
+
+- Current alignment note: `docs/architecture/current-state.md`
+- Lightweight review checklist: `docs/architecture/refactor-checklist.md`
+- PR review template: `.github/pull_request_template.md`
+
 ---
 
 ## 1. Architecture Decision

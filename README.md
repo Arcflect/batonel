@@ -199,7 +199,10 @@ bash scripts/onboarding_e2e_init_plan.sh --preset generic-layered --project-name
 If you want to understand the model, roadmap, and design decisions in more detail, start here:
 
 - [ROADMAP.md](./ROADMAP.md)
+- [ARCHITECTURE_RULES.md](./ARCHITECTURE_RULES.md)
 - [docs/roadmap-detail.md](./docs/roadmap-detail.md)
+- [docs/architecture/current-state.md](./docs/architecture/current-state.md)
+- [docs/architecture/refactor-checklist.md](./docs/architecture/refactor-checklist.md)
 - [docs/schema-guide.md](./docs/schema-guide.md)
 - [docs/architecture-flow.md](./docs/architecture-flow.md)
 - [docs/presets.md](./docs/presets.md)

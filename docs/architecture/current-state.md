@@ -1,141 +1,134 @@
-# Current State: Module Boundaries and Dependency Direction
+# Current State: Architecture Rule Alignment
 
-Date: 2026-04-09
-Target issue: #191
+Date: 2026-04-10
+Target issue: #202
+Reference: `ARCHITECTURE_RULES.md`
 
 ## Purpose
 
-This note captures the current structure, dependency direction, and major boundary violations before refactoring.
-It is based on the current code in `src/` and aligned against `docs/ARCHITECTURE_RULES.ja.md`.
+This note verifies the current `src/` structure against the architecture rules and
+records the remaining gaps that should still guide refactoring and review.
 
-## 1. Current module map
+It replaces the earlier pre-refactor audit from issue #191 with a shorter
+"what is aligned now / what is still transitional" view.
 
-### CLI entry and command routing
+## 1. Current structure snapshot
 
-- `src/main.rs`
-  - Parses CLI args and dispatches to command functions.
-- `src/cli.rs`
-  - Defines command options and subcommands via `clap`.
+Current top-level source directories:
 
-### Command layer (currently mixed application + domain + I/O)
+- `src/cli`
+- `src/app`
+- `src/domain`
+- `src/ports`
+- `src/infra`
+- `src/commands`
+- `src/config`
+- `src/generator`
+- `src/model`
 
-- `src/commands/plan.rs`
-- `src/commands/scaffold.rs`
-- `src/commands/verify.rs`
-- `src/commands/audit.rs`
-- `src/commands/fix.rs`
-- `src/commands/fix_rollout.rs`
-- `src/commands/triage.rs`
-- `src/commands/guard.rs`
-- `src/commands/prompt.rs`
-- `src/commands/policy_resolve.rs`
-- `src/commands/compliance_report.rs`
-- `src/commands/preset_registry.rs`
-- `src/commands/preset_verify.rs`
-- `src/commands/preset_migrate.rs`
-- `src/commands/init.rs`
+The first five directories match the target architecture shape from
+`ARCHITECTURE_RULES.md`.
+The last four remain as transitional legacy areas and should continue shrinking.
 
-### Config loading/parsing
+## 2. What is aligned with the rules
 
-- `src/config/project.rs`
-- `src/config/placement.rs`
-- `src/config/artifact.rs`
-- `src/config/contract.rs`
-- `src/config/policy.rs`
-- `src/config/guard.rs`
-- `src/config/override_policy.rs`
-- `src/config/error.rs`
+The following rule expectations are already reflected in the implementation:
 
-### Generation / path resolution
+1. Layer skeleton exists
+- `cli`, `app`, `domain`, `ports`, and `infra` are present in `src/`.
 
-- `src/generator/resolver.rs`
-- `src/generator/scaffold.rs`
+2. CLI entrypoint is thin
+- `src/main.rs` only boots the CLI via `cli::run()`.
 
-### Domain/model and validation logic
+3. UseCase-oriented command flow exists
+- `src/cli/commands` dispatches command input into application use cases.
+- `src/app/usecase/*` now exists as the main orchestration layer.
 
-- `src/model/project.rs`
-- `src/model/placement.rs`
-- `src/model/artifact.rs`
-- `src/model/contract.rs`
-- `src/model/prompt.rs`
-- `src/model/verify.rs`
-- `src/model/contract_validation.rs`
-- `src/model/prompt_validation.rs`
-- `src/model/scaffold_validation.rs`
-- `src/model/status_validation.rs`
+4. Core planning / validation / generation logic has named domain areas
+- `src/domain/project`
+- `src/domain/preset`
+- `src/domain/planning`
+- `src/domain/validation`
+- `src/domain/generation`
 
-## 2. Current dependency direction (observed)
+5. Ports and adapters are explicit
+- `src/ports/*` defines capability boundaries.
+- `src/infra/*` provides concrete adapters and renderers.
 
-High-level observed direction today:
+6. Structured application errors exist
+- Application-facing error types now exist instead of only ad hoc string errors.
 
-1. `main -> cli`
-2. `main -> commands::*`
-3. `commands::* -> config::*`
-4. `commands::* -> generator::*`
-5. `commands::* -> model::*`
-6. `commands::* -> std::fs/std::path/std::process`
-7. `generator::* -> model::*` and `config::placement`
-8. `config::* -> model::*`
-9. `model::* -> std::fs` in validation modules (`contract_validation`, `prompt_validation`)
-10. `model::prompt -> cli::OutputMode`
+## 3. Remaining gaps against the rules
 
-This means dependency flow is not purely inward; cross-layer references exist both ways.
+The architecture is improved, but not fully converged yet.
 
-## 3. Boundary violations against architecture rules
+### 3.1 Transitional legacy modules still exist
 
-Major violations found (with concrete evidence):
+The following directories still hold behavior that should gradually move behind the
+new boundaries:
 
-1. Domain depending on CLI type
-- Evidence: `src/model/prompt.rs` uses `crate::cli::OutputMode`.
-- Why violation: domain/model depends on outer interface type.
+- `src/commands`
+- `src/config`
+- `src/generator`
+- `src/model`
 
-2. Domain validation modules perform direct filesystem I/O
-- Evidence: `src/model/contract_validation.rs` and `src/model/prompt_validation.rs` use `std::fs` and read files.
-- Why violation: domain logic is coupled to file access implementation.
+This is the main reason the current structure is "aligned in direction" but not
+yet fully aligned in final shape.
 
-3. Command layer contains orchestration + rule decisions + rendering + process exits
-- Evidence: `src/commands/verify.rs`, `src/commands/audit.rs`, `src/commands/fix.rs`, `src/commands/scaffold.rs` all mix:
-  - config loading,
-  - business validation/decision logic,
-  - console output,
-  - `std::process::exit`.
-- Why violation: CLI/application concerns and domain decisions are not separated.
+### 3.2 App layer still calls legacy command/config code
 
-4. Command layer directly depends on generator internals
-- Evidence: calls to `crate::generator::resolver::resolve_artifact_path` and `resolve_sidecar_path` from `plan`, `verify`, `guard`, `audit`, `prompt`.
-- Why violation: missing stable application/domain service boundary; multiple commands bind to low-level resolver functions.
+Observed examples:
 
-5. Missing explicit ports/infra split for I/O
-- Evidence: file reads/writes and output rendering are called directly from command/domain-adjacent modules.
-- Why violation: filesystem/output are not behind ports/adapters, making boundary enforcement and testing harder.
+- `app/usecase/init_project.rs` still delegates to `commands::init::execute`
+- `app/usecase/validate_project.rs` still delegates to `commands::verify::execute`
+- `app/usecase/generate_artifacts.rs` still delegates to `commands::scaffold::execute`
+- `app/usecase/plan_architecture.rs` still depends on legacy config loading and guard types
 
-## 4. Refactor targets (short)
+This means some use cases are still wrappers around old execution paths rather than
+the final application orchestration boundary described in the rules.
 
-Recommended refactor order to reduce risk:
+### 3.3 Raw config loading is still coupled to legacy config modules
 
-1. Introduce layer skeleton (`cli`, `app`, `domain`, `ports`, `infra`) without behavior changes.
-2. Move command execution logic into app use-cases; keep command files as thin adapters.
-3. Extract filesystem and output ports; route all file and console operations via infra adapters.
-4. Move rule/validation/planning logic into domain services and value objects.
-5. Remove domain->cli dependency (`model::prompt` mode type), define domain-local presentation mode or app DTO.
-6. Consolidate path resolution behind one domain/app service boundary; stop direct resolver calls from many commands.
+`app/usecase/*` still loads configuration through `crate::config::*::load(...)`.
 
-## 5. Immediate high-impact refactor candidates
+This is acceptable as an intermediate state, but the review expectation should be:
 
-1. `verify` use-case split
-- Separate: input loading, domain checks, output formatting.
+- parsing stays outside domain
+- raw config APIs do not leak arbitrarily across the codebase
+- new features should prefer app/domain-facing boundaries instead of adding more
+  direct calls into legacy config modules
 
-2. `audit` + `triage` + `fix` family consolidation
-- Centralize shared policy/finding model in domain.
-- Keep rollout/approval workflow in app layer.
+### 3.4 Target directory shape is not complete yet
 
-3. Prompt generation boundary cleanup
-- Move output mode conversion to app/cli.
-- Keep `model::prompt` independent of CLI types.
+`ARCHITECTURE_RULES.md` describes `shared/` as the place for truly stable cross-cutting
+primitives.
 
-## 6. Done criteria status for this audit task
+That directory does not exist yet, so contributors should avoid inventing new
+cross-cutting buckets until there is a clear, documented need.
 
-- [x] current modules/files identified for CLI/config/planning/validation/generation/I/O
-- [x] dependency direction mapped
-- [x] boundary violations listed against architecture rules
-- [x] short refactor targets note prepared
+## 4. Review interpretation for current PRs
+
+Until the migration is complete, reviewers should treat architecture alignment as:
+
+1. New behavior should prefer `cli -> app -> domain/ports` flow.
+2. New business decisions should not be added to `cli`.
+3. New generic buckets should not be introduced under `commands`, `generator`, or `model`.
+4. Legacy modules may be touched for compatibility, but changes should reduce or at least
+   not increase boundary leakage.
+5. If a rule cannot be followed yet, the PR should state the temporary reason explicitly.
+
+## 5. Practical refactor priority
+
+The next architecture-alignment wins are:
+
+1. Move remaining command execution logic out of legacy `commands::*` into app/usecase flows.
+2. Replace direct legacy config access with narrower app-facing loaders or ports where helpful.
+3. Keep shrinking `model` and `generator` toward domain/infra ownership.
+4. Introduce `shared/` only if a primitive is truly stable and cross-cutting.
+
+## 6. Status summary
+
+- [x] current structure checked against `ARCHITECTURE_RULES.md`
+- [x] aligned areas identified
+- [x] remaining gaps identified
+- [x] review interpretation recorded for future PRs
