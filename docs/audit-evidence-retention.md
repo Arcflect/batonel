@@ -68,7 +68,7 @@ jobs:
           
       - name: Upload Evidence Artifact
         if: always() # Ensure evidence is uploaded even if the audit fails
-        uses: actions/checkout@v7
+        uses: actions/upload-artifact@v7
         with:
           name: archflow-audit-evidence
           path: .archflow-evidence/audit-report.json

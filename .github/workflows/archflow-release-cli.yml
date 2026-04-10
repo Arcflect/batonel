@@ -139,7 +139,7 @@ jobs:
           (cd "$DIST_DIR" && sha256sum "$ARCHIVE_NAME" > "$ARCHIVE_NAME.sha256")
 
       - name: Upload release artifact bundle
-        uses: actions/checkout@v7
+        uses: actions/upload-artifact@v7
         with:
           name: archflow-release-${{ matrix.target }}
           path: dist/*
@@ -199,7 +199,7 @@ jobs:
           (cd "$DIST_DIR" && sha256sum "$ARCHIVE_NAME" > "$ARCHIVE_NAME.sha256")
 
       - name: Upload release artifact bundle
-        uses: actions/checkout@v7
+        uses: actions/upload-artifact@v7
         with:
           name: archflow-release-aarch64-apple-darwin
           path: dist/*

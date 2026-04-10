@@ -40,7 +40,7 @@ jobs:
             --project-name "${{ matrix.project_name }}"
 
       - name: Upload onboarding logs
-        uses: actions/checkout@v7
+        uses: actions/upload-artifact@v7
         with:
           name: onboarding-e2e-${{ matrix.preset }}
           path: target/onboarding-e2e/${{ matrix.preset }}/*.log

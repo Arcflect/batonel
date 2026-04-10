@@ -49,7 +49,7 @@ jobs:
           archflow prompt "${{ github.event.inputs.artifact }}" --mode "${{ github.event.inputs.mode }}" > prompt-preview.md
 
       - name: Upload prompt preview
-        uses: actions/checkout@v7
+        uses: actions/upload-artifact@v7
         with:
           name: archflow-prompt-preview-${{ github.event.inputs.artifact }}
           path: archflow/prompt-preview.md
