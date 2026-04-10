@@ -16,3 +16,4 @@ pub use placement::PlacementRulesConfig;
 pub use policy::PolicyProfileConfig;
 pub use project::ProjectConfig;
 pub mod override_policy;
+pub mod rbac;

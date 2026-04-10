@@ -8,8 +8,8 @@
 /// level wins. The `resolve` command surfaces the full effective-policy resolution
 /// so that governance is auditable and predictable.
 use crate::config::policy::{
-    NamingPolicy, NamingRule, PolicyOverride, PolicyProfileConfig, RoleForbiddenDependencyPolicy,
-    SUPPORTED_POLICY_PROFILE_VERSION,
+    GovernanceRoleBinding, NamingPolicy, NamingRule, PolicyOverride, PolicyProfileConfig,
+    RoleForbiddenDependencyPolicy, SUPPORTED_POLICY_PROFILE_VERSION,
 };
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -86,6 +86,9 @@ pub struct PolicyLayer {
     /// Required files enforced by this layer (merged with lower levels).
     #[serde(default)]
     pub required_files: Vec<String>,
+    /// Governance roles contributed by this layer.
+    #[serde(default)]
+    pub governance_roles: Vec<GovernanceRoleBinding>,
 }
 
 impl PolicyLayer {
@@ -153,6 +156,16 @@ pub struct ResolvedRequiredFile {
     pub source_label: String,
 }
 
+/// A governance role binding in the resolved policy.
+#[derive(Debug, Clone)]
+pub struct ResolvedGovernanceRoleBinding {
+    pub role: String,
+    pub members: Vec<String>,
+    #[allow(dead_code)]
+    pub source_level: OverrideLevel,
+    pub source_label: String,
+}
+
 /// A locked-rule entry: this rule cannot be overridden by lower levels.
 #[derive(Debug, Clone)]
 pub struct ResolvedLockedRule {
@@ -176,6 +189,8 @@ pub struct EffectivePolicy {
     pub required_files: Vec<ResolvedRequiredFile>,
     /// Rules locked by org or team that cannot be suppressed at lower levels.
     pub locked_rules: Vec<ResolvedLockedRule>,
+    /// All resolved governance roles (highest level wins per role).
+    pub governance_roles: Vec<ResolvedGovernanceRoleBinding>,
 }
 
 impl EffectivePolicy {
@@ -228,6 +243,14 @@ impl EffectivePolicy {
                     rule_id: entry.rule_id.clone(),
                     targets: entry.targets.clone(),
                     reason: entry.reason.clone(),
+                })
+                .collect(),
+            governance_roles: self
+                .governance_roles
+                .iter()
+                .map(|role| GovernanceRoleBinding {
+                    role: role.role.clone(),
+                    members: role.members.clone(),
                 })
                 .collect(),
         }
@@ -354,6 +377,23 @@ pub fn resolve(
         }
     }
 
+    // Resolve governance roles: highest-precedence level wins per role.
+    let mut resolved_roles: Vec<ResolvedGovernanceRoleBinding> = Vec::new();
+    let mut seen_gov_role: std::collections::HashSet<String> = Default::default();
+
+    for (level, layer) in &loaded {
+        for role_binding in &layer.governance_roles {
+            if seen_gov_role.insert(role_binding.role.clone()) {
+                resolved_roles.push(ResolvedGovernanceRoleBinding {
+                    role: role_binding.role.clone(),
+                    members: role_binding.members.clone(),
+                    source_level: level.clone(),
+                    source_label: friendly_label(level, &layer.label),
+                });
+            }
+        }
+    }
+
     // Resolve required files: union of all levels (no deduplication).
     let mut resolved_required: Vec<ResolvedRequiredFile> = Vec::new();
     let mut seen_file: std::collections::HashSet<String> = Default::default();
@@ -393,6 +433,7 @@ pub fn resolve(
         forbidden_dependencies: resolved_forbidden,
         required_files: resolved_required,
         locked_rules,
+        governance_roles: resolved_roles,
     })
 }
 
@@ -746,6 +787,49 @@ forbidden_dependencies:
         // Org wins; project-level entry should not be present.
         assert!(deps.contains(&"infrastructure_module".to_string()));
         assert!(!deps.contains(&"project_level_entry".to_string()));
+    }
+
+    #[test]
+    fn governance_roles_highest_level_wins_per_role() {
+        let tmp = tempdir().unwrap();
+        write(
+            tmp.path(),
+            "org.yaml",
+            r#"
+version: 1
+governance_roles:
+  - role: auditor
+    members:
+      - "@org-auditor"
+"#,
+        );
+        write(
+            tmp.path(),
+            "project.yaml",
+            r#"
+version: 1
+governance_roles:
+  - role: auditor
+    members:
+      - "@project-auditor"
+"#,
+        );
+
+        let ep = resolve(
+            Some(&tmp.path().join("org.yaml")),
+            None,
+            Some(&tmp.path().join("project.yaml")),
+        )
+        .unwrap();
+
+        let roles: Vec<&ResolvedGovernanceRoleBinding> = ep
+            .governance_roles
+            .iter()
+            .filter(|r| r.role == "auditor")
+            .collect();
+        assert_eq!(roles.len(), 1);
+        assert_eq!(roles[0].members, vec!["@org-auditor".to_string()]);
+        assert_eq!(roles[0].source_level, OverrideLevel::Org);
     }
 
     #[test]

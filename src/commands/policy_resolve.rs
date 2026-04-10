@@ -1,9 +1,15 @@
 use crate::config::override_policy::{
     load_effective_policy, EffectivePolicy, OverrideLevel,
 };
+use crate::config::rbac::{GovernanceOperation, RbacEvaluator};
 use std::path::Path;
 
-pub fn execute_cli(org_policy: Option<&str>, team_policy: Option<&str>, project_policy: Option<&str>) {
+pub fn execute_cli(
+    org_policy: Option<&str>,
+    team_policy: Option<&str>,
+    project_policy: Option<&str>,
+    actor: Option<&str>,
+) {
     let org_path = org_policy.map(Path::new);
     let team_path = team_policy.map(Path::new);
     let project_path = project_policy.map(Path::new);
@@ -16,13 +22,21 @@ pub fn execute_cli(org_policy: Option<&str>, team_policy: Option<&str>, project_
         }
     };
 
+    if let Some(actor_name) = actor {
+        let auth_result = RbacEvaluator::authorize_operation(&ep, actor_name, GovernanceOperation::RunAudit);
+        if !auth_result.is_allowed() {
+            eprintln!("[!] RBAC Denied: actor '{}' is not authorized to run audit/policy commands.", actor_name);
+            std::process::exit(1);
+        }
+    }
+
     render_effective_policy(&ep);
 }
 
 /// Load effective policy using default paths and render it.
 /// Called without explicit path arguments — uses standard lookup paths.
 #[allow(dead_code)]
-pub fn execute_default_cli() {
+pub fn execute_default_cli(actor: Option<&str>) {
     let ep = match load_effective_policy() {
         Ok(ep) => ep,
         Err(err) => {
@@ -30,6 +44,14 @@ pub fn execute_default_cli() {
             std::process::exit(1);
         }
     };
+
+    if let Some(actor_name) = actor {
+        let auth_result = RbacEvaluator::authorize_operation(&ep, actor_name, GovernanceOperation::RunAudit);
+        if !auth_result.is_allowed() {
+            eprintln!("[!] RBAC Denied: actor '{}' is not authorized to run audit/policy commands.", actor_name);
+            std::process::exit(1);
+        }
+    }
 
     render_effective_policy(&ep);
 }
@@ -111,6 +133,24 @@ pub fn render_effective_policy(ep: &EffectivePolicy) {
             println!("    reason: {}", entry.reason);
             for target in &entry.targets {
                 println!("    - {}", target);
+            }
+        }
+    }
+    println!();
+
+    // Governance Roles
+    if ep.governance_roles.is_empty() {
+        println!("Governance roles: (none mapped)");
+    } else {
+        println!("Governance roles:");
+        for role_binding in &ep.governance_roles {
+            println!(
+                "  role: {}  [source: {}]",
+                role_binding.role, role_binding.source_label
+            );
+            println!("    members:");
+            for member in &role_binding.members {
+                println!("      - {}", member);
             }
         }
     }
