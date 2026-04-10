@@ -65,6 +65,10 @@ fields:
         type: string
         required: true
         description: Human-readable justification for the override.
+      expires_at:
+        type: string
+        required: false
+        description: ISO 8601 date (YYYY-MM-DD) indicating when this override expires. If expired, it structurally drops out of the effective policy.
 
   governance_roles:
     type: list[map]
@@ -99,6 +103,7 @@ example:
       targets:
         - artifact:create_legacy_user
       reason: temporary migration path
+      expires_at: "2026-12-31"
   governance_roles:
     - role: policy_admin
       members:

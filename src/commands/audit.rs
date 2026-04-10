@@ -543,6 +543,7 @@ mod tests {
             rule_id: "artifact-module-defined".to_string(),
             targets: vec!["artifact:create_order".to_string()],
             reason: "legacy migration".to_string(),
+            expires_at: None,
         });
         let artifacts = ArtifactsPlanConfig {
             artifacts: vec![Artifact {

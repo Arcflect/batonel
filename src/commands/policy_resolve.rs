@@ -126,11 +126,15 @@ pub fn render_effective_policy(ep: &EffectivePolicy) {
     } else {
         println!("Overrides:");
         for entry in &ep.overrides {
+            let expired_tag = if entry.is_expired { " [EXPIRED]" } else { "" };
             println!(
-                "  rule: {}  [source: {}]",
-                entry.rule_id, entry.source_label
+                "  rule: {}{}  [source: {}]",
+                entry.rule_id, expired_tag, entry.source_label
             );
             println!("    reason: {}", entry.reason);
+            if let Some(exp) = &entry.expires_at {
+                println!("    expires at: {}", exp);
+            }
             for target in &entry.targets {
                 println!("    - {}", target);
             }

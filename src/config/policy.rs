@@ -48,6 +48,8 @@ pub struct PolicyOverride {
     pub rule_id: String,
     pub targets: Vec<String>,
     pub reason: String,
+    #[serde(default)]
+    pub expires_at: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -192,6 +194,17 @@ impl PolicyProfileConfig {
                     ),
                 });
             }
+            if let Some(expires) = &override_entry.expires_at {
+                if chrono::NaiveDate::parse_from_str(expires, "%Y-%m-%d").is_err() {
+                    return Err(ConfigError::Validation {
+                        path: path.clone(),
+                        message: format!(
+                            "override '{}' expires_at must be in YYYY-MM-DD format (got '{}')",
+                            override_entry.rule_id, expires
+                        ),
+                    });
+                }
+            }
         }
 
         for role_binding in &self.governance_roles {
@@ -248,5 +261,31 @@ overrides:
         let err = PolicyProfileConfig::load_or_default(&path)
             .expect_err("invalid override should fail");
         assert!(err.to_string().contains("must define at least one target"));
+    }
+
+    #[test]
+    fn load_or_default_rejects_invalid_expires_at() {
+        let temp = tempdir().expect("tempdir should be created");
+        let path = temp.path().join("policy.profile.yaml");
+        std::fs::write(
+            &path,
+            r#"version: 1
+required_files:
+  - project.arch.yaml
+naming:
+  module: lowercase-identifier
+  artifact: lowercase-identifier
+overrides:
+  - rule_id: artifact-path-aligns-role
+    targets: ["foo"]
+    reason: "bar"
+    expires_at: "12-31-2025"
+"#,
+        )
+        .expect("policy should be written");
+
+        let err = PolicyProfileConfig::load_or_default(&path)
+            .expect_err("invalid expires_at should fail");
+        assert!(err.to_string().contains("expires_at must be in YYYY-MM-DD format"));
     }
 }

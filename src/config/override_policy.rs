@@ -132,6 +132,8 @@ pub struct ResolvedOverride {
     pub rule_id: String,
     pub targets: Vec<String>,
     pub reason: String,
+    pub expires_at: Option<String>,
+    pub is_expired: bool,
     #[allow(dead_code)]
     pub source_level: OverrideLevel,
     pub source_label: String,
@@ -207,7 +209,8 @@ impl EffectivePolicy {
     #[allow(dead_code)]
     pub fn is_overridden(&self, rule_id: &str, target: &str) -> bool {
         self.overrides.iter().any(|entry| {
-            entry.rule_id == rule_id
+            !entry.is_expired
+                && entry.rule_id == rule_id
                 && entry.targets.iter().any(|candidate| candidate == target)
         })
     }
@@ -243,6 +246,7 @@ impl EffectivePolicy {
                     rule_id: entry.rule_id.clone(),
                     targets: entry.targets.clone(),
                     reason: entry.reason.clone(),
+                    expires_at: entry.expires_at.clone(),
                 })
                 .collect(),
             governance_roles: self
@@ -349,10 +353,22 @@ pub fn resolve(
                 }
             }
             if !new_targets.is_empty() {
+                let mut is_expired = false;
+                if let Some(expires_at) = &entry.expires_at {
+                    if let Ok(expiration_date) = chrono::NaiveDate::parse_from_str(expires_at, "%Y-%m-%d") {
+                        let today = chrono::Utc::now().naive_utc().date();
+                        if expiration_date < today {
+                            is_expired = true;
+                        }
+                    }
+                }
+
                 resolved_overrides.push(ResolvedOverride {
                     rule_id: entry.rule_id.clone(),
                     targets: new_targets,
                     reason: entry.reason.clone(),
+                    expires_at: entry.expires_at.clone(),
+                    is_expired,
                     source_level: level.clone(),
                     source_label: friendly_label(level, &layer.label),
                 });
@@ -830,6 +846,45 @@ governance_roles:
         assert_eq!(roles.len(), 1);
         assert_eq!(roles[0].members, vec!["@org-auditor".to_string()]);
         assert_eq!(roles[0].source_level, OverrideLevel::Org);
+    }
+
+    #[test]
+    fn override_is_ignored_when_expired() {
+        let tmp = tempdir().unwrap();
+        write(
+            tmp.path(),
+            "project.yaml",
+            r#"
+version: 1
+overrides:
+  - rule_id: expiring-rule
+    targets: ["some.yml"]
+    reason: "testing"
+    expires_at: "2010-01-01"
+"#,
+        );
+        let ep = resolve(None, None, Some(&tmp.path().join("project.yaml"))).unwrap();
+        assert!(!ep.is_overridden("expiring-rule", "some.yml"), "Expired override should not be actively applied");
+    }
+
+    #[test]
+    fn override_is_applied_when_not_expired() {
+        let tmp = tempdir().unwrap();
+        // Use a far future date
+        write(
+            tmp.path(),
+            "project.yaml",
+            r#"
+version: 1
+overrides:
+  - rule_id: expiring-rule
+    targets: ["some.yml"]
+    reason: "testing"
+    expires_at: "2099-01-01"
+"#,
+        );
+        let ep = resolve(None, None, Some(&tmp.path().join("project.yaml"))).unwrap();
+        assert!(ep.is_overridden("expiring-rule", "some.yml"), "Active override should be applied");
     }
 
     #[test]
