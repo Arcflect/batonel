@@ -80,10 +80,12 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: sync version with release drafter"
-          title: "chore: sync version with release drafter"
+          commit-message: "chore: sync version to v${{ steps.drafter.outputs.resolved_version }} with release drafter"
+          title: "chore: sync version to v${{ steps.drafter.outputs.resolved_version }} with release drafter"
           body: |
             Automated version synchronization generated from release-drafter resolved version.
+
+            Target version: `v${{ steps.drafter.outputs.resolved_version }}`
 
             - Updates `Cargo.toml` version
             - Updates root package version in `Cargo.lock`

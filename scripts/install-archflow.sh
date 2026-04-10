@@ -5,6 +5,13 @@ REPO_OWNER="Arcflect"
 REPO_NAME="archflow"
 INSTALL_DIR="${INSTALL_DIR:-/usr/local/bin}"
 REQUESTED_VERSION="${1:-latest}"
+TMP_DIR=""
+
+cleanup_tmp_dir() {
+  if [[ -n "${TMP_DIR:-}" && -d "$TMP_DIR" ]]; then
+    rm -rf "$TMP_DIR"
+  fi
+}
 
 require_cmd() {
   if ! command -v "$1" >/dev/null 2>&1; then
@@ -135,25 +142,24 @@ main() {
   checksum_name="${archive_name}.sha256"
   base_url="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/${version}"
 
-  local tmp_dir
-  tmp_dir="$(mktemp -d)"
-  trap 'rm -rf "$tmp_dir"' EXIT
+  TMP_DIR="$(mktemp -d)"
+  trap cleanup_tmp_dir EXIT
 
   echo "downloading ${archive_name}"
-  curl -fsSL -o "$tmp_dir/$archive_name" "$base_url/$archive_name"
-  curl -fsSL -o "$tmp_dir/$checksum_name" "$base_url/$checksum_name"
+  curl -fsSL -o "$TMP_DIR/$archive_name" "$base_url/$archive_name"
+  curl -fsSL -o "$TMP_DIR/$checksum_name" "$base_url/$checksum_name"
 
   echo "verifying checksum"
-  (cd "$tmp_dir" && verify_checksum "$archive_name" "$checksum_name")
+  (cd "$TMP_DIR" && verify_checksum "$archive_name" "$checksum_name")
 
-  tar -xzf "$tmp_dir/$archive_name" -C "$tmp_dir"
+  tar -xzf "$TMP_DIR/$archive_name" -C "$TMP_DIR"
 
-  if [[ ! -f "$tmp_dir/archflow" ]]; then
+  if [[ ! -f "$TMP_DIR/archflow" ]]; then
     echo "archive does not contain expected binary: archflow" >&2
     exit 1
   fi
 
-  install_binary "$tmp_dir/archflow"
+  install_binary "$TMP_DIR/archflow"
   archflow --version
 }
 
