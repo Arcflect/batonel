@@ -56,7 +56,7 @@ jobs:
   audit-and-retain:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Install Archflow
         run: cargo install --path . # or download release binary
@@ -68,7 +68,7 @@ jobs:
           
       - name: Upload Evidence Artifact
         if: always() # Ensure evidence is uploaded even if the audit fails
-        uses: actions/upload-artifact@v4
+        uses: actions/checkout@v7
         with:
           name: archflow-audit-evidence
           path: .archflow-evidence/audit-report.json

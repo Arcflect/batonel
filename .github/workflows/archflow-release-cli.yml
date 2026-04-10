@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Resolve release tag
         id: release_tag
@@ -139,7 +139,7 @@ jobs:
           (cd "$DIST_DIR" && sha256sum "$ARCHIVE_NAME" > "$ARCHIVE_NAME.sha256")
 
       - name: Upload release artifact bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/checkout@v7
         with:
           name: archflow-release-${{ matrix.target }}
           path: dist/*
@@ -151,7 +151,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Resolve release tag
         id: release_tag
@@ -199,7 +199,7 @@ jobs:
           (cd "$DIST_DIR" && sha256sum "$ARCHIVE_NAME" > "$ARCHIVE_NAME.sha256")
 
       - name: Upload release artifact bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/checkout@v7
         with:
           name: archflow-release-aarch64-apple-darwin
           path: dist/*
@@ -214,7 +214,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Resolve release tag
         id: release_tag

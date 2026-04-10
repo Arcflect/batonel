@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -39,7 +39,7 @@ jobs:
         run: echo "value=$(echo '${{ matrix.example_dir }}' | tr '/' '-')" >> "$GITHUB_OUTPUT"
 
       - name: Upload verify log artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/checkout@v7
         with:
           name: archflow-verify-log-${{ steps.artifact_suffix.outputs.value }}
           path: ${{ matrix.example_dir }}/archflow-verify.log

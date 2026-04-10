@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -40,7 +40,7 @@ jobs:
             --project-name "${{ matrix.project_name }}"
 
       - name: Upload onboarding logs
-        uses: actions/upload-artifact@v4
+        uses: actions/checkout@v7
         with:
           name: onboarding-e2e-${{ matrix.preset }}
           path: target/onboarding-e2e/${{ matrix.preset }}/*.log
