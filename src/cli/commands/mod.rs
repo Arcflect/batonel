@@ -163,11 +163,13 @@ pub fn handle(command: Commands) {
             org_policy,
             team_policy,
             project_policy,
+            actor,
         } => {
             crate::commands::policy_resolve::execute_cli(
                 org_policy.as_deref(),
                 team_policy.as_deref(),
                 project_policy.as_deref(),
+                actor.as_deref(),
             );
         }
         Commands::FixRolloutPlan { output } => {

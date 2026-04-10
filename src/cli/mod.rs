@@ -185,6 +185,9 @@ pub enum Commands {
         /// Path to project-level policy file (default: policy.profile.yaml)
         #[arg(long)]
         project_policy: Option<String>,
+        /// Identity of the actor invoking the command, used to simulate RBAC evaluation
+        #[arg(long)]
+        actor: Option<String>,
     },
     /// Generate a structured fix rollout plan (JSON) from current audit findings
     FixRolloutPlan {

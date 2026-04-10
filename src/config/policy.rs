@@ -20,6 +20,8 @@ pub struct PolicyProfileConfig {
     pub forbidden_dependencies: Vec<RoleForbiddenDependencyPolicy>,
     #[serde(default)]
     pub overrides: Vec<PolicyOverride>,
+    #[serde(default)]
+    pub governance_roles: Vec<GovernanceRoleBinding>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -46,6 +48,12 @@ pub struct PolicyOverride {
     pub rule_id: String,
     pub targets: Vec<String>,
     pub reason: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GovernanceRoleBinding {
+    pub role: String,
+    pub members: Vec<String>,
 }
 
 impl PolicyProfileConfig {
@@ -86,6 +94,7 @@ impl PolicyProfileConfig {
             },
             forbidden_dependencies: vec![],
             overrides: vec![],
+            governance_roles: vec![],
         }
     }
 
@@ -181,6 +190,15 @@ impl PolicyProfileConfig {
                         "override '{}' must provide reason",
                         override_entry.rule_id
                     ),
+                });
+            }
+        }
+
+        for role_binding in &self.governance_roles {
+            if role_binding.role.trim().is_empty() {
+                return Err(ConfigError::Validation {
+                    path: path.clone(),
+                    message: "governance_roles[].role cannot be empty".to_string(),
                 });
             }
         }

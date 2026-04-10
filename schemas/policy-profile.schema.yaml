@@ -66,6 +66,20 @@ fields:
         required: true
         description: Human-readable justification for the override.
 
+  governance_roles:
+    type: list[map]
+    required: false
+    description: Role-Based Access Control map defining mappings of teams/users to governance roles.
+    item_fields:
+      role:
+        type: string
+        required: true
+        description: Governance role identifier (e.g. policy_admin, architect, auditor).
+      members:
+        type: list[string]
+        required: true
+        description: Actors mapped to this role (e.g., github usernames or team slugs like @org/architects).
+
 example:
   version: 1
   required_files:
@@ -85,3 +99,10 @@ example:
       targets:
         - artifact:create_legacy_user
       reason: temporary migration path
+  governance_roles:
+    - role: policy_admin
+      members:
+        - "@archflow/core"
+    - role: architect
+      members:
+        - "@archflow/architecture-committee"
