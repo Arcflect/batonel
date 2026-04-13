@@ -8,7 +8,7 @@ set -eou pipefail
 #   ./scripts/verify_trust.sh <identity> <signature-file> <target-file> [allowed-signers-file]
 #
 # Example:
-#   ./scripts/verify_trust.sh governance@archflow.io generic-layered.tar.gz.sig generic-layered.tar.gz
+#   ./scripts/verify_trust.sh governance@arcflect.com generic-layered.tar.gz.sig generic-layered.tar.gz
 
 IDENTITY=${1:-}
 SIGNATURE_FILE=${2:-}

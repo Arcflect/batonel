@@ -10,7 +10,7 @@ TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 
 # Generate an ephemeral core identity
-ssh-keygen -t ed25519 -N "" -C "governance@archflow.io" -f "$TMP_DIR/core_key" -q
+ssh-keygen -t ed25519 -N "" -C "governance@arcflect.com" -f "$TMP_DIR/core_key" -q
 CORE_PUB=$(cat "$TMP_DIR/core_key.pub")
 
 # Generate an ephemeral partner identity
@@ -19,7 +19,7 @@ PARTNER_PUB=$(cat "$TMP_DIR/partner_key.pub")
 
 # Create mock allowed_signers
 ALLOWED_SIGNERS="$TMP_DIR/allowed_signers"
-echo "governance@archflow.io $CORE_PUB" > "$ALLOWED_SIGNERS"
+echo "governance@arcflect.com $CORE_PUB" > "$ALLOWED_SIGNERS"
 echo "partner@example.com $PARTNER_PUB" >> "$ALLOWED_SIGNERS"
 
 # Create a mock preset bundle
@@ -31,7 +31,7 @@ ssh-keygen -Y sign -f "$TMP_DIR/core_key" -n file "$MOCK_PRESET" >/dev/null 2>&1
 MOCK_SIG="$MOCK_PRESET.sig"
 
 echo "TEST 1: Validating legitimate signature..."
-if ./scripts/verify_trust.sh governance@archflow.io "$MOCK_SIG" "$MOCK_PRESET" "$ALLOWED_SIGNERS" >/dev/null; then
+if ./scripts/verify_trust.sh governance@arcflect.com "$MOCK_SIG" "$MOCK_PRESET" "$ALLOWED_SIGNERS" >/dev/null; then
     echo "  [PASS] Legitimate signature verified."
 else
     echo "  [FAIL] Legitimate signature failed verification."
@@ -51,7 +51,7 @@ fi
 echo "tampered" >> "$MOCK_PRESET"
 
 echo "TEST 3: Validating tampered asset..."
-if ./scripts/verify_trust.sh governance@archflow.io "$MOCK_SIG" "$MOCK_PRESET" "$ALLOWED_SIGNERS" >/dev/null 2>&1; then
+if ./scripts/verify_trust.sh governance@arcflect.com "$MOCK_SIG" "$MOCK_PRESET" "$ALLOWED_SIGNERS" >/dev/null 2>&1; then
     echo "  [FAIL] Tampered asset was accepted."
     exit 1
 else
@@ -60,10 +60,10 @@ fi
 echo "dummy preset contents" > "$MOCK_PRESET" # restore
 
 # 4. Revocation Test
-echo "revoked governance@archflow.io $CORE_PUB" > "$ALLOWED_SIGNERS"
+echo "revoked governance@arcflect.com $CORE_PUB" > "$ALLOWED_SIGNERS"
 
 echo "TEST 4: Validating revoked key..."
-if ./scripts/verify_trust.sh governance@archflow.io "$MOCK_SIG" "$MOCK_PRESET" "$ALLOWED_SIGNERS" >/dev/null 2>&1; then
+if ./scripts/verify_trust.sh governance@arcflect.com "$MOCK_SIG" "$MOCK_PRESET" "$ALLOWED_SIGNERS" >/dev/null 2>&1; then
     echo "  [FAIL] Revoked key signature was accepted."
     exit 1
 else
