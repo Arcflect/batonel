@@ -1,0 +1,29 @@
+name: Preset Trust Verification
+
+on:
+  pull_request:
+    paths:
+      - 'presets/**'
+      - '.github/trust/allowed_signers'
+      - 'scripts/verify_trust.sh'
+  workflow_dispatch:
+
+jobs:
+  verify-governance-controls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Trust Verification Tests
+        run: |
+          chmod +x ./scripts/test_verify_trust.sh
+          ./scripts/test_verify_trust.sh
+
+      - name: Check allowed_signers format
+        run: |
+          if [ -f .github/trust/allowed_signers ]; then
+            # Ensure it can be parsed by ssh-keygen
+            ssh-keygen -l -f .github/trust/allowed_signers
+          else
+            echo "::warning::allowed_signers file is missing."
+          fi
