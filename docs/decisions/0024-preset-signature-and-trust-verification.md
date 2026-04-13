@@ -22,7 +22,7 @@ We will use **Ed25519 SSH Signatures (`ssh-keygen -Y`)** to sign and verify pres
 - **Verification**: The `scripts/verify_trust.sh` utility will execute `ssh-keygen -Y verify` against the preset bundle and its signature (`.sig`) using the repository's `allowed_signers` file as the root of trust.
 - **Lifecycle Handling**:
   - Keys are generated offline in a secure enclave.
-  - Active keys are appended to `allowed_signers` under a specific principle or identity namespace (e.g., `governance@arcflect.io`).
+  - Active keys are appended to `allowed_signers` under a specific principle or identity namespace (e.g., `governance@arcflect.com`).
   - Key rotation is executed by adding a new key to the file while retaining the old one for a defined overlap period.
   - Key revocation is executed by adding the `revoked` marker to the public key entry, permanently invalidating it for future and past verifications.
 
@@ -64,7 +64,7 @@ Preset の署名および検証には **Ed25519 SSH Signatures (`ssh-keygen -Y`)
 - **検証**: `scripts/verify_trust.sh` ユーティリティは、リポジトリの `allowed_signers` ファイルを信頼の起点として使用し、Preset バンドルとその署名 (`.sig`) に対して `ssh-keygen -Y verify` を実行します。
 - **ライフサイクル処理**:
   - 鍵はオフラインのセキュアエンクレーブで生成されます。
-  - 有効な鍵は、特定のプリンシパルまたは ID ネームスペース（例: `governance@arcflect.io`）のもと、`allowed_signers` に追記されます。
+  - 有効な鍵は、特定のプリンシパルまたは ID ネームスペース（例: `governance@arcflect.com`）のもと、`allowed_signers` に追記されます。
   - 鍵のローテーションは、定義されたオーバーラップ期間中は古い鍵を維持しつつ、新しい鍵をファイルに追加することで実行されます。
   - 鍵の失効処理は、公開鍵エントリに `revoked` マーカーを追記することで実行され、過去および将来の検証において永続的に無効化されます。
 
