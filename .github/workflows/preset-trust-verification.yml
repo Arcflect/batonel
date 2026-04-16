@@ -7,7 +7,11 @@ on:
       - '.github/trust/allowed_signers'
       - 'scripts/verify_trust.sh'
       - 'scripts/validate_allowed_signers.sh'
+      - 'scripts/check_compliance_level.sh'
       - 'scripts/test_*.sh'
+      - 'docs/partner-preset-review.md'
+      - 'docs/governance-rbac.md'
+      - 'docs/ecosystem-compliance-maturity.md'
   workflow_dispatch:
 
 jobs:
@@ -31,3 +35,13 @@ jobs:
           else
             echo "::warning::allowed_signers file is missing."
           fi
+
+      - name: Run Compliance Maturity Level Tests
+        run: |
+          chmod +x ./scripts/test_check_compliance_level.sh
+          ./scripts/test_check_compliance_level.sh
+
+      - name: Assert Ecosystem Compliance Maturity (L4 required)
+        run: |
+          chmod +x ./scripts/check_compliance_level.sh
+          ./scripts/check_compliance_level.sh .

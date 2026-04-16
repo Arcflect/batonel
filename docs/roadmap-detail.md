@@ -618,7 +618,9 @@ Scale trusted preset ecosystem operations across internal and external contribut
 
 - signed preset verification is available in distribution and install flow
 - partner submission/review workflow is documented and operational
-- benchmark model can compare compliance maturity across participating repositories
+- benchmark model can compare compliance maturity across participating repositories;
+  see [docs/ecosystem-compliance-maturity.md](docs/ecosystem-compliance-maturity.md)
+  for the five-level model (L0–L4) and self-assessment tooling
 
 ### What not to overbuild
 
@@ -630,6 +632,14 @@ Scale trusted preset ecosystem operations across internal and external contribut
 - [#158](https://github.com/Arcflect/archflow/issues/158)
 - [#159](https://github.com/Arcflect/archflow/issues/159)
 - [#160](https://github.com/Arcflect/archflow/issues/160)
+
+### Related documents
+
+- [docs/ecosystem-compliance-maturity.md](docs/ecosystem-compliance-maturity.md)
+- [docs/partner-preset-review.md](docs/partner-preset-review.md)
+- [docs/governance-rbac.md](docs/governance-rbac.md)
+- [docs/decisions/0024-preset-signature-and-trust-verification.md](docs/decisions/0024-preset-signature-and-trust-verification.md)
+- [docs/decisions/0025-ecosystem-compliance-maturity-benchmark-model.md](docs/decisions/0025-ecosystem-compliance-maturity-benchmark-model.md)
 
 ---
 
@@ -1306,6 +1316,21 @@ Preset 流通を拡大しつつ、contract-first / sidecar-first を維持する
 - Preset署名と信頼検証パイプラインの定義
 - パートナーPreset投稿・審査フローの構築
 - エコシステム準拠成熟度ベンチマークモデルの公開
+
+#### 完了の定義
+
+- 署名済み Preset の検証が配布・インストールフローで利用可能である
+- パートナー投稿・審査ワークフローがドキュメント化され運用中である
+- ベンチマークモデルが参加リポジトリ間のコンプライアンス成熟度を比較できる；
+  5 段階モデル（L0–L4）および自己評価ツールについては
+  [docs/ecosystem-compliance-maturity.md](../docs/ecosystem-compliance-maturity.md) を参照
+
+#### 関連ドキュメント
+
+- [docs/ecosystem-compliance-maturity.md](../docs/ecosystem-compliance-maturity.md)
+- [docs/partner-preset-review.md](../docs/partner-preset-review.md)
+- [docs/governance-rbac.md](../docs/governance-rbac.md)
+- [docs/decisions/0025-ecosystem-compliance-maturity-benchmark-model.md](../docs/decisions/0025-ecosystem-compliance-maturity-benchmark-model.md)
 
 #### 実行Issue
 
