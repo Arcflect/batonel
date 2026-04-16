@@ -1,409 +1,357 @@
-# Archflow
+# Arcflect Archflow
 
-Turn architecture into executable scaffolding for AI-assisted development.
+**The architecture-to-execution bridge for AI-assisted development.**
 
-Archflow is an open source tool that converts design decisions into artifact-level implementation contracts.
-Instead of only documenting architecture, Archflow helps define:
-
-- where code should live
-- what each artifact is responsible for
-- what it must not do
-- what context should be handed to an AI coding tool
-
-Archflow is designed for teams that define the overall architecture first, then implement file by file with humans or lightweight AI models.
-
-For concrete example layouts and generated outputs, see [examples/README.md](./examples/README.md).
-
-For deeper project documentation, see the [Docs guide](#docs--ドキュメント).
+Arcflect Archflow turns design decisions into artifact-level contracts —
+so that both humans and AI coding tools know exactly what to build, where, and under what constraints.
 
 ---
 
-## English
+## The problem
 
-### Why Archflow
+AI coding tools are fast at writing code.
+They struggle when structure is unclear.
 
-AI coding tools are good at local implementation, but they often fail when structure is unclear.
-Even when a team agrees on the architecture, development still gets stuck on questions like:
+Even when a team has agreed on an architecture, implementation keeps hitting the same wall:
 
-- Where should this file go?
-- What is this file allowed to do?
-- What must it never depend on?
-- How can we hand this file to a smaller model without losing architectural intent?
+- Where does this file belong?
+- What is this component allowed to depend on?
+- What must it never touch?
+- How do I hand off this artifact to a smaller model without losing architectural intent?
 
-Archflow fills that gap.
+Without explicit contracts, AI-generated code drifts. Architecture becomes a memory, not a rule.
 
-### What Archflow does
+---
 
-Archflow turns architecture into executable project scaffolding.
+## What Archflow does
 
-It can generate:
+Archflow converts architecture into an executable project scaffold.
+
+Given a design intention, it generates:
 
 - directory and file structure
-- artifact contracts
-- responsibility definitions
-- implementation constraints
-- AI handoff prompts
-- verification targets
+- per-artifact contracts (role, responsibilities, forbidden behavior, allowed dependencies)
+- AI handoff prompts derived directly from those contracts
+- verification targets for structural consistency checks
 
-This makes architecture usable during implementation, not just during planning.
+Architecture stops being a diagram. It becomes a set of contracts that implementation tools can act on.
 
-### Core idea
+---
 
-Architecture should not stop at diagrams, folder trees, or markdown docs.
-It should become a set of artifact contracts that both humans and AI tools can execute against.
+## Quickstart
 
-Archflow is centered on artifact-level contracts such as:
+**Install** (Linux / macOS):
 
-- placement
-- role
-- responsibilities
-- forbidden behavior
-- allowed dependencies
-- implementation size
-- status
+```bash
+curl -fsSL https://raw.githubusercontent.com/Arcflect/archflow/main/scripts/install-archflow.sh | bash
+```
 
-### Positioning
+Pin a specific version:
 
-Archflow is not just a spec tool.
-It is not just an agent instruction format.
-It is not just an architecture linter.
+```bash
+curl -fsSL https://raw.githubusercontent.com/Arcflect/archflow/main/scripts/install-archflow.sh | bash -s -- v1.6.0
+```
 
-It is an **architecture-to-execution bridge**.
+**Initialize a project from a preset:**
+
+```bash
+# Preview what will be generated (no files written)
+archflow init --preset generic-layered --project-name my-service --dry-run
+
+# Initialize and generate the artifact plan
+archflow init --preset generic-layered --project-name my-service
+archflow plan
+
+# Run a structural audit
+archflow audit --strict
+```
+
+Two presets are included out of the box:
+
+| Preset | When to use |
+|--------|------------|
+| `generic-layered` | Language-agnostic starting point, layered boundaries |
+| `rust-clean-hexagonal` | Rust projects with domain/application/adapter separation |
+
+→ See [docs/preset-onboarding.md](./docs/preset-onboarding.md) for the full onboarding flow.
+→ See [docs/release-operations.md](./docs/release-operations.md) for CI pinned-version install.
+
+---
+
+## Core concept: Contracts for your files
+
+Archflow treats your project as a collection of **artifacts** (files or directories).
+Instead of just being empty files, every artifact follows a **contract**—an explicit set of rules defining its role and boundaries.
+
+```yaml
+# example: src/domain/auth.contract.yaml
+role: domain
+responsibilities:
+  - Validate authentication credentials
+  - Enforce session invariants
+must_not:
+  - Import from adapter layer
+  - Access HTTP context directly
+allowed_dependencies:
+  - domain/user
+  - ports/auth
+```
+
+These contracts serve as the single source of truth for:
+
+- **scaffold** — generating the actual directories and files
+- **prompt** — providing clear implementation instructions to AI
+- **verify / audit** — checking if the code structure actually follows the rules
+
+---
+
+## Why "architecture-to-execution bridge"
+
+Most tools stop at one of two points:
+
+- **Documentation tools** — architecture lives in diagrams or markdown, decoupled from implementation
+- **Scaffolding tools** — directory templates with no semantic content
+
+Archflow sits between them. It makes architectural intent executable.
+
+The contract model is precise enough for a CI audit gate. It is also structured enough to generate a context-aware prompt for a lightweight AI coding model — without losing the design boundary.
+
+---
+
+## Governance and trust pipeline
+
+Archflow ships with a complete preset governance model:
+
+- **Ed25519 SSH signatures** for signed preset bundles
+- **Allowed signers trust store** (`.github/trust/allowed_signers`) for verifiable key anchors
+- **Partner review workflow** with mandatory out-of-band identity verification
+- **Ecosystem compliance maturity benchmark** — a five-level model (L0–L4) for assessing governance posture
+- **CI enforcement** — compliance gate runs on every governance-sensitive PR
+
+→ See [docs/ecosystem-compliance-maturity.md](./docs/ecosystem-compliance-maturity.md) for the benchmark levels.
+
+---
 
 ## Examples
 
-Archflow includes example inputs and expected outputs to show how architecture
-is translated into placement rules, artifact contracts, and AI handoff prompts.
+| Example | What it shows |
+|---------|--------------|
+| [`minimal`](./examples/minimal/README.md) | Smallest possible Archflow project |
+| [`generic-layered`](./examples/generic-layered/README.md) | Language-agnostic layered structure |
+| [`rust-clean-hexagonal`](./examples/rust-clean-hexagonal/README.md) | Rust workspace with clean architecture |
 
-Start here:
-- [examples/README.md](./examples/README.md)
-
-Included examples:
-- [`minimal`](./examples/minimal/README.md)
-- [`generic-layered`](./examples/generic-layered/README.md)
-- [`rust-clean-hexagonal`](./examples/rust-clean-hexagonal/README.md)
-
-## Quickstart (init -> plan)
-
-Use one of the core presets, then run `plan`:
-
-```bash
-# Generic layered path
-cargo run -- init --preset generic-layered --project-name my-service
-cargo run -- plan
-
-# Rust clean/hexagonal path
-cargo run -- init --preset rust-clean-hexagonal --project-name my-rust-service
-cargo run -- plan
-```
-
-Preview before writing files:
-
-```bash
-cargo run -- init --preset generic-layered --project-name my-service --dry-run
-```
-
-Run baseline audit checks (strict mode fails on warnings):
-
-```bash
-cargo run -- audit --strict
-```
-
-## CLI Install and Update
-
-Archflow CLI distribution is standardized through GitHub Releases.
-
-- Release operation guide: [docs/release-operations.md](./docs/release-operations.md)
-- Release workflow: [`.github/workflows/archflow-release-cli.yml`](./.github/workflows/archflow-release-cli.yml)
-
-Quick install references:
-
-- Binary install from GitHub Releases (recommended for users and CI)
-- `archflow --version` should report the pinned version after install
-- For CI, pin a fixed `vX.Y.Z` and cache by `${version}-${target}`
-
-Export multi-repo compliance metrics (JSON/CSV):
-
-```bash
-# JSON export
-cargo run -- compliance-report \
-  --repos examples/minimal/archflow \
-  --repos examples/generic-layered/archflow \
-  --format json \
-  --output compliance-report.json
-
-# CSV export with trend comparison against a previous JSON baseline
-cargo run -- compliance-report \
-  --repos examples/minimal/archflow \
-  --repos examples/generic-layered/archflow \
-  --format csv \
-  --output compliance-report.csv \
-  --baseline-json compliance-report.json
-```
-
-Preview conservative remediation candidates:
-
-```bash
-cargo run -- fix --dry-run
-```
-
-Prototype preset registry workflow:
-
-```bash
-# Verify preset contract-first and sidecar-first alignment before publishing
-cargo run -- preset-verify --preset-dir presets/generic-layered
-
-# Publish local preset package into local registry index (alignment check runs automatically)
-cargo run -- preset-publish --preset-dir presets/generic-layered --registry-dir .archflow/registry
-
-# Install latest compatible preset from local registry index
-cargo run -- preset-install --preset generic-layered --registry-dir .archflow/registry --destination-dir presets
-
-# Run sidecar guard checks (CI-style)
-cargo run -- guard --hook ci --strict
-```
-
-Preset versioning and migration workflow:
-
-```bash
-# Generate a migration plan (patch previews + conflict detection)
-cargo run -- preset-migration-plan \
-  --preset generic-layered \
-  --from-version 0.1.0 \
-  --to-version 0.2.0 \
-  --registry-dir .archflow/registry
-
-# Apply safe changes (backups created automatically; conflicts never auto-applied)
-cargo run -- preset-migration-apply \
-  --preset generic-layered \
-  --from-version 0.1.0 \
-  --to-version 0.2.0 \
-  --registry-dir .archflow/registry
-```
-
-Org/team override precedence:
-
-```bash
-# Show effective policy after applying org → team → project precedence chain
-cargo run -- policy-resolve
-```
-
-Onboarding e2e check script:
-
-```bash
-bash scripts/onboarding_e2e_init_plan.sh --preset generic-layered --project-name e2e-generic-service
-```
-
-## Docs / ドキュメント
-
-If you want to understand the model, roadmap, and design decisions in more detail, start here:
-
-- [ROADMAP.md](./ROADMAP.md)
-- [ARCHITECTURE_RULES.md](./ARCHITECTURE_RULES.md)
-- [docs/roadmap-detail.md](./docs/roadmap-detail.md)
-- [docs/architecture/current-state.md](./docs/architecture/current-state.md)
-- [docs/architecture/refactor-checklist.md](./docs/architecture/refactor-checklist.md)
-- [docs/schema-guide.md](./docs/schema-guide.md)
-- [docs/architecture-flow.md](./docs/architecture-flow.md)
-- [docs/presets.md](./docs/presets.md)
-- [docs/preset-onboarding.md](./docs/preset-onboarding.md)
-- [docs/contributing-areas.md](./docs/contributing-areas.md)
-- [docs/glossary.md](./docs/glossary.md)
-- [docs/decisions/README.md](./docs/decisions/README.md)
-
-Core concepts:
-- [docs/concepts/project.md](./docs/concepts/project.md)
-- [docs/concepts/module.md](./docs/concepts/module.md)
-- [docs/concepts/role.md](./docs/concepts/role.md)
-- [docs/concepts/placement-rule.md](./docs/concepts/placement-rule.md)
-- [docs/concepts/artifact.md](./docs/concepts/artifact.md)
-- [docs/concepts/contract.md](./docs/concepts/contract.md)
-- [docs/concepts/prompt.md](./docs/concepts/prompt.md)
-- [docs/concepts/handoff.md](./docs/concepts/handoff.md)
-- [docs/concepts/scaffold.md](./docs/concepts/scaffold.md)
-- [docs/concepts/verify.md](./docs/concepts/verify.md)
-
-Usage:
-- [docs/usage.md](./docs/usage.md)
-- [docs/release-operations.md](./docs/release-operations.md)
-- [`.github/workflows/archflow-audit-pr-gate.yml`](./.github/workflows/archflow-audit-pr-gate.yml)
-
-Schema drafts:
-- [schemas/project.schema.yaml](./schemas/project.schema.yaml)
-- [schemas/placement-rules.schema.yaml](./schemas/placement-rules.schema.yaml)
-- [schemas/contracts-template.schema.yaml](./schemas/contracts-template.schema.yaml)
-- [schemas/artifacts-plan.schema.yaml](./schemas/artifacts-plan.schema.yaml)
-- [schemas/contract.schema.yaml](./schemas/contract.schema.yaml)
-- [schemas/prompt.schema.yaml](./schemas/prompt.schema.yaml)
-- [schemas/policy-profile.schema.yaml](./schemas/policy-profile.schema.yaml)
-- [schemas/guard-sidecar.schema.yaml](./schemas/guard-sidecar.schema.yaml)
-- [schemas/preset-package.schema.yaml](./schemas/preset-package.schema.yaml)
-- [schemas/preset-registry-index.schema.yaml](./schemas/preset-registry-index.schema.yaml)
-
-Recommended reading order:
-1. [examples/README.md](./examples/README.md)
-2. [docs/schema-guide.md](./docs/schema-guide.md)
-3. [docs/architecture-flow.md](./docs/architecture-flow.md)
-4. [docs/concepts/project.md](./docs/concepts/project.md)
-5. [docs/concepts/module.md](./docs/concepts/module.md)
-6. [docs/concepts/role.md](./docs/concepts/role.md)
-7. [docs/concepts/placement-rule.md](./docs/concepts/placement-rule.md)
-8. [docs/concepts/artifact.md](./docs/concepts/artifact.md)
-9. [docs/concepts/contract.md](./docs/concepts/contract.md)
-10. [docs/concepts/prompt.md](./docs/concepts/prompt.md)
-11. [docs/concepts/handoff.md](./docs/concepts/handoff.md)
-12. [docs/concepts/scaffold.md](./docs/concepts/scaffold.md)
-13. [docs/concepts/verify.md](./docs/concepts/verify.md)
-14. [docs/usage.md](./docs/usage.md)
-15. [docs/decisions/README.md](./docs/decisions/README.md)
+→ [examples/README.md](./examples/README.md)
 
 ---
 
-## 日本語
+## Docs
 
-### Archflow とは
+| Topic | Link |
+|-------|------|
+| Architecture flow | [docs/architecture-flow.md](./docs/architecture-flow.md) |
+| Preset guide | [docs/presets.md](./docs/presets.md) |
+| Preset onboarding | [docs/preset-onboarding.md](./docs/preset-onboarding.md) |
+| Schema reference | [docs/schema-guide.md](./docs/schema-guide.md) |
+| Governance & RBAC | [docs/governance-rbac.md](./docs/governance-rbac.md) |
+| Compliance maturity | [docs/ecosystem-compliance-maturity.md](./docs/ecosystem-compliance-maturity.md) |
+| Glossary | [docs/glossary.md](./docs/glossary.md) |
+| Design decisions | [docs/decisions/README.md](./docs/decisions/README.md) |
+| Roadmap | [ROADMAP.md](./ROADMAP.md) |
 
-Archflow は、設計で決めた内容を、AI 開発時代に使える**実装用の骨組み**へ変換するための OSS です。
-
-アーキテクチャを文章や図で残すだけではなく、次のような情報を **artifact 単位の契約** として扱います。
-
-- どこに配置するか
-- 何を責務とするか
-- 何をしてはいけないか
-- どの依存を許可するか
-- AI に何を渡して実装させるか
-
-具体的なレイアウト例や生成された出力については、[examples/README.md](./examples/README.md)を参照してください。
-
-より詳しい設計資料は、下の [Docs / ドキュメント](#docs--ドキュメント) を参照してください。
-
-### なぜ必要か
-
-生成 AI は局所的な実装は得意ですが、構造が曖昧だと誤った配置や責務逸脱を起こしやすくなります。
-
-たとえば、次のような迷いが日常的に発生します。
-
-- このファイルはどこに置くべきか
-- このファイルは何をしてよいのか
-- 何をしてはいけないのか
-- 軽量モデルにどう渡せば設計意図を保てるのか
-
-Archflow は、この曖昧さを減らすことを目的としています。
-
-### 目指していること
-
-Archflow は、設計を以下へ変換することを目指します。
-
-- ディレクトリ構造
-- 空ファイルや雛形
-- `*.contract.yaml` のような責務契約
-- `*.prompt.md` のような AI 実装指示
-- verify 対象となる構造ルール
-
-つまり、**設計を実装可能な単位まで下ろす**ための橋渡しです。
-
-### ポジション
-
-Archflow は、単なる仕様管理ツールでも、単なる AI 向け instruction ファイルでも、単なる lint ツールでもありません。
-
-**設計から実装への橋渡しを行う OSS** です。
-
-AI への正確な実装指示（AI Handoff）については、[docs/concepts/handoff.md](./docs/concepts/handoff.md) を参照してください。
-
-## 例
-
-Archflowには、アーキテクチャが配置ルール、アーティファクト契約、およびAIへの引き継ぎプロンプトにどのように変換されるかを示すための、入力例と期待される出力が含まれています。
-
-まずはこちらから:
-- [examples/README.md](./examples/README.md)
-
-含まれる例:
-- [`minimal`](./examples/minimal/README.md)
-- [`generic-layered`](./examples/generic-layered/README.md)
-- [`rust-clean-hexagonal`](./examples/rust-clean-hexagonal/README.md)
-
-## クイックスタート（init -> plan）
-
-core preset のどちらかを選び、`plan` まで実行します。
-
-```bash
-# Generic layered
-cargo run -- init --preset generic-layered --project-name my-service
-cargo run -- plan
-
-# Rust clean/hexagonal
-cargo run -- init --preset rust-clean-hexagonal --project-name my-rust-service
-cargo run -- plan
-```
-
-生成前に確認したい場合:
-
-```bash
-cargo run -- init --preset generic-layered --project-name my-service --dry-run
-```
-
-オンボーディングe2e検証スクリプト:
-
-```bash
-bash scripts/onboarding_e2e_init_plan.sh --preset generic-layered --project-name e2e-generic-service
-```
+Core concept docs:
+[project](./docs/concepts/project.md) ·
+[artifact](./docs/concepts/artifact.md) ·
+[contract](./docs/concepts/contract.md) ·
+[prompt](./docs/concepts/prompt.md) ·
+[handoff](./docs/concepts/handoff.md) ·
+[verify](./docs/concepts/verify.md)
 
 ---
 
-## Current status / 現在のステータス
+## About Arcflect
 
-Archflow is currently in early design and repository bootstrap stage.
+Arcflect Archflow is part of the [Arcflect](https://github.com/Arcflect) project.
 
-現在の Archflow は、初期設計とリポジトリ整備の段階です。
-最初の公開ゴールは次のとおりです。
-
-- design file の読み込み
-- placement rules の定義
-- scaffold の生成
-- artifact contract の生成
-- AI handoff prompt の生成
-- verify の最小実装
-
-より詳しい段階分けは、次を参照してください。
-
-- [ROADMAP.md](./ROADMAP.md)
-- [docs/roadmap-detail.md](./docs/roadmap-detail.md)
+Arcflect builds tooling for design responsibility, handoff, and governance in AI-assisted development.
+Archflow is its open source foundation — the engine that turns architectural intent into executable structure.
 
 ---
 
-## Planned commands / 想定コマンド
+## Community
 
-```bash
-archflow init
-archflow plan
-archflow scaffold
-archflow prompt
-archflow verify
-```
+Bugs, feature requests, and architecture rule proposals: **GitHub Issues**
 
----
-
-## Community / コミュニティ
-
-Please use GitHub Issues for bugs, feature requests, and architecture rule proposals.
-For open-ended exploration, use GitHub Discussions when available.
-
-バグ報告、機能提案、アーキテクチャルール提案は GitHub Issues を利用してください。
-広めの議論は GitHub Discussions を想定しています。
-
-Contributors may also find these documents useful:
-
+Contributors:
 - [CONTRIBUTING.md](./CONTRIBUTING.md)
 - [docs/contributing-areas.md](./docs/contributing-areas.md)
 - [docs/decisions/README.md](./docs/decisions/README.md)
 
 ---
 
-## License / ライセンス
+## License
 
-Apache License 2.0.
+Apache License 2.0 · [LICENSE](./LICENSE) · [日本語サマリー](./docs/LICENSE.ja.md)
 
-A short Japanese summary is available in docs/LICENSE.ja.md.
+---
 
-Apache License 2.0 を採用します。
-日本語の参考サマリーは [docs/LICENSE.ja.md](./docs/LICENSE.ja.md) にあります。
+---
+
+## 日本語
+
+# Arcflect Archflow
+
+**AI 開発時代のための、設計から実装への橋渡しツール。**
+
+Arcflect Archflow は、設計上の意思決定を artifact 単位の契約へ変換します。
+人間も AI コーディングツールも、「何を」「どこに」「どんな制約のもとで」作ればよいかを明示的に把握できます。
+
+---
+
+## 解決する問題
+
+AI コーディングツールはコードを書くのが速い。
+しかし、構造が曖昧だと誤った実装を生み出しやすい。
+
+チームがアーキテクチャを合意していても、実装フェーズで次の壁にぶつかり続けます：
+
+- このファイルはどこに置くべきか
+- このコンポーネントが依存してよい対象は何か
+- 絶対に触れてはいけない対象は何か
+- 軽量モデルに渡すとき、設計意図をどう保つか
+
+明示的な契約がなければ、AI が生成するコードは設計から逸脱していきます。アーキテクチャは「記憶」になり、「ルール」ではなくなります。
+
+---
+
+## Archflow が行うこと
+
+Archflow は、アーキテクチャを「実行可能なプロジェクト骨格」へ変換します。
+
+設計意図が与えられると、次のものを生成します：
+
+- ディレクトリ・ファイル構造
+- artifact ごとの契約（役割・責務・禁止事項・許可された依存）
+- その契約から直接導出される AI への handoff プロンプト
+- 構造一貫性チェックのための verification ターゲット
+
+アーキテクチャは図で終わらない。実装ツールが動ける契約になります。
+
+---
+
+## クイックスタート
+
+**インストール**（Linux / macOS）：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Arcflect/archflow/main/scripts/install-archflow.sh | bash
+```
+
+バージョンを固定してインストール：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Arcflect/archflow/main/scripts/install-archflow.sh | bash -s -- v1.6.0
+```
+
+**プリセットからプロジェクトを初期化：**
+
+```bash
+# 生成内容を確認（ファイルは書かない）
+archflow init --preset generic-layered --project-name my-service --dry-run
+
+# 初期化して artifact プランを生成
+archflow init --preset generic-layered --project-name my-service
+archflow plan
+
+# 構造整合性の監査
+archflow audit --strict
+```
+
+すぐ使える 2 つのプリセット：
+
+| プリセット | 用途 |
+|-----------|------|
+| `generic-layered` | 言語非依存のレイヤードアーキテクチャ起点 |
+| `rust-clean-hexagonal` | Rust ワークスペース向けクリーンアーキテクチャ |
+
+→ 詳細は [docs/preset-onboarding.md](./docs/preset-onboarding.md) を参照してください。
+→ CI でのバージョン固定インストールは [docs/release-operations.md](./docs/release-operations.md) を参照してください。
+
+---
+
+## コアコンセプト：ファイルごとの「役割」と「契約」
+
+Archflow では、管理対象のファイルやディレクトリを **artifact** と呼びます。
+単にファイルを置くだけでなく、個々の artifact に対して「何に責任を持つか（責務）」や「何をしてはいけないか（境界）」を **契約 (contract)** として定義します。
+
+```yaml
+# 例: src/domain/auth.contract.yaml
+role: domain
+responsibilities:
+  - 認証クレデンシャルを検証する
+  - セッション不変条件を強制する
+must_not:
+  - adapter レイヤーからインポートしない
+  - HTTP コンテキストに直接アクセスしない
+allowed_dependencies:
+  - domain/user
+  - ports/auth
+```
+
+この契約が、開発のあらゆるフェーズで「唯一の真実源」になります：
+
+- **scaffold**（生成） — 実際のディレクトリやファイルを自動作成
+- **prompt**（指示） — AI に対して、設計意図に基づいた的確な実装指示（handoff）を生成
+- **verify / audit**（検証） — 実装された構造が、契約（ルール）に違反していないかをチェック
+
+---
+
+## なぜ「設計から実装への橋渡し」か
+
+多くのツールは次の 2 点のどちらかで止まっています：
+
+- **ドキュメントツール** — アーキテクチャが図やmarkdownに留まり、実装と切り離されている
+- **スキャフォールドツール** — 意味のないディレクトリテンプレートで、設計の境界情報がない
+
+Archflow はその中間にあります。設計意図を実行可能にします。
+
+契約モデルは、CI 監査ゲートとして使えるほど精密で、かつ軽量 AI モデルへのコンテキスト付きプロンプトを生成できるほど構造化されています。
+
+---
+
+## ガバナンスと信頼パイプライン
+
+Archflow には完全な preset ガバナンスモデルが含まれています：
+
+- 署名済み preset バンドルのための **Ed25519 SSH 署名**
+- 検証可能な鍵アンカーのための **allowed signers トラストストア**
+- 帯域外アイデンティティ確認を義務付けた **パートナーレビューワークフロー**
+- ガバナンスポスチャを評価する **5 段階のエコシステム準拠成熟度ベンチマーク（L0–L4）**
+- ガバナンス関連 PR すべてに適用される **CI 強制ゲート**
+
+→ ベンチマークの各レベルは [docs/ecosystem-compliance-maturity.md](./docs/ecosystem-compliance-maturity.md) を参照してください。
+
+---
+
+## Arcflect について
+
+Arcflect Archflow は [Arcflect](https://github.com/Arcflect) プロジェクトの一部です。
+
+Arcflect は、AI 支援開発における設計責務・継承・ガバナンスのためのツールを構築しています。
+Archflow はそのオープンソース基盤であり、設計意図を実行可能な構造へ変換するエンジンです。
+
+---
+
+## コミュニティ
+
+バグ報告・機能提案・アーキテクチャルール提案は **GitHub Issues** へ。
+
+コントリビューター向け：
+- [CONTRIBUTING.md](./CONTRIBUTING.md)
+- [docs/contributing-areas.md](./docs/contributing-areas.md)
+- [docs/decisions/README.md](./docs/decisions/README.md)
+
+---
+
+## ライセンス
+
+Apache License 2.0 · [LICENSE](./LICENSE) · [日本語サマリー](./docs/LICENSE.ja.md)
