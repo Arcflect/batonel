@@ -1,9 +1,9 @@
 # Ecosystem Compliance Maturity Benchmark
 
-This document defines the Archflow ecosystem compliance maturity model.
+This document defines the Batonel ecosystem compliance maturity model.
 
 It provides a structured, auditable framework for evaluating how consistently
-a repository applies Archflow governance controls.
+a repository applies Batonel governance controls.
 
 The benchmark is intended for use by:
 
@@ -17,7 +17,7 @@ The benchmark is intended for use by:
 
 This benchmark answers the question:
 
-> "To what degree does this repository follow Archflow governance expectations?"
+> "To what degree does this repository follow Batonel governance expectations?"
 
 The answer is expressed as a maturity level. Each level corresponds to a concrete
 set of governance controls that can be verified by inspection or automated check.
@@ -37,9 +37,9 @@ Each level is cumulative. A repository at L3 must also satisfy L0, L1, and L2.
 
 ### L0 — Unregistered
 
-**Definition**: No Archflow governance controls are in place.
+**Definition**: No Batonel governance controls are in place.
 
-The repository has not adopted any of the Archflow trust or governance mechanisms.
+The repository has not adopted any of the Batonel trust or governance mechanisms.
 
 **Criteria** (all must be absent or unmet):
 
@@ -58,7 +58,7 @@ guarantees can be made about the origin or integrity of presets it produces or c
 **Definition**: A valid trust anchor is established for the repository's signing identity.
 
 The repository has declared at least one trusted public key, formatted and validated
-in accordance with Archflow's signing requirements.
+in accordance with Batonel's signing requirements.
 
 **Criteria** (all must hold):
 
@@ -165,7 +165,7 @@ bash scripts/check_compliance_level.sh
 Example output:
 
 ```
-Checking Archflow ecosystem compliance maturity...
+Checking Batonel ecosystem compliance maturity...
 
   L0 — Unregistered:        PASS (baseline)
   L1 — Trust Anchored:      PASS
@@ -264,9 +264,9 @@ The five levels collectively cover the following governance dimensions:
 
 ## 日本語
 
-このドキュメントは Archflow エコシステム準拠成熟度ベンチマークを定義します。
+このドキュメントは Batonel エコシステム準拠成熟度ベンチマークを定義します。
 
-リポジトリが Archflow のガバナンスコントロールをどの程度一貫して適用しているかを
+リポジトリが Batonel のガバナンスコントロールをどの程度一貫して適用しているかを
 評価するための、構造化された監査可能なフレームワークを提供します。
 
 ---
@@ -275,7 +275,7 @@ The five levels collectively cover the following governance dimensions:
 
 このベンチマークは次の問いに答えます：
 
-> 「このリポジトリは Archflow のガバナンス要件をどの程度満たしているか？」
+> 「このリポジトリは Batonel のガバナンス要件をどの程度満たしているか？」
 
 答えは成熟度レベルとして表現されます。各レベルは、検査または自動チェックによって
 検証可能な具体的なガバナンスコントロールの集合に対応します。
@@ -292,9 +292,9 @@ The five levels collectively cover the following governance dimensions:
 
 #### L0 — 未登録（Unregistered）
 
-**定義**: Archflow のガバナンスコントロールが存在しない。
+**定義**: Batonel のガバナンスコントロールが存在しない。
 
-リポジトリは Archflow の信頼またはガバナンスの仕組みをまだ採用していません。
+リポジトリは Batonel の信頼またはガバナンスの仕組みをまだ採用していません。
 
 **基準**（すべて未存在または未充足）:
 

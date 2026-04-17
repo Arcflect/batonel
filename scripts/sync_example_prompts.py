@@ -74,7 +74,7 @@ def generate_prompt(contract_path, prompt_path):
 
 if __name__ == "__main__":
     count = 0
-    for c_path in glob.glob("examples/**/expected/.archflow/contracts/*.contract.yaml", recursive=True):
+    for c_path in glob.glob("examples/**/expected/.batonel/contracts/*.contract.yaml", recursive=True):
         p_path = c_path.replace("contracts/", "prompts/").replace(".contract.yaml", ".prompt.md")
         os.makedirs(os.path.dirname(p_path), exist_ok=True)
         generate_prompt(c_path, p_path)

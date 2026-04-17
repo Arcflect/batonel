@@ -2,7 +2,7 @@
 
 Preset:
 
-- default `archflow init` output (minimal baseline)
+- default `batonel init` output (minimal baseline)
 
 ## Repository shape (small but realistic)
 
@@ -13,8 +13,8 @@ my-minimal-app/
       usecases/
     domain/
       entities/
-  archflow/
-    project.arch.yaml
+  batonel/
+    project.baton.yaml
     placement.rules.yaml
     contracts.template.yaml
     artifacts.plan.yaml
@@ -38,7 +38,7 @@ my-minimal-app/
 ## Minimal override example
 
 ```yaml
-# project.arch.yaml (repo naming override)
+# project.baton.yaml (repo naming override)
 project:
   name: my-minimal-app
   architecture_style: simple

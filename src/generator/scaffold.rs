@@ -29,7 +29,7 @@ pub fn generate_artifact_with_sidecars(
     write_file_safely(
         artifact_path,
         &format!(
-            "// Archflow placeholder: {} ({})\n",
+            "// Batonel placeholder: {} ({})\n",
             artifact.name, artifact.role
         ),
     )?;

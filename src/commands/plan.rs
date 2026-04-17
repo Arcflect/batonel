@@ -7,7 +7,7 @@ pub fn execute() {
     let guard_report = crate::commands::guard::run_hook(crate::commands::guard::GuardHookPoint::Plan, None);
     crate::commands::guard::render_report(&guard_report);
 
-    let project_config = match ProjectConfig::load("project.arch.yaml") {
+    let project_config = match ProjectConfig::load("project.baton.yaml") {
         Ok(config) => config,
         Err(e) => {
             eprintln!("Error loading project: {}", e);
@@ -50,7 +50,7 @@ pub fn execute() {
 #[allow(dead_code)]
 fn build_plan_output(plan: &crate::domain::planning::ArchitecturePlan) -> (Vec<String>, usize) {
     let mut lines = vec![
-        "Archflow Implementation Plan".to_string(),
+        "Batonel Implementation Plan".to_string(),
         "============================".to_string(),
         format!("Project: {}", plan.project_name),
         format!("Style:   {}", plan.architecture_style),
@@ -146,7 +146,7 @@ mod tests {
                 role: "usecase".to_string(),
                 status: PlannedArtifactStatus::Error,
                 resolved_path: None,
-                error_message: Some("module 'order' is not defined in project.arch.yaml".to_string()),
+                error_message: Some("module 'order' is not defined in project.baton.yaml".to_string()),
             }],
         };
 
@@ -155,6 +155,6 @@ mod tests {
         assert_eq!(error_count, 1);
         assert!(lines
             .iter()
-            .any(|line| line.contains("module 'order' is not defined in project.arch.yaml")));
+            .any(|line| line.contains("module 'order' is not defined in project.baton.yaml")));
     }
 }

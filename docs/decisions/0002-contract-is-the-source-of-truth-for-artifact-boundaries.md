@@ -5,7 +5,7 @@
 
 ## Context
 
-Archflow includes multiple representations of architectural intent:
+Batonel includes multiple representations of architectural intent:
 
 - examples
 - project definitions
@@ -79,7 +79,7 @@ This decision should guide future verify behavior and prompt design.
 
 ## コンテキスト
 
-Archflow にはアーキテクチャの意図の複数の表現が含まれています。
+Batonel にはアーキテクチャの意図の複数の表現が含まれています。
 
 - examples
 - プロジェクト定義

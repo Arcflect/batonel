@@ -9,7 +9,7 @@ Preset packaging is now part of the onboarding path.
 As presets become more visible, there is a risk they are interpreted as
 directory-only starter templates.
 
-If that happens, Archflow would lose core model intent:
+If that happens, Batonel would lose core model intent:
 
 - contract-centered artifact boundaries
 - sidecar files as first-class operational artifacts
@@ -22,7 +22,7 @@ Existing decisions already define these principles in other areas:
 - [ADR-0014](./0014-guard-contract-first-and-sidecar-first-behavior-in-phase-4-verification.md)
 
 What is needed now is a preset-specific guardrail so setup acceleration does not
-flatten Archflow into folder scaffolding without architectural meaning.
+flatten Batonel into folder scaffolding without architectural meaning.
 
 ## Decision
 
@@ -74,7 +74,7 @@ For preset additions/changes, reviewers should check:
 
 ## Consequences
 
-- Presets remain aligned with Archflow core philosophy.
+- Presets remain aligned with Batonel core philosophy.
 - Setup speed improves without sacrificing architectural intent.
 - Contributors get clear criteria for rejecting model-weakening preset changes.
 
@@ -93,7 +93,7 @@ preset packaging は onboarding 経路の一部になりました。
 preset の可視性が上がるにつれて、preset が
 「ディレクトリ雛形だけのスターター」と解釈されるリスクがあります。
 
-そうなると Archflow の中核意図が失われます。
+そうなると Batonel の中核意図が失われます。
 
 - contract 中心の artifact 境界
 - sidecar ファイルを first-class な運用 artifact として扱うこと
@@ -107,7 +107,7 @@ preset の可視性が上がるにつれて、preset が
 
 今必要なのは preset 特有のガードレールです。
 セットアップ高速化が、アーキテクチャ意味を持たない
-フォルダスキャフォルディングへと Archflow を平坦化しないようにします。
+フォルダスキャフォルディングへと Batonel を平坦化しないようにします。
 
 ## 決定事項
 
@@ -158,6 +158,6 @@ preset 追加/変更時、レビューで次を確認します。
 
 ## 結果
 
-- preset は Archflow のコア哲学と整合したまま維持される。
+- preset は Batonel のコア哲学と整合したまま維持される。
 - セットアップ速度を上げつつ、アーキテクチャ意図を損なわない。
 - モデルを弱める preset 変更を却下するための明確基準が得られる。

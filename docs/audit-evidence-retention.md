@@ -4,16 +4,16 @@
 
 In highly regulated environments (e.g., SOC2, ISO27001), it is not enough to simply block a pull request when an architectural rule is violated. Organizations must prove to auditors that architectural governance was consistently applied and resolved over time.
 
-To facilitate this, Archflow provides an evidence extraction workflow. By emitting structural, timestamped JSON representations of the audit report, CI/CD pipelines can reliably archive the state of governance on every merge to a trunk branch.
+To facilitate this, Batonel provides an evidence extraction workflow. By emitting structural, timestamped JSON representations of the audit report, CI/CD pipelines can reliably archive the state of governance on every merge to a trunk branch.
 
 ## Generating Evidence
 
-The `archflow audit` command supports a dedicated extraction flag: `--evidence-export`. 
+The `batonel audit` command supports a dedicated extraction flag: `--evidence-export`. 
 
-When this flag is provided, Archflow processes the audit normally (including standard output for developers) and additionally serializes the entire `AuditReport` data structure to the requested file path.
+When this flag is provided, Batonel processes the audit normally (including standard output for developers) and additionally serializes the entire `AuditReport` data structure to the requested file path.
 
 ```bash
-archflow audit --evidence-export .archflow/audit-evidence.json
+batonel audit --evidence-export .batonel/audit-evidence.json
 ```
 
 ### JSON Structure
@@ -44,10 +44,10 @@ To ensure this evidence is preserved without manual intervention, integrate the 
 
 We recommend generating this evidence on every push to the `main` or `master` branch and uploading it as a CI artifact.
 
-### Example: `.github/workflows/archflow-audit.yml`
+### Example: `.github/workflows/batonel-audit.yml`
 
 ```yaml
-name: Archflow Governance Audit
+name: Batonel Governance Audit
 on:
   push:
     branches: [ "main" ]
@@ -58,20 +58,20 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       
-      - name: Install Archflow
+      - name: Install Batonel
         run: cargo install --path . # or download release binary
         
       - name: Run Audit and Export Evidence
         run: |
-          mkdir -p .archflow-evidence
-          archflow audit --evidence-export .archflow-evidence/audit-report.json
+          mkdir -p .batonel-evidence
+          batonel audit --evidence-export .batonel-evidence/audit-report.json
           
       - name: Upload Evidence Artifact
         if: always() # Ensure evidence is uploaded even if the audit fails
         uses: actions/upload-artifact@v7
         with:
-          name: archflow-audit-evidence
-          path: .archflow-evidence/audit-report.json
+          name: batonel-audit-evidence
+          path: .batonel-evidence/audit-report.json
           retention-days: 90
 ```
 

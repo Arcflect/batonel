@@ -5,7 +5,7 @@
 
 ## Context
 
-Archflow includes prompts because AI-assisted implementation is a major use case.
+Batonel includes prompts because AI-assisted implementation is a major use case.
 
 However, prompts can easily drift.
 They may become:
@@ -59,7 +59,7 @@ Not chosen because it weakens repeatability and consistency.
 
 ### No prompt generation at all
 
-Not chosen because artifact-level AI handoff is one of the key reasons Archflow exists.
+Not chosen because artifact-level AI handoff is one of the key reasons Batonel exists.
 
 ## Notes
 
@@ -77,7 +77,7 @@ but it should remain downstream from the contract.
 
 ## コンテキスト
 
-Archflow は AI 支援実装が主要なユースケースであるため、prompt を含んでいます。
+Batonel は AI 支援実装が主要なユースケースであるため、prompt を含んでいます。
 
 しかし、prompt は容易にずれる可能性があります。
 次のようになるかもしれません。
@@ -130,7 +130,7 @@ Prompt は実装ハンドオフの配信形式です。
 
 ### Prompt 生成をまったく行わない
 
-選択されなかった理由：artifact レベルの AI ハンドオフは Archflow が存在する主な理由の 1 つであるため。
+選択されなかった理由：artifact レベルの AI ハンドオフは Batonel が存在する主な理由の 1 つであるため。
 
 ## 注記
 

@@ -47,7 +47,7 @@ jobs:
               /^docs\/schema-guide\.md$/,
               /^\.github\/pull_request_template\.md$/,
               /^\.github\/ISSUE_TEMPLATE\/architecture_rule_request\.yml$/,
-              /^\.github\/workflows\/archflow-audit-pr-gate\.yml$/,
+              /^\.github\/workflows\/batonel-audit-pr-gate\.yml$/,
               /^\.github\/workflows\/architecture-pr-checklist\.yml$/,
             ]
 

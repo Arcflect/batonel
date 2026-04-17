@@ -37,8 +37,8 @@ struct PresetPackageMetadata {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct PresetCompatibility {
-    min_archflow_version: String,
-    max_archflow_version: String,
+    min_batonel_version: String,
+    max_batonel_version: String,
     project_schema_version: String,
     policy_profile_version: u32,
 }
@@ -282,22 +282,22 @@ fn validate_manifest_identity(preset_dir: &Path, manifest: &PresetManifest) -> R
 
 fn validate_manifest_compatibility(manifest: &PresetManifest) -> Result<(), String> {
     let compatibility = &manifest.package.compatibility;
-    if !is_semver(&compatibility.min_archflow_version) {
+    if !is_semver(&compatibility.min_batonel_version) {
         return Err(format!(
-            "compatibility.min_archflow_version '{}' must be semver x.y.z",
-            compatibility.min_archflow_version
+            "compatibility.min_batonel_version '{}' must be semver x.y.z",
+            compatibility.min_batonel_version
         ));
     }
-    if !is_semver(&compatibility.max_archflow_version) {
+    if !is_semver(&compatibility.max_batonel_version) {
         return Err(format!(
-            "compatibility.max_archflow_version '{}' must be semver x.y.z",
-            compatibility.max_archflow_version
+            "compatibility.max_batonel_version '{}' must be semver x.y.z",
+            compatibility.max_batonel_version
         ));
     }
-    if compare_semver(&compatibility.min_archflow_version, &compatibility.max_archflow_version)
+    if compare_semver(&compatibility.min_batonel_version, &compatibility.max_batonel_version)
         == Ordering::Greater
     {
-        return Err("compatibility.min_archflow_version cannot be greater than max_archflow_version"
+        return Err("compatibility.min_batonel_version cannot be greater than max_batonel_version"
             .to_string());
     }
 
@@ -310,7 +310,7 @@ fn validate_manifest_compatibility(manifest: &PresetManifest) -> Result<(), Stri
 
 fn validate_manifest_file_includes(preset_dir: &Path, manifest: &PresetManifest) -> Result<(), String> {
     let hard_required = [
-        "project.arch.yaml",
+        "project.baton.yaml",
         "placement.rules.yaml",
         "contracts.template.yaml",
     ];
@@ -421,19 +421,19 @@ fn select_registry_entry<'a>(
 }
 
 fn validate_install_compatibility(entry: &PresetRegistryEntry) -> Result<(), String> {
-    let current_archflow_version = env!("CARGO_PKG_VERSION");
-    if compare_semver(current_archflow_version, &entry.compatibility.min_archflow_version)
+    let current_batonel_version = env!("CARGO_PKG_VERSION");
+    if compare_semver(current_batonel_version, &entry.compatibility.min_batonel_version)
         == Ordering::Less
-        || compare_semver(current_archflow_version, &entry.compatibility.max_archflow_version)
+        || compare_semver(current_batonel_version, &entry.compatibility.max_batonel_version)
             == Ordering::Greater
     {
         return Err(format!(
-            "preset '{}' version '{}' is incompatible with archflow '{}'; supported range: {} - {}",
+            "preset '{}' version '{}' is incompatible with batonel '{}'; supported range: {} - {}",
             entry.id,
             entry.version,
-            current_archflow_version,
-            entry.compatibility.min_archflow_version,
-            entry.compatibility.max_archflow_version
+            current_batonel_version,
+            entry.compatibility.min_batonel_version,
+            entry.compatibility.max_batonel_version
         ));
     }
 
@@ -568,8 +568,8 @@ mod tests {
             architecture_style: "layered".to_string(),
             ecosystem: "generic".to_string(),
             compatibility: PresetCompatibility {
-                min_archflow_version: "0.1.0".to_string(),
-                max_archflow_version: "0.1.9".to_string(),
+                min_batonel_version: "0.1.0".to_string(),
+                max_batonel_version: "0.1.9".to_string(),
                 project_schema_version: "1".to_string(),
                 policy_profile_version: 1,
             },

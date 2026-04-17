@@ -106,7 +106,7 @@ pub fn run_hook(hook: GuardHookPoint, init_planned_files: Option<&[String]>) -> 
             target: "contracts.template.yaml".to_string(),
             message: "contracts.template.yaml is required by sidecar guard policy".to_string(),
             remediation:
-                "Create contracts.template.yaml (or run `archflow init`) before continuing."
+                "Create contracts.template.yaml (or run `batonel init`) before continuing."
                     .to_string(),
         });
     }
@@ -179,7 +179,7 @@ pub fn render_report(report: &GuardReport) {
         .filter(|finding| finding.severity == GuardSeverity::Warn)
         .count();
 
-    println!("Archflow Guard Sidecar Report");
+    println!("Batonel Guard Sidecar Report");
     println!("============================");
     println!(
         "Summary: {} issue(s) detected (errors={}, warnings={})",

@@ -37,11 +37,11 @@ body:
     id: environment
     attributes:
       label: Environment / 環境
-      description: OS, shell, toolchain, Archflow version, etc.
+      description: OS, shell, toolchain, Batonel version, etc.
       placeholder: |
         - OS:
         - Rust:
-        - Archflow:
+        - Batonel:
         - Shell:
     validations:
       required: false

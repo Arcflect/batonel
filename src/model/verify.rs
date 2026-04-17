@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 /// Represents the subject of a verification check.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum VerifyTarget {
-    /// Core project configuration files (e.g., project.arch.yaml)
+    /// Core project configuration files (e.g., project.baton.yaml)
     RootConfig { name: String, path: String },
     /// A logical artifact defined in the plan
     Artifact { name: String },

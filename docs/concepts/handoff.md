@@ -1,16 +1,16 @@
 # AI Handoff Flow
 
-The **AI Handoff** is the final stage of the Archflow design process. It transforms structural constraints (Contracts) into actionable instructions (Prompts) for AI coding assistants.
+The **AI Handoff** is the final stage of the Batonel design process. It transforms structural constraints (Contracts) into actionable instructions (Prompts) for AI coding assistants.
 
 ## The Architecture-to-Execution Bridge
 
-Archflow solves the "Context Drift" problem in AI-assisted coding by ensuring that every file an AI creates is governed by a pre-defined contract.
+Batonel solves the "Context Drift" problem in AI-assisted coding by ensuring that every file an AI creates is governed by a pre-defined contract.
 
 ```mermaid
 graph TD
-    A[artifacts.plan.yaml] -->|archflow scaffold| B[*.contract.yaml]
+    A[artifacts.plan.yaml] -->|batonel scaffold| B[*.contract.yaml]
     B -->|Refine Responsibility| B
-    B -->|archflow prompt| C[Markdown Prompt]
+    B -->|batonel prompt| C[Markdown Prompt]
     C -->|Paste into Chat/IDE| D[Implemented Source Code]
 ```
 
@@ -22,7 +22,7 @@ graph TD
 Define your artifacts in `artifacts.plan.yaml`. Associate each artifact with a **Role** (e.g., `entity`, `usecase`, `http_handler`).
 
 ### Step 2: Scaffolding
-Run `archflow scaffold`. This creates:
+Run `batonel scaffold`. This creates:
 1. The **Source Placeholder** (e.g., `user.rs`)
 2. The **Contract Sidecar** (e.g., `user.contract.yaml`)
 
@@ -36,14 +36,14 @@ Open the generated `.contract.yaml` and refine the:
 Run the prompt command to get a curated AI instruction set.
 
 ```bash
-archflow prompt user
+batonel prompt user
 ```
 
 ---
 
 ## Smart Role Defaults
 
-Phase 3 introduces **Role-Aware Prompts**. Even if you leave your contract relatively simple, Archflow automatically injects "Completion Criteria" based on the architectural role.
+Phase 3 introduces **Role-Aware Prompts**. Even if you leave your contract relatively simple, Batonel automatically injects "Completion Criteria" based on the architectural role.
 
 | Role | Default AI Guidance |
 | :--- | :--- |
@@ -68,11 +68,11 @@ Best for lightweight/fast models or in-editor inline completion. Strips metadata
 
 ## Example: The "Happy Path"
 
-1. **User runs** `archflow prompt create_user`
-2. **Archflow reads** `create_user.contract.yaml`.
-3. **Archflow synthesizes** the project context + contract constraints + role defaults.
+1. **User runs** `batonel prompt create_user`
+2. **Batonel reads** `create_user.contract.yaml`.
+3. **Batonel synthesizes** the project context + contract constraints + role defaults.
 4. **Output** is a clean Markdown block ready for your favorite LLM.
-5. **AI implements** the code strictly within the boundaries of the Archflow `usecase` definition.
+5. **AI implements** the code strictly within the boundaries of the Batonel `usecase` definition.
 
 ---
 
@@ -80,18 +80,18 @@ Best for lightweight/fast models or in-editor inline completion. Strips metadata
 
 # AI ハンドオフ・フロー
 
-**AI ハンドオフ**は、Archflow の設計プロセスの最終段階です。構造的な制約（Contract）を、AI コーディングアシスタント向けの実行可能な指示（Prompt）へと変換します。
+**AI ハンドオフ**は、Batonel の設計プロセスの最終段階です。構造的な制約（Contract）を、AI コーディングアシスタント向けの実行可能な指示（Prompt）へと変換します。
 
 ## アーキテクチャから実装への架け橋
 
-Archflow は、AI による実装における「文脈の乖離（Context Drift）」という問題を、全ての生成ファイルに対して事前に定義された **Contract**（契約）を適用することで解決します。
+Batonel は、AI による実装における「文脈の乖離（Context Drift）」という問題を、全ての生成ファイルに対して事前に定義された **Contract**（契約）を適用することで解決します。
 
 ## 4つのステップ
 
 1. **Planning**: `artifacts.plan.yaml` でアーティファクトを定義。
-2. **Scaffolding**: `archflow scaffold` を実行し、ソースのプレースホルダーと Contract ファイル（Sidecar）を作成。
+2. **Scaffolding**: `batonel scaffold` を実行し、ソースのプレースホルダーと Contract ファイル（Sidecar）を作成。
 3. **Refinement**: 生成された `.contract.yaml` を磨き上げ、責務や制約を明文化。
-4. **Generation**: `archflow prompt` を実行し、AI 用のプロンプトを出力。
+4. **Generation**: `batonel prompt` を実行し、AI 用のプロンプトを出力。
 
 ## ロールベースの自動最適化 (Phase 3)
 

@@ -7,7 +7,7 @@
 
 ADR-0015 defined the minimal internal model for presets.
 The next question is how a preset should be represented in the repository
-and consumed by Archflow.
+and consumed by Batonel.
 
 Without a packaging decision:
 
@@ -41,7 +41,7 @@ and future CLI selection.
 Each preset directory contains these required files:
 
 - `preset.yaml`: preset metadata manifest
-- `project.arch.yaml`: project defaults for the preset
+- `project.baton.yaml`: project defaults for the preset
 - `placement.rules.yaml`: role-to-path defaults for the preset
 - `contracts.template.yaml`: role-based contract defaults for the preset
 - `README.md`: human-readable explanation of intent and usage
@@ -66,7 +66,7 @@ In the first packaging model, presets are **directory-contained**, not fragmente
 This means:
 
 - `preset.yaml` identifies which standard files belong to the preset by convention
-- `project.arch.yaml`, `placement.rules.yaml`, and `contracts.template.yaml` live inside the same preset directory
+- `project.baton.yaml`, `placement.rules.yaml`, and `contracts.template.yaml` live inside the same preset directory
 - a preset does not point at files under `examples/` as its runtime source
 - a preset does not rely on cross-directory composition for its required defaults
 
@@ -104,7 +104,7 @@ Those concerns may be added later if needed, but they are not part of the first 
 ## Consequences
 
 - Contributors have one stable repository shape for preset implementation.
-- Archflow can consume presets through simple path-based loading in a future phase.
+- Batonel can consume presets through simple path-based loading in a future phase.
 - Presets remain easy to inspect and review because required files live together.
 - Examples can still inspire presets without becoming runtime dependencies of presets.
 
@@ -121,7 +121,7 @@ Those concerns may be added later if needed, but they are not part of the first 
 
 ADR-0015 では preset の最小内部モデルを定義しました。
 次の問いは、preset をリポジトリ内でどのように表現し、
-Archflow がどのように利用するかです。
+Batonel がどのように利用するかです。
 
 パッケージング方針がなければ：
 
@@ -155,7 +155,7 @@ distribution、registry、remote install の振る舞いを過剰に構築して
 各 preset ディレクトリは次の必須ファイルを含みます。
 
 - `preset.yaml`: preset metadata manifest
-- `project.arch.yaml`: preset の project defaults
+- `project.baton.yaml`: preset の project defaults
 - `placement.rules.yaml`: preset の role-to-path defaults
 - `contracts.template.yaml`: preset のロールベース contract defaults
 - `README.md`: 意図と使い方を説明する人間向けドキュメント
@@ -180,7 +180,7 @@ core な preset package の定義自体は変えません。
 これは次を意味します。
 
 - `preset.yaml` はどの標準ファイルが preset に属するかを慣習で示す
-- `project.arch.yaml`、`placement.rules.yaml`、`contracts.template.yaml` は同じ preset ディレクトリ内に置かれる
+- `project.baton.yaml`、`placement.rules.yaml`、`contracts.template.yaml` は同じ preset ディレクトリ内に置かれる
 - preset は `examples/` 配下のファイルを実行時の source として参照しない
 - preset は必須デフォルトのためにディレクトリ横断の構成に依存しない
 
@@ -217,6 +217,6 @@ preset の命名は次のルールに従います。
 ## 結果
 
 - コントリビューターは preset 実装のための安定したリポジトリ形状を持てる。
-- 将来のフェーズで Archflow は単純な path-based loading によって preset を利用できる。
+- 将来のフェーズで Batonel は単純な path-based loading によって preset を利用できる。
 - 必須ファイルが同じ場所にあるため、preset は検査・レビューしやすいままでいられる。
 - examples は preset の着想源であり続けられるが、preset の runtime dependency にはならない。

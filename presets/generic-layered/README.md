@@ -1,6 +1,6 @@
 # generic-layered preset
 
-Language-agnostic layered starter preset for Archflow.
+Language-agnostic layered starter preset for Batonel.
 
 ## Purpose
 
@@ -12,7 +12,7 @@ without committing to one language ecosystem.
 Required files:
 
 - `preset.yaml`
-- `project.arch.yaml`
+- `project.baton.yaml`
 - `placement.rules.yaml`
 - `contracts.template.yaml`
 - `README.md`
@@ -34,7 +34,7 @@ same role boundaries:
 
 ## How to start
 
-1. Copy `project.arch.yaml`, `placement.rules.yaml`, and `contracts.template.yaml`
+1. Copy `project.baton.yaml`, `placement.rules.yaml`, and `contracts.template.yaml`
    into your target project root.
 2. Optionally copy `artifacts.plan.yaml` as a starter artifact inventory.
 3. Adjust module names, artifact names, and `file_extension` values for your ecosystem.

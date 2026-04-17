@@ -5,7 +5,7 @@
 
 ## Context
 
-Archflow already has examples such as:
+Batonel already has examples such as:
 
 - minimal
 - generic-layered
@@ -74,7 +74,7 @@ This decision supports the current documentation direction in `docs/presets.md`.
 
 ## コンテキスト
 
-Archflow にはすでに次のような examples があります。
+Batonel にはすでに次のような examples があります。
 
 - minimal
 - generic-layered

@@ -5,7 +5,7 @@
 
 ## Context
 
-As Archflow's Phase 12 expands the trusted preset ecosystem, there is a need to go
+As Batonel's Phase 12 expands the trusted preset ecosystem, there is a need to go
 beyond individual governance controls (signing, review, RBAC) and provide a unified
 model for evaluating and comparing the overall governance posture of participating
 repositories.
@@ -61,7 +61,7 @@ partial credit accumulation.
   - No automated scoring server or external reporting service is introduced in this
     phase. The model is entirely self-assessed via the script or manual checklist.
   - The model covers governance posture only, not architectural quality or preset content.
-    These are separate concerns handled by `archflow verify` and the review workflow.
+    These are separate concerns handled by `batonel verify` and the review workflow.
 
 ## Alternatives considered
 
@@ -74,7 +74,7 @@ partial credit accumulation.
   reflect this.
 - **External compliance attestation service**: Rejected for this phase. Introducing a
   networked attestation server adds significant operational complexity and a dependency
-  footprint that is inconsistent with Archflow's offline-first governance philosophy.
+  footprint that is inconsistent with Batonel's offline-first governance philosophy.
   Self-assessment tooling is sufficient for the current phase.
 - **Single checklist without levels**: Rejected. A flat checklist does not communicate
   the minimum viable posture or the recommended adoption order, making it harder for
@@ -89,7 +89,7 @@ partial credit accumulation.
   - `docs/partner-preset-review.md` (L3 review process)
   - `docs/governance-rbac.md` (L3 role mapping)
 - L4 is the expected minimum posture for any repository that participates in the
-  Archflow trusted ecosystem as a publisher of signed presets.
+  Batonel trusted ecosystem as a publisher of signed presets.
 
 ---
 
@@ -97,7 +97,7 @@ partial credit accumulation.
 
 ### Context
 
-Archflow の Phase 12 が信頼された Preset エコシステムを拡張するにつれ、
+Batonel の Phase 12 が信頼された Preset エコシステムを拡張するにつれ、
 個々のガバナンスコントロール（署名、レビュー、RBAC）を超えて、
 参加リポジトリの全体的なガバナンスポスチャを評価・比較するための
 統一されたモデルが必要になりました。

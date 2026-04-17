@@ -1,10 +1,10 @@
 # Partner Preset Review Operations
 
-This document defines the process for Archflow governance reviewers to validate and merge partner preset submissions.
+This document defines the process for Batonel governance reviewers to validate and merge partner preset submissions.
 
 ## Objective
 
-To maintain the integrity of Archflow's trusted ecosystem, all partner public keys added to `.github/trust/allowed_signers` must be carefully vetted. This procedure ensures origin authenticity while mitigating risks associated with supply chain attacks.
+To maintain the integrity of Batonel's trusted ecosystem, all partner public keys added to `.github/trust/allowed_signers` must be carefully vetted. This procedure ensures origin authenticity while mitigating risks associated with supply chain attacks.
 
 ## 1. Submission Review
 

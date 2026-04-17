@@ -12,17 +12,17 @@ pub fn execute() {
     let mut results = Vec::new();
     let mut verified_contracts = HashSet::new();
 
-    println!("Archflow Architectural Verification");
+    println!("Batonel Architectural Verification");
     println!("==================================");
 
     // 1. Root File Checks
-    check_root_file("project.arch.yaml", &mut results);
+    check_root_file("project.baton.yaml", &mut results);
     check_root_file("placement.rules.yaml", &mut results);
     check_root_file("artifacts.plan.yaml", &mut results);
     check_root_file("contracts.template.yaml", &mut results);
 
     // 2. Load Configs for deeper checks (only if root files exist)
-    let project_config = ProjectConfig::load("project.arch.yaml").ok();
+    let project_config = ProjectConfig::load("project.baton.yaml").ok();
     let placement_config = PlacementRulesConfig::load("placement.rules.yaml").ok();
     let artifacts_config = ArtifactsPlanConfig::load("artifacts.plan.yaml").ok();
 
@@ -594,11 +594,11 @@ mod tests {
             CheckResult {
                 check_id: "root-file-exists".to_string(),
                 target: VerifyTarget::RootConfig {
-                    name: "project.arch.yaml".to_string(),
-                    path: "project.arch.yaml".to_string(),
+                    name: "project.baton.yaml".to_string(),
+                    path: "project.baton.yaml".to_string(),
                 },
                 status: VerifyStatus::Fail,
-                message: "Missing required file: project.arch.yaml".to_string(),
+                message: "Missing required file: project.baton.yaml".to_string(),
             },
             CheckResult {
                 check_id: "prompt-exists".to_string(),
@@ -617,8 +617,8 @@ mod tests {
         assert!(output.contains("Status: FAILED"));
         assert!(output.contains("Failures"));
         assert!(output.contains("Warnings"));
-        assert!(output.contains("Root config: project.arch.yaml"));
-        assert!(output.contains("[root-file-exists] Missing required file: project.arch.yaml"));
+        assert!(output.contains("Root config: project.baton.yaml"));
+        assert!(output.contains("[root-file-exists] Missing required file: project.baton.yaml"));
         assert!(output.contains("Prompt: user (src/user.prompt.md)"));
         assert!(output.contains("[prompt-exists] Prompt missing for user"));
     }

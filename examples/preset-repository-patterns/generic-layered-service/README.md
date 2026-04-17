@@ -20,8 +20,8 @@ my-service-repo/
         infrastructure/
           gateways/
   docs/
-  archflow/
-    project.arch.yaml
+  batonel/
+    project.baton.yaml
     placement.rules.yaml
     contracts.template.yaml
     artifacts.plan.yaml

@@ -416,7 +416,7 @@ fn classify_migration_step(
 // ---------------------------------------------------------------------------
 
 pub fn render_plan(plan: &MigrationPlan) {
-    println!("Archflow Preset Migration Plan");
+    println!("Batonel Preset Migration Plan");
     println!("==============================");
     println!("  preset:       {}", plan.preset_id);
     println!("  from version: {}", plan.from_version);
@@ -551,7 +551,7 @@ fn build_unified_diff(filename: &str, old: &str, new: &str) -> String {
 }
 
 fn make_backup_dir(project_dir: &Path, from_version: &str) -> PathBuf {
-    project_dir.join(format!(".archflow/migration-backup/{}", from_version))
+    project_dir.join(format!(".batonel/migration-backup/{}", from_version))
 }
 
 fn write_step(step: &MigrationStep, target_path: &Path) -> Result<(), String> {

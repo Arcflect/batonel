@@ -36,7 +36,7 @@ impl PlanArchitectureUseCase {
     ) -> Result<PlanArchitectureOutput, crate::app::error::PlanBuildError> {
         Self::execute_with_paths_and_guard(
             input,
-            "project.arch.yaml",
+            "project.baton.yaml",
             "placement.rules.yaml",
             "artifacts.plan.yaml",
             || {
@@ -128,14 +128,14 @@ mod tests {
             PlanArchitectureInput {
                 format: PlanRenderFormat::Json,
             },
-            "missing-project.arch.yaml",
+            "missing-project.baton.yaml",
             "missing-placement.rules.yaml",
             "missing-artifacts.plan.yaml",
             || crate::commands::guard::GuardReport { findings: vec![] },
         );
 
         let err = result.expect_err("expected missing config error");
-        assert!(err.to_string().contains("missing-project.arch.yaml"));
+        assert!(err.to_string().contains("missing-project.baton.yaml"));
     }
 
     #[test]
@@ -144,8 +144,8 @@ mod tests {
         let root = temp.path();
 
         std::fs::write(
-            root.join("project.arch.yaml"),
-            r#"archflow:
+            root.join("project.baton.yaml"),
+            r#"batonel:
   schema_version: "1"
 project:
   name: sample-app
@@ -181,7 +181,7 @@ modules:
             PlanArchitectureInput {
                 format: PlanRenderFormat::Text,
             },
-            root.join("project.arch.yaml")
+            root.join("project.baton.yaml")
                 .to_str()
                 .expect("project path utf8"),
             root.join("placement.rules.yaml")

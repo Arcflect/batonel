@@ -2,12 +2,12 @@
 
 ## Overview
 
-In Archflow, an **Artifact** is the smallest planned implementation unit.
+In Batonel, an **Artifact** is the smallest planned implementation unit.
 
 An artifact represents a concrete thing that should exist in the project structure,
 such as a file, module boundary, handler, use case, entity, repository port, or gateway.
 
-Artifacts are the primary execution units that Archflow scaffolds, documents, and prepares
+Artifacts are the primary execution units that Batonel scaffolds, documents, and prepares
 for human or AI implementation.
 
 ---
@@ -123,7 +123,7 @@ An artifact should not:
 
 ## Why it matters
 
-Archflow is centered on artifact-level execution.
+Batonel is centered on artifact-level execution.
 
 This is important because AI coding tools often perform best when the task is:
 
@@ -132,7 +132,7 @@ This is important because AI coding tools often perform best when the task is:
 - bounded
 - context-rich
 
-Artifacts give Archflow a practical unit for:
+Artifacts give Batonel a practical unit for:
 
 - placement
 - scaffolding
@@ -175,11 +175,11 @@ In the future, artifacts may also support:
 
 ## 概要
 
-Archflow における **Artifact** は、実装のための最小の計画済み単位です。
+Batonel における **Artifact** は、実装のための最小の計画済み単位です。
 
 artifact は、プロジェクト構造に存在すべき具体的なもの、つまりファイル、ハンドラー、エンティティ、サービス、リポジトリ境界、アダプターユニットなどを表します。
 
-Artifact は Archflow がスキャフォルドし、制約を与え、人間または AI システムにハンドオフする主要なユニットです。
+Artifact は Batonel がスキャフォルドし、制約を与え、人間または AI システムにハンドオフする主要なユニットです。
 
 ---
 
@@ -195,7 +195,7 @@ artifact は次のような質問に答えます。
 - どのような依存関係が許可または禁止されているか？
 - どのようにして AI ツールにハンドオフされるか？
 
-Artifact がなければ、Archflow はプロジェクト全体の粗い意図のみを持ち、具体的な実行ユニットを持ちません。
+Artifact がなければ、Batonel はプロジェクト全体の粗い意図のみを持ち、具体的な実行ユニットを持ちません。
 
 ---
 
@@ -229,7 +229,7 @@ Artifact は通常、次のフィールドを持ちます。
 - `outputs`: artifact が生成すると期待されるデータ型（任意）
 - `status`: artifact のライフサイクル状態（任意）
 
-これらのフィールドを使用して、Archflow は次のことができます。
+これらのフィールドを使用して、Batonel は次のことができます。
 
 - artifact のファイルパスを解決する
 - artifact の contract を生成する
@@ -268,7 +268,7 @@ artifacts:
 
 ## 他の概念との関係
 
-Artifact は Archflow モデルの中心です。
+Artifact は Batonel モデルの中心です。
 
 それは次のものによってサポートされます。
 
@@ -284,9 +284,9 @@ Artifact はこれらすべての概念を 1 か所に結びつけます。
 
 ---
 
-## Artifact が Archflow で中心的な理由
+## Artifact が Batonel で中心的な理由
 
-Archflow における実装の有用な最小単位は、リポジトリ全体や大きなサービスではありません。
+Batonel における実装の有用な最小単位は、リポジトリ全体や大きなサービスではありません。
 Artifact です。
 
 Artifact が中心的な理由は次のとおりです。
@@ -312,4 +312,4 @@ Artifact が中心的な理由は次のとおりです。
 
 それらが成長しても、基本的な目的は変わりません。
 
-artifact は Archflow における計画、スキャフォルディング、実装ハンドオフの中心的な単位です。
+artifact は Batonel における計画、スキャフォルディング、実装ハンドオフの中心的な単位です。

@@ -3,7 +3,7 @@ pub struct PlanRendererAdapter;
 impl PlanRendererAdapter {
     pub fn render_text(output: &crate::app::usecase::PlanArchitectureOutput) -> String {
         let mut lines = vec![
-            "Archflow Implementation Plan".to_string(),
+            "Batonel Implementation Plan".to_string(),
             "============================".to_string(),
             format!("Project: {}", output.plan.project_name),
             format!("Style:   {}", output.plan.architecture_style),
@@ -65,7 +65,7 @@ impl PlanRendererAdapter {
 
     pub fn render_markdown(output: &crate::app::usecase::PlanArchitectureOutput) -> String {
         let mut md = String::new();
-        md.push_str("# Archflow Implementation Plan\n\n");
+        md.push_str("# Batonel Implementation Plan\n\n");
         md.push_str(&format!("- Project: {}\n", output.plan.project_name));
         md.push_str(&format!("- Style: {}\n", output.plan.architecture_style));
         md.push_str(&format!("- Language: {}\n", output.plan.language));

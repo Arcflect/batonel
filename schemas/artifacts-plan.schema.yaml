@@ -2,7 +2,7 @@ schema:
   name: artifacts-plan
   version: 0.1.0
   description: >
-    Defines the list of artifacts that Archflow should scaffold or prepare.
+    Defines the list of artifacts that Batonel should scaffold or prepare.
 
 required:
   - artifacts
@@ -30,7 +30,7 @@ fields:
         required: false
         description: >
           Optional explicit path override.
-          If omitted, Archflow resolves the path from placement rules.
+          If omitted, Batonel resolves the path from placement rules.
       inputs:
         type: list[string]
         required: false

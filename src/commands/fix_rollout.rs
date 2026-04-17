@@ -159,7 +159,7 @@ pub fn execute_plan(root: &Path, output: &str) {
             );
             if review_required_count > 0 {
                 println!(
-                    "  Run `archflow fix-rollout approve {}` to approve review-required items before applying.",
+                    "  Run `batonel fix-rollout approve {}` to approve review-required items before applying.",
                     output,
                 );
             }
@@ -243,7 +243,7 @@ pub fn execute_approve(plan_file: &str, ids: &[String], all: bool, approver: Opt
 
 /// Apply all approvable fixes from a plan file.
 ///
-/// - AutoFixable + Approved items → applied automatically via `archflow init`.
+/// - AutoFixable + Approved items → applied automatically via `batonel init`.
 /// - ReviewRequired + Approved items → patch guidance printed; operator applies manually.
 /// - ReviewRequired + Pending/Rejected items → skipped (or fatal in strict mode).
 ///
@@ -281,7 +281,7 @@ pub fn execute_apply(plan_file: &str, strict: bool) {
 
     if !pending_items.is_empty() {
         eprintln!(
-            "[!] {} review-required item(s) are still pending approval. Run `archflow fix-rollout approve` first.",
+            "[!] {} review-required item(s) are still pending approval. Run `batonel fix-rollout approve` first.",
             pending_items.len()
         );
         for item in &pending_items {
@@ -304,7 +304,7 @@ pub fn execute_apply(plan_file: &str, strict: bool) {
         })
         .collect();
 
-    println!("Archflow Fix Rollout – Apply");
+    println!("Batonel Fix Rollout – Apply");
     println!("============================");
     println!("Plan  : {}", plan_file);
     println!(
@@ -318,7 +318,7 @@ pub fn execute_apply(plan_file: &str, strict: bool) {
 
     // Apply AutoFixable items.
     if has_auto_fixable {
-        println!("Applying auto-fixable items via `archflow init`…");
+        println!("Applying auto-fixable items via `batonel init`…");
         crate::commands::init::execute(None, None, false);
         println!("  Auto-fixable items applied.");
         println!();
@@ -415,7 +415,7 @@ mod tests {
 
     #[test]
     fn auto_fixable_item_is_pre_approved() {
-        let finding = make_finding("required-root-file", FixClass::AutoFixable, "project.arch.yaml");
+        let finding = make_finding("required-root-file", FixClass::AutoFixable, "project.baton.yaml");
         let item = plan_item_from_finding(1, &finding);
         assert_eq!(item.id, "fix-001");
         assert!(!item.approval_required);
@@ -472,7 +472,7 @@ mod tests {
     #[test]
     fn plan_counts_correct() {
         let findings = vec![
-            make_finding("required-root-file", FixClass::AutoFixable, "project.arch.yaml"),
+            make_finding("required-root-file", FixClass::AutoFixable, "project.baton.yaml"),
             make_finding("artifact-module-defined", FixClass::ReviewRequired, "artifact:a"),
             make_finding("artifact-role-defined", FixClass::ReviewRequired, "artifact:b"),
         ];
@@ -531,7 +531,7 @@ mod tests {
     #[test]
     fn auto_fixable_items_are_not_gated_by_approval() {
         let findings = vec![
-            make_finding("required-root-file", FixClass::AutoFixable, "project.arch.yaml"),
+            make_finding("required-root-file", FixClass::AutoFixable, "project.baton.yaml"),
         ];
         let plan = build_plan_from_findings(&findings);
         // Gate check: no pending approval-required items.
@@ -562,7 +562,7 @@ mod tests {
     #[test]
     fn plan_survives_json_round_trip() {
         let findings = vec![
-            make_finding("required-root-file", FixClass::AutoFixable, "project.arch.yaml"),
+            make_finding("required-root-file", FixClass::AutoFixable, "project.baton.yaml"),
             make_finding_with_patch("artifact-module-defined", FixClass::ReviewRequired, "artifact:x"),
         ];
         let plan = build_plan_from_findings(&findings);
@@ -576,7 +576,7 @@ mod tests {
 
     #[test]
     fn items_with_no_patch_omit_field_in_json() {
-        let finding = make_finding("required-root-file", FixClass::AutoFixable, "project.arch.yaml");
+        let finding = make_finding("required-root-file", FixClass::AutoFixable, "project.baton.yaml");
         let item = plan_item_from_finding(1, &finding);
         let json = serde_json::to_string(&item).expect("serialize");
         assert!(!json.contains("patch_preview"));

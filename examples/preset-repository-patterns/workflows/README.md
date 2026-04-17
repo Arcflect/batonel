@@ -1,7 +1,7 @@
 # GitHub Workflow Examples for Preset-Based Projects
 
 These workflows are minimal examples for repositories that started from an
-Archflow preset.
+Batonel preset.
 
 They are intentionally small and illustrative.
 
@@ -12,30 +12,30 @@ They are intentionally small and illustrative.
 
 ## Assumed repository shape
 
-The examples assume Archflow config files are under `archflow/`:
+The examples assume Batonel config files are under `batonel/`:
 
-- `archflow/project.arch.yaml`
-- `archflow/placement.rules.yaml`
-- `archflow/contracts.template.yaml`
-- `archflow/artifacts.plan.yaml`
+- `batonel/project.baton.yaml`
+- `batonel/placement.rules.yaml`
+- `batonel/contracts.template.yaml`
+- `batonel/artifacts.plan.yaml`
 
 If your repository keeps config files in a different location, adjust
 `working-directory` accordingly.
 
 ## Installation step note
 
-The workflows include a pinned Archflow binary installation step:
+The workflows include a pinned Batonel binary installation step:
 
 ```bash
-ARCHFLOW_VERSION="v0.1.0"
-ARCHFLOW_TARGET="x86_64-unknown-linux-gnu"
-curl -fsSL -o archflow.tar.gz "https://github.com/Arcflect/archflow/releases/download/${ARCHFLOW_VERSION}/archflow-${ARCHFLOW_VERSION}-${ARCHFLOW_TARGET}.tar.gz"
-curl -fsSL -o archflow.tar.gz.sha256 "https://github.com/Arcflect/archflow/releases/download/${ARCHFLOW_VERSION}/archflow-${ARCHFLOW_VERSION}-${ARCHFLOW_TARGET}.tar.gz.sha256"
-sha256sum -c archflow.tar.gz.sha256
-tar -xzf archflow.tar.gz
-chmod +x archflow
-sudo mv archflow /usr/local/bin/archflow
-archflow --version
+BATONEL_VERSION="v0.1.0"
+BATONEL_TARGET="x86_64-unknown-linux-gnu"
+curl -fsSL -o batonel.tar.gz "https://github.com/Arcflect/batonel/releases/download/${BATONEL_VERSION}/batonel-${BATONEL_VERSION}-${BATONEL_TARGET}.tar.gz"
+curl -fsSL -o batonel.tar.gz.sha256 "https://github.com/Arcflect/batonel/releases/download/${BATONEL_VERSION}/batonel-${BATONEL_VERSION}-${BATONEL_TARGET}.tar.gz.sha256"
+sha256sum -c batonel.tar.gz.sha256
+tar -xzf batonel.tar.gz
+chmod +x batonel
+sudo mv batonel /usr/local/bin/batonel
+batonel --version
 ```
 
 Use a fixed version in CI and rotate intentionally. See also:

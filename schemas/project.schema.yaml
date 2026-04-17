@@ -2,17 +2,17 @@ schema:
   name: project
   version: 0.1.0
   description: >
-    Defines the top-level project context for Archflow.
+    Defines the top-level project context for Batonel.
 
 required:
-  - archflow
+  - batonel
   - project
 
 fields:
-  archflow:
+  batonel:
     type: map
     required: true
-    description: Archflow-specific schema metadata for this project contract.
+    description: Batonel-specific schema metadata for this project contract.
     fields:
       schema_version:
         type: string
@@ -89,7 +89,7 @@ notes:
   - Workspace is optional and ecosystem-dependent.
 
 example:
-  archflow:
+  batonel:
     schema_version: "1"
     preset:
       id: rust-clean-hexagonal

@@ -32,7 +32,7 @@ The minimum behavior per failure class is defined below.
 
 ### 1. Missing File Behavior (Root Context Files)
 
-If `project.arch.yaml`, `placement.rules.yaml`, `artifacts.plan.yaml`, or
+If `project.baton.yaml`, `placement.rules.yaml`, `artifacts.plan.yaml`, or
 `contracts.template.yaml` is missing:
 
 - **Classification:** `Fail` (`root-file-exists`)
@@ -146,7 +146,7 @@ Phase 4 の verify は **「集約して分類する (Aggregate and Classify)」
 
 ### 1. 設定ファイル不足時の動作
 
-`project.arch.yaml` / `placement.rules.yaml` / `artifacts.plan.yaml` /
+`project.baton.yaml` / `placement.rules.yaml` / `artifacts.plan.yaml` /
 `contracts.template.yaml` が不足している場合:
 
 - **分類:** `Fail` (`root-file-exists`)

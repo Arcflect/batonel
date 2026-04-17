@@ -5,7 +5,7 @@
 
 ## Context
 
-As Archflow scales to support an ecosystem of independent presets, it must establish a reliable mechanism to ensure the integrity and authenticity of preset bundles consumed by end-users. Consumers need confidence that a preset actually originated from the claimed source (Archflow maintainers or a trusted partner) and has not suffered from tampering during distribution.
+As Batonel scales to support an ecosystem of independent presets, it must establish a reliable mechanism to ensure the integrity and authenticity of preset bundles consumed by end-users. Consumers need confidence that a preset actually originated from the claimed source (Batonel maintainers or a trusted partner) and has not suffered from tampering during distribution.
 
 To effectively deliver the phase objectives around ecosystem governance, we need to choose a signature mechanism and define the trust verification pipeline that includes key lifecycle handling.
 
@@ -47,7 +47,7 @@ Contributors should assume that any official release automation will mandate a s
 
 ### Context
 
-Archflow が独立した Preset のエコシステムをサポートするようスケールするにつれ、エンドユーザーが利用する Preset バンドルの完全性と真正性を保証する信頼性の高いメカニズムを確立する必要があります。Preset の利用者は、その Preset が実際に主張するソース（Archflow メンテナや信頼できるパートナー）から提供されたものであり、配布中に改ざんされていないという確証を必要としています。
+Batonel が独立した Preset のエコシステムをサポートするようスケールするにつれ、エンドユーザーが利用する Preset バンドルの完全性と真正性を保証する信頼性の高いメカニズムを確立する必要があります。Preset の利用者は、その Preset が実際に主張するソース（Batonel メンテナや信頼できるパートナー）から提供されたものであり、配布中に改ざんされていないという確証を必要としています。
 
 エコシステム・ガバナンスにおけるフェーズ目標を効果的に達成するため、署名メカニズムを選定し、鍵のライフサイクル管理を含むトラスト検証パイプラインを定義する必要があります。
 

@@ -50,7 +50,7 @@ mod tests {
 
     fn sample_project() -> ProjectConfig {
         ProjectConfig {
-            archflow: Some(crate::config::project::ArchflowMetadata {
+            batonel: Some(crate::config::project::BatonelMetadata {
                 schema_version: crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION.to_string(),
                 preset: None,
             }),

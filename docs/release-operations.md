@@ -1,22 +1,22 @@
-# Archflow CLI Distribution and Release Operations
+# Batonel CLI Distribution and Release Operations
 
-This document standardizes how to build, publish, install, and update the `archflow` CLI.
+This document standardizes how to build, publish, install, and update the `batonel` CLI.
 It is the baseline operating procedure for Phase10 Task1.
 
 ## 1. Release deliverables
 
 Every release must publish all of the following assets on GitHub Releases:
 
-- `archflow-vX.Y.Z-x86_64-unknown-linux-gnu.tar.gz`
-- `archflow-vX.Y.Z-aarch64-unknown-linux-gnu.tar.gz`
-- `archflow-vX.Y.Z-x86_64-apple-darwin.tar.gz`
-- `archflow-vX.Y.Z-aarch64-apple-darwin.tar.gz`
+- `batonel-vX.Y.Z-x86_64-unknown-linux-gnu.tar.gz`
+- `batonel-vX.Y.Z-aarch64-unknown-linux-gnu.tar.gz`
+- `batonel-vX.Y.Z-x86_64-apple-darwin.tar.gz`
+- `batonel-vX.Y.Z-aarch64-apple-darwin.tar.gz`
 - `*.sha256` for each archive
 - `checksums.txt` (combined checksum list)
 
 The release workflow is:
 
-- `.github/workflows/archflow-release-cli.yml`
+- `.github/workflows/batonel-release-cli.yml`
 
 ## 2. Release flow
 
@@ -38,16 +38,16 @@ The release tag is created by GitHub when the draft is published — no manual `
    - reads version from `Cargo.toml` (e.g. `1.0.0` -> `v1.0.0`)
    - finds matching draft release (`tag_name == vX.Y.Z`, `draft == true`)
    - publishes it automatically
-   - explicitly triggers `archflow-release-cli.yml` via `workflow_dispatch` for the same tag
+   - explicitly triggers `batonel-release-cli.yml` via `workflow_dispatch` for the same tag
 
-5. `archflow-release-cli.yml` builds release packages and uploads them to the published release:
+5. `batonel-release-cli.yml` builds release packages and uploads them to the published release:
    - Linux/macOS archives per target (`.tar.gz`)
    - per-archive `.sha256`
    - aggregated `checksums.txt`
 
 6. `verify-tag-version.yml` validates `Cargo.toml` version matches the release tag (`release: published`).
 
-> **Important**: `archflow --version` output is determined by `Cargo.toml` at compile time.
+> **Important**: `batonel --version` output is determined by `Cargo.toml` at compile time.
 > If the version-sync PR has not been merged yet, do not publish the release. Merge first.
 
 ## 3. Installation channels
@@ -69,13 +69,13 @@ Package manager channels must use the exact same artifact checksums from GitHub 
 Use the official installer script (Linux/macOS):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Arcflect/archflow/main/scripts/install-archflow.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Arcflect/batonel/main/scripts/install-batonel.sh | bash
 ```
 
 Install a fixed version:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Arcflect/archflow/main/scripts/install-archflow.sh | bash -s -- vX.Y.Z
+curl -fsSL https://raw.githubusercontent.com/Arcflect/batonel/main/scripts/install-batonel.sh | bash -s -- vX.Y.Z
 ```
 
 The script automatically:
@@ -83,7 +83,7 @@ The script automatically:
 - resolves target OS/arch
 - downloads the correct release archive
 - verifies SHA256 checksum
-- installs `archflow` to `/usr/local/bin` (uses `sudo` only if needed)
+- installs `batonel` to `/usr/local/bin` (uses `sudo` only if needed)
 
 Manual install steps remain available for debugging or constrained environments.
 
@@ -94,30 +94,30 @@ Use a fixed release version in CI to avoid accidental breaking changes.
 Example (Linux runner):
 
 ```bash
-ARCHFLOW_VERSION=vX.Y.Z
+BATONEL_VERSION=vX.Y.Z
 
 if [[ "$(uname -m)" == "aarch64" || "$(uname -m)" == "arm64" ]]; then
-   ARCHFLOW_TARGET=aarch64-unknown-linux-gnu
+   BATONEL_TARGET=aarch64-unknown-linux-gnu
 else
-   ARCHFLOW_TARGET=x86_64-unknown-linux-gnu
+   BATONEL_TARGET=x86_64-unknown-linux-gnu
 fi
 
-curl -fsSL -o archflow.tar.gz "https://github.com/Arcflect/archflow/releases/download/${ARCHFLOW_VERSION}/archflow-${ARCHFLOW_VERSION}-${ARCHFLOW_TARGET}.tar.gz"
-curl -fsSL -o archflow.tar.gz.sha256 "https://github.com/Arcflect/archflow/releases/download/${ARCHFLOW_VERSION}/archflow-${ARCHFLOW_VERSION}-${ARCHFLOW_TARGET}.tar.gz.sha256"
-sha256sum -c archflow.tar.gz.sha256
-tar -xzf archflow.tar.gz
-chmod +x archflow
-mv archflow "$RUNNER_TEMP/archflow"
-"$RUNNER_TEMP/archflow" --version
-"$RUNNER_TEMP/archflow" init --preset generic-layered --project-name ci-smoke
-"$RUNNER_TEMP/archflow" plan
-"$RUNNER_TEMP/archflow" audit
+curl -fsSL -o batonel.tar.gz "https://github.com/Arcflect/batonel/releases/download/${BATONEL_VERSION}/batonel-${BATONEL_VERSION}-${BATONEL_TARGET}.tar.gz"
+curl -fsSL -o batonel.tar.gz.sha256 "https://github.com/Arcflect/batonel/releases/download/${BATONEL_VERSION}/batonel-${BATONEL_VERSION}-${BATONEL_TARGET}.tar.gz.sha256"
+sha256sum -c batonel.tar.gz.sha256
+tar -xzf batonel.tar.gz
+chmod +x batonel
+mv batonel "$RUNNER_TEMP/batonel"
+"$RUNNER_TEMP/batonel" --version
+"$RUNNER_TEMP/batonel" init --preset generic-layered --project-name ci-smoke
+"$RUNNER_TEMP/batonel" plan
+"$RUNNER_TEMP/batonel" audit
 ```
 
 Cache strategy:
 
-- cache by key `${ARCHFLOW_VERSION}-${ARCHFLOW_TARGET}`
-- invalidate cache only when upgrading `ARCHFLOW_VERSION`
+- cache by key `${BATONEL_VERSION}-${BATONEL_TARGET}`
+- invalidate cache only when upgrading `BATONEL_VERSION`
 
 ## 6. CI workflows overview
 
@@ -128,7 +128,7 @@ Cache strategy:
 | `pr-title-check.yml` | pull_request | Validates PR title format (`type: summary`) |
 | `pr-auto-label.yml` | pull_request_target | Auto-applies labels based on branch/title/files |
 | `verify-tag-version.yml` | release `published` | Validates `Cargo.toml` version matches the release tag |
-| `archflow-release-cli.yml` | release `published` | Builds binaries, smoke tests, uploads assets to the published release |
+| `batonel-release-cli.yml` | release `published` | Builds binaries, smoke tests, uploads assets to the published release |
 
 ## 7. Update policy
 
@@ -146,9 +146,9 @@ The generated release body describes all breaking changes from merged PR titles.
 
 After a release is published, verify at least once in a fresh environment:
 
-- `archflow --version`
-- `archflow init --preset generic-layered --project-name smoke`
-- `archflow plan`
-- `archflow audit`
+- `batonel --version`
+- `batonel init --preset generic-layered --project-name smoke`
+- `batonel plan`
+- `batonel audit`
 
 If any step fails, mark release as draft or publish a follow-up patch release.

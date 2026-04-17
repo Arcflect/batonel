@@ -2,7 +2,7 @@
 
 ## Overview
 
-In Archflow, **Verify** is the process of checking whether architectural structure
+In Batonel, **Verify** is the process of checking whether architectural structure
 and artifact definitions remain consistent over time.
 
 Verification helps ensure that the project still matches the architecture
@@ -41,7 +41,7 @@ Without verification, architecture can drift into:
 
 ## Responsibilities
 
-Verify is responsible for checking whether the Archflow model remains coherent.
+Verify is responsible for checking whether the Batonel model remains coherent.
 
 It is responsible for validating things such as:
 
@@ -66,7 +66,7 @@ The core idea of verify is simple:
 
 **architecture should remain inspectable and enforceable after generation**
 
-Archflow is not meant to stop at scaffold generation.
+Batonel is not meant to stop at scaffold generation.
 It should also help users detect when the repository drifts away
 from its explicit architectural model.
 
@@ -77,7 +77,7 @@ where implementation can happen quickly and drift can happen quietly.
 
 ## Relationship to other concepts
 
-Verify is downstream from the rest of the Archflow model.
+Verify is downstream from the rest of the Batonel model.
 
 The relationship is:
 
@@ -97,7 +97,7 @@ This makes verify the main protective layer of the model.
 
 ## Why verify matters
 
-Archflow is built around explicit architecture.
+Batonel is built around explicit architecture.
 
 That explicit architecture should not live only at generation time.
 It should continue to matter as the project changes.
@@ -148,7 +148,7 @@ Verify should not begin with:
 Those may become useful later,
 but they should not replace the sidecar-first and contract-centered model too early.
 
-Archflow begins from architecture,
+Batonel begins from architecture,
 so verify should begin from architecture too.
 
 ---
@@ -186,7 +186,7 @@ Verify is broader than code-aware analysis, but also starts earlier.
 - **early verify** focuses on structure and sidecar consistency
 - **later verify** may optionally include code-aware checks
 
-This distinction matters because Archflow is designed to be useful
+This distinction matters because Batonel is designed to be useful
 before full implementation exists.
 
 That means verify must remain meaningful even when:
@@ -241,7 +241,7 @@ Examples of useful verification questions include:
 - Are status values valid?
 - Are examples internally consistent with the documented schemas?
 
-These are the kinds of checks that make Archflow operational over time.
+These are the kinds of checks that make Batonel operational over time.
 
 ---
 
@@ -285,7 +285,7 @@ verify protects the consistency of the architecture-to-execution model.
 
 ## Summary
 
-Verify is the consistency-checking layer of Archflow.
+Verify is the consistency-checking layer of Batonel.
 
 It exists to ensure that project structure, contracts, prompts,
 and scaffold outputs remain aligned with architectural intent.
@@ -302,7 +302,7 @@ If you remember only one thing, remember this:
 
 ## 概要
 
-Archflow における **Verify** は、プロジェクト構造と artifact の定義が時間をかけて整合したままであるかどうかをチェックする操作です。
+Batonel における **Verify** は、プロジェクト構造と artifact の定義が時間をかけて整合したままであるかどうかをチェックする操作です。
 
 verify は次のような問いに答えます。
 
@@ -310,7 +310,7 @@ verify は次のような問いに答えます。
 - ロール、パス、contract が一貫しているか？
 - 実際の構造はアーキテクチャの意図と整合しているか？
 
-Verify は Archflow のアーキテクチャメモリを保護する方法です。
+Verify は Batonel のアーキテクチャメモリを保護する方法です。
 
 ---
 
@@ -368,11 +368,11 @@ Scaffold と verify は異なる目的を果たします。
 
 ## Verify がチェックすること（最初のスコープ）
 
-Archflow の最初の verify フェーズは次に焦点を当てます。
+Batonel の最初の verify フェーズは次に焦点を当てます。
 
 ### 1. 必須入力ファイルの存在
 
-- `project.arch.yaml` が存在する
+- `project.baton.yaml` が存在する
 - `placement.rules.yaml` が存在する
 - `artifacts.plan.yaml` が存在する
 
@@ -425,7 +425,7 @@ Verify は次のものに依存します。
 - **contract**: verify の主要な真実の源
 - **scaffold**: verify がチェックする構造を生成する
 
-Verify は Archflow の一貫性チェックレイヤーです。
+Verify は Batonel の一貫性チェックレイヤーです。
 
 プロジェクト構造、contract、prompt、スキャフォルド出力がアーキテクチャの意図と整合したままであることを確保するために存在します。
 

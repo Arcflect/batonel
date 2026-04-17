@@ -4,12 +4,12 @@ use std::collections::BTreeSet;
 use std::path::Path;
 
 use super::error::ConfigError;
-use super::raw::{RawArchflowMetadata, RawPresetReference, RawProjectConfig};
+use super::raw::{RawBatonelMetadata, RawPresetReference, RawProjectConfig};
 
 pub const SUPPORTED_PROJECT_SCHEMA_VERSION: &str = "1";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ArchflowMetadata {
+pub struct BatonelMetadata {
     pub schema_version: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub preset: Option<PresetReference>,
@@ -23,7 +23,7 @@ pub struct PresetReference {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProjectConfig {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub archflow: Option<ArchflowMetadata>,
+    pub batonel: Option<BatonelMetadata>,
     pub project: Project,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub workspace: Option<Workspace>,
@@ -43,7 +43,7 @@ impl ProjectConfig {
 
     pub fn from_raw<P: AsRef<Path>>(raw: RawProjectConfig, path: P) -> Result<Self, ConfigError> {
         let config = ProjectConfig {
-            archflow: raw.archflow.map(|a| ArchflowMetadata {
+            batonel: raw.batonel.map(|a| BatonelMetadata {
                 schema_version: a.schema_version,
                 preset: a.preset.map(|p| PresetReference { id: p.id }),
             }),
@@ -64,27 +64,27 @@ impl ProjectConfig {
     fn validate<P: AsRef<Path>>(&self, path: P) -> Result<(), ConfigError> {
         let path = path.as_ref().to_path_buf();
 
-        let archflow = self.archflow.as_ref().ok_or_else(|| ConfigError::Validation {
+        let batonel = self.batonel.as_ref().ok_or_else(|| ConfigError::Validation {
             path: path.clone(),
-            message: "missing required top-level key: archflow".to_string(),
+            message: "missing required top-level key: batonel".to_string(),
         })?;
 
-        if archflow.schema_version != SUPPORTED_PROJECT_SCHEMA_VERSION {
+        if batonel.schema_version != SUPPORTED_PROJECT_SCHEMA_VERSION {
             return Err(ConfigError::Validation {
                 path: path.clone(),
                 message: format!(
-                    "archflow.schema_version must be '{}' (got '{}')",
-                    SUPPORTED_PROJECT_SCHEMA_VERSION, archflow.schema_version
+                    "batonel.schema_version must be '{}' (got '{}')",
+                    SUPPORTED_PROJECT_SCHEMA_VERSION, batonel.schema_version
                 ),
             });
         }
 
-        if let Some(preset) = &archflow.preset {
+        if let Some(preset) = &batonel.preset {
             if !is_kebab_case(&preset.id) {
                 return Err(ConfigError::Validation {
                     path: path.clone(),
                     message: format!(
-                        "archflow.preset.id must use lowercase kebab-case (got '{}')",
+                        "batonel.preset.id must use lowercase kebab-case (got '{}')",
                         preset.id
                     ),
                 });
@@ -212,9 +212,9 @@ impl From<PresetReference> for RawPresetReference {
     }
 }
 
-impl From<ArchflowMetadata> for RawArchflowMetadata {
-    fn from(value: ArchflowMetadata) -> Self {
-        RawArchflowMetadata {
+impl From<BatonelMetadata> for RawBatonelMetadata {
+    fn from(value: BatonelMetadata) -> Self {
+        RawBatonelMetadata {
             schema_version: value.schema_version,
             preset: value.preset.map(Into::into),
         }
@@ -250,15 +250,15 @@ mod tests {
 
     fn write_and_load(contents: &str) -> Result<ProjectConfig, crate::config::error::ConfigError> {
         let temp = tempdir().expect("tempdir should be created");
-        let path = temp.path().join("project.arch.yaml");
+        let path = temp.path().join("project.baton.yaml");
         std::fs::write(&path, contents).expect("config should be written");
         ProjectConfig::load(&path)
     }
 
     #[test]
-    fn load_accepts_versioned_archflow_metadata() {
+    fn load_accepts_versioned_batonel_metadata() {
         let config = write_and_load(
-            r#"archflow:
+            r#"batonel:
   schema_version: "1"
   preset:
     id: generic-layered
@@ -274,12 +274,12 @@ modules:
         )
         .expect("config should load");
 
-        assert_eq!(config.archflow.as_ref().unwrap().schema_version, "1");
+        assert_eq!(config.batonel.as_ref().unwrap().schema_version, "1");
         assert!(config.has_module("user"));
     }
 
     #[test]
-    fn load_rejects_missing_archflow_block() {
+    fn load_rejects_missing_batonel_block() {
         let err = write_and_load(
             r#"project:
   name: sample-app
@@ -289,17 +289,17 @@ modules:
   - name: user
 "#,
         )
-        .expect_err("missing archflow should fail");
+        .expect_err("missing batonel should fail");
 
         assert!(err
             .to_string()
-            .contains("missing required top-level key: archflow"));
+            .contains("missing required top-level key: batonel"));
     }
 
     #[test]
     fn load_rejects_unsupported_schema_version() {
         let err = write_and_load(
-            r#"archflow:
+            r#"batonel:
   schema_version: "2"
 project:
   name: sample-app
@@ -313,13 +313,13 @@ modules:
 
         assert!(err
             .to_string()
-            .contains("archflow.schema_version must be '1' (got '2')"));
+            .contains("batonel.schema_version must be '1' (got '2')"));
     }
 
     #[test]
     fn load_rejects_duplicate_module_names() {
         let err = write_and_load(
-            r#"archflow:
+            r#"batonel:
   schema_version: "1"
 project:
   name: sample-app

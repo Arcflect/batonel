@@ -1,0 +1,45 @@
+name: Batonel Verify Example
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "schemas/**"
+      - "examples/**"
+      - ".github/workflows/batonel-verify-example.yml"
+  workflow_dispatch:
+
+jobs:
+  verify-examples:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        example_dir:
+          - examples/minimal/batonel
+          - examples/generic-layered/batonel
+          - examples/rust-clean-hexagonal/batonel
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run batonel verify and save log (${{ matrix.example_dir }})
+        working-directory: ${{ matrix.example_dir }}
+        run: cargo run --manifest-path ../../../Cargo.toml -- verify 2>&1 | tee batonel-verify.log
+
+      - name: Build artifact name suffix
+        id: artifact_suffix
+        run: echo "value=$(echo '${{ matrix.example_dir }}' | tr '/' '-')" >> "$GITHUB_OUTPUT"
+
+      - name: Upload verify log artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: batonel-verify-log-${{ steps.artifact_suffix.outputs.value }}
+          path: ${{ matrix.example_dir }}/batonel-verify.log

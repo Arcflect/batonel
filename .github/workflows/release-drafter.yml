@@ -66,12 +66,12 @@ jobs:
           cargo_lock = Path("Cargo.lock")
           lock_text = cargo_lock.read_text(encoding="utf-8")
           pattern = re.compile(
-              r'(\[\[package\]\]\nname = "archflow"\nversion = ")[0-9]+\.[0-9]+\.[0-9]+("\n)',
+              r'(\[\[package\]\]\nname = "batonel"\nversion = ")[0-9]+\.[0-9]+\.[0-9]+("\n)',
               re.MULTILINE,
           )
           lock_text_new, lock_count = pattern.subn(rf'\g<1>{version}\g<2>', lock_text, count=1)
           if lock_count != 1:
-              raise SystemExit("failed to update Cargo.lock version for archflow package")
+              raise SystemExit("failed to update Cargo.lock version for batonel package")
           cargo_lock.write_text(lock_text_new, encoding="utf-8")
           PY
 

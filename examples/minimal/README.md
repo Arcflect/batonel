@@ -1,6 +1,6 @@
 # minimal
 
-The smallest Archflow example.
+The smallest Batonel example.
 
 This example demonstrates:
 
@@ -9,4 +9,4 @@ This example demonstrates:
 - a small artifact plan
 - generated contracts and prompts
 
-Use this example to understand the minimum Archflow workflow before exploring larger layouts.
+Use this example to understand the minimum Batonel workflow before exploring larger layouts.

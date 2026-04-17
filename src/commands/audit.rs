@@ -86,8 +86,8 @@ pub fn run_for_root(root: &Path) -> Result<AuditReport, String> {
                 rule_id: "policy-profile-valid".to_string(),
                 severity: Severity::Error,
                 target: "policy.profile.yaml".to_string(),
-                message: format!("policy resolution failed: {}; hint: run `archflow policy-resolve` to diagnose", err),
-                remediation: "Fix the policy layer files identified by `archflow policy-resolve`."
+                message: format!("policy resolution failed: {}; hint: run `batonel policy-resolve` to diagnose", err),
+                remediation: "Fix the policy layer files identified by `batonel policy-resolve`."
                     .to_string(),
             });
             return Ok(build_report(root, findings));
@@ -103,15 +103,15 @@ pub fn run_for_root(root: &Path) -> Result<AuditReport, String> {
         return Ok(build_report(root, findings));
     }
 
-    let project_config = match ProjectConfig::load(root.join("project.arch.yaml")) {
+    let project_config = match ProjectConfig::load(root.join("project.baton.yaml")) {
         Ok(config) => config,
         Err(err) => {
             findings.push(AuditFinding {
                 rule_id: "project-config-valid".to_string(),
                 severity: Severity::Error,
-                target: "project.arch.yaml".to_string(),
+                target: "project.baton.yaml".to_string(),
                 message: format!("project configuration is invalid: {}", err),
-                remediation: "Fix project.arch.yaml based on the validation message and rerun `archflow audit`.".to_string(),
+                remediation: "Fix project.baton.yaml based on the validation message and rerun `batonel audit`.".to_string(),
             });
             return Ok(build_report(root, findings));
         }
@@ -191,7 +191,7 @@ fn check_required_root_file(
             severity: Severity::Error,
             target: filename.to_string(),
             message: format!("missing required root file: {}", filename),
-            remediation: format!("Run `archflow init` to generate missing files, or add {} manually.", filename),
+            remediation: format!("Run `batonel init` to generate missing files, or add {} manually.", filename),
         });
     }
 }
@@ -256,7 +256,7 @@ fn run_policy_audit(
                         artifact.name, artifact.module
                     ),
                     remediation: format!(
-                        "Add module '{}' to project.arch.yaml or update artifact '{}' to an existing module.",
+                        "Add module '{}' to project.baton.yaml or update artifact '{}' to an existing module.",
                         artifact.module, artifact.name
                     ),
                 });
@@ -423,7 +423,7 @@ fn render_report(findings: &[AuditFinding]) {
         .filter(|finding| finding.severity == Severity::Warn)
         .count();
 
-    println!("Archflow Audit Report");
+    println!("Batonel Audit Report");
     println!("=====================");
     println!(
         "Summary: {} issue(s) detected (errors={}, warnings={})",
@@ -461,7 +461,7 @@ mod tests {
 
     fn base_project() -> ProjectConfig {
         ProjectConfig {
-            archflow: Some(crate::config::project::ArchflowMetadata {
+            batonel: Some(crate::config::project::BatonelMetadata {
                 schema_version: crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION.to_string(),
                 preset: None,
             }),

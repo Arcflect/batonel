@@ -1,7 +1,7 @@
 # Preset Repository Patterns
 
 This directory provides onboarding-focused repository patterns that show how
-Archflow presets fit realistic project layouts.
+Batonel presets fit realistic project layouts.
 
 These are not full applications.
 They are intentionally small mapping guides from preset defaults to repository
@@ -23,13 +23,13 @@ Example bootstrap commands:
 
 ```bash
 # Minimal baseline
-archflow init --project-name my-minimal-app
+batonel init --project-name my-minimal-app
 
 # Language-agnostic layered baseline
-archflow init --preset generic-layered --project-name my-service
+batonel init --preset generic-layered --project-name my-service
 
 # Rust clean/hexagonal baseline
-archflow init --preset rust-clean-hexagonal --project-name my-rust-service
+batonel init --preset rust-clean-hexagonal --project-name my-rust-service
 ```
 
 Each pattern includes:
@@ -42,7 +42,7 @@ Each pattern includes:
 
 ## GitHub Workflow Examples
 
-For minimal GitHub Actions examples that show where Archflow commands can fit,
+For minimal GitHub Actions examples that show where Batonel commands can fit,
 see:
 
 - `examples/preset-repository-patterns/workflows/`

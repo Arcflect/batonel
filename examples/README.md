@@ -1,16 +1,16 @@
 # Examples
 
-This directory contains example Archflow inputs and expected outputs.
+This directory contains example Batonel inputs and expected outputs.
 
-The goal of these examples is to show how Archflow turns architecture into executable implementation scaffolding for AI-assisted development.
+The goal of these examples is to show how Batonel turns architecture into executable implementation scaffolding for AI-assisted development.
 
 Each example is organized in the same way:
 
-- `archflow/`: input files for Archflow
+- `batonel/`: input files for Batonel
 - `expected/`: example output structure after planning or scaffolding
 
 These examples are not meant to be full applications.
-They are designed to make the Archflow model easy to understand.
+They are designed to make the Batonel model easy to understand.
 
 They are documentation-first assets.
 Preset implementation should be derived from stabilized example defaults,
@@ -20,7 +20,7 @@ not the other way around.
 
 ## What these examples show
 
-Across all examples, Archflow is expected to help define:
+Across all examples, Batonel is expected to help define:
 
 - where artifacts should live
 - what role each artifact has
@@ -42,9 +42,9 @@ but also on:
 
 ### 1. `minimal`
 
-The smallest possible Archflow example.
+The smallest possible Batonel example.
 
-Use this when you want to understand the basic Archflow flow with the least amount of structure.
+Use this when you want to understand the basic Batonel flow with the least amount of structure.
 
 What it emphasizes:
 
@@ -75,7 +75,7 @@ Artifacts included:
 
 A Rust-oriented example using a clean / hexagonal style layout.
 
-Use this when you want to see how Archflow can support projects
+Use this when you want to see how Batonel can support projects
 with stronger architectural boundaries and workspace-style structure.
 
 What it emphasizes:
@@ -129,7 +129,7 @@ Best for:
 
 - language-agnostic understanding
 - layered architecture users
-- teams exploring Archflow before choosing a language-specific preset
+- teams exploring Batonel before choosing a language-specific preset
 
 Preset path:
 
@@ -156,7 +156,7 @@ Artifacts included:
 
 | Example | Main purpose | Architecture style | Language orientation | Complexity | Best starting point for |
 |---|---|---|---|---|---|
-| `minimal` | Show the smallest Archflow flow | simple | generic | low | understanding the core idea quickly |
+| `minimal` | Show the smallest Batonel flow | simple | generic | low | understanding the core idea quickly |
 | `rust-clean-hexagonal` | Show strong boundaries in a Rust-style layout | clean / hexagonal | Rust-oriented | medium | Rust users and architecture-focused teams |
 | `generic-layered` | Show broad layered architecture support | layered | language-agnostic | medium | teams wanting a neutral example |
 
@@ -226,7 +226,7 @@ An example should be promoted to a supported preset only when:
 
 ## Recommended reading order
 
-If you are new to Archflow, read the examples in this order:
+If you are new to Batonel, read the examples in this order:
 
 1. `minimal`
 2. `generic-layered`
@@ -236,7 +236,7 @@ Why this order:
 
 - `minimal` explains the core model with the least noise
 - `generic-layered` shows a more realistic but still language-neutral structure
-- `rust-clean-hexagonal` shows how Archflow can express stricter boundaries in a Rust-oriented project
+- `rust-clean-hexagonal` shows how Batonel can express stricter boundaries in a Rust-oriented project
 
 If you already know you care about Rust, you can start with `rust-clean-hexagonal`.
 
@@ -246,12 +246,12 @@ If you already know you care about Rust, you can start with `rust-clean-hexagona
 
 Every example follows the same high-level pattern:
 
-### `archflow/`
+### `batonel/`
 Input files that describe architecture and intent.
 
 Typical files:
 
-- `project.arch.yaml`
+- `project.baton.yaml`
 - `placement.rules.yaml`
 - `contracts.template.yaml`
 - `artifacts.plan.yaml`
@@ -262,10 +262,10 @@ Example scaffold output after planning or generation.
 Typical contents:
 
 - planned file structure
-- `.archflow/contracts/*.contract.yaml`
-- `.archflow/prompts/*.prompt.md`
+- `.batonel/contracts/*.contract.yaml`
+- `.batonel/prompts/*.prompt.md`
 
-This reflects the core Archflow idea:
+This reflects the core Batonel idea:
 
 **design first, scaffold clearly, implement with explicit boundaries**
 
@@ -273,7 +273,7 @@ This reflects the core Archflow idea:
 
 ## Why the examples include contracts and prompts
 
-Archflow is not only about deciding where files go.
+Batonel is not only about deciding where files go.
 
 It is also about turning architecture into artifact-level execution context.
 
@@ -283,7 +283,7 @@ That is why the examples include:
 - artifact contracts
 - AI handoff prompts
 
-This helps show how Archflow can support both humans and lightweight coding models during implementation.
+This helps show how Batonel can support both humans and lightweight coding models during implementation.
 
 ---
 
@@ -302,7 +302,7 @@ The purpose is to highlight:
 
 rather than full business logic.
 
-As Archflow evolves, these examples may expand to include:
+As Batonel evolves, these examples may expand to include:
 
 - additional roles
 - more presets

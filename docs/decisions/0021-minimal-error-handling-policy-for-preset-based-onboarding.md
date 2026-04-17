@@ -5,7 +5,7 @@
 
 ## Context
 
-Preset-based onboarding is now available through `archflow init --preset`.
+Preset-based onboarding is now available through `batonel init --preset`.
 As adoption grows, contributors need shared expectations for preset-related
 failures without introducing heavy UX or complex recovery behavior.
 
@@ -34,7 +34,7 @@ If the selected preset id is not found in available preset roots:
 ### 2. Incomplete preset definition behavior
 
 If a preset exists but required files are missing or unreadable
-(`project.arch.yaml`, `placement.rules.yaml`, `contracts.template.yaml`):
+(`project.baton.yaml`, `placement.rules.yaml`, `contracts.template.yaml`):
 
 - **Behavior:** Fail immediately
 - **Message:** includes required file path and IO/read error detail
@@ -77,7 +77,7 @@ If override input is invalid (for now, `--project-name` is empty/whitespace):
 
 ## コンテキスト
 
-`archflow init --preset` により preset ベースオンボーディングが利用可能になりました。
+`batonel init --preset` により preset ベースオンボーディングが利用可能になりました。
 採用が進むにつれて、preset 関連失敗について、過剰な UX を作り込まずに
 共通期待値を持つ必要があります。
 
@@ -106,7 +106,7 @@ preset オンボーディングは **「明確で明示的な失敗 (Clear and E
 ### 2. 不完全 preset 定義の挙動
 
 preset は存在するが必須ファイル
-(`project.arch.yaml`, `placement.rules.yaml`, `contracts.template.yaml`)
+(`project.baton.yaml`, `placement.rules.yaml`, `contracts.template.yaml`)
 が欠落または読み取り不能な場合:
 
 - **挙動:** 即時失敗

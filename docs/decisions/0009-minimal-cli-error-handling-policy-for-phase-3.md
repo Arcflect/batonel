@@ -5,7 +5,7 @@
 
 ## Context
 
-As part of Phase 3 (AI Handoff Layer), the Archflow CLI must handle specific failures related to contract loading, parsing, and prompt generation. This policy extends [ADR-0008](./0008-minimal-cli-error-handling-policy-for-phase-2.md) to the prompt generation workflow.
+As part of Phase 3 (AI Handoff Layer), the Batonel CLI must handle specific failures related to contract loading, parsing, and prompt generation. This policy extends [ADR-0008](./0008-minimal-cli-error-handling-policy-for-phase-2.md) to the prompt generation workflow.
 
 The objective is to maintain a predictable, "Fail Fast" behavior for configuration errors while ensuring the tool remains flexible enough to handle custom extension points (Roles) without unnecessary crashes.
 
@@ -25,7 +25,7 @@ If a `.contract.yaml` exists but is malformed or missing required fields (`name`
 ### 3. Unsupported Role Behavior
 If an artifact has a `role` value that is not recognized by the internal role-aware prompt mapper (e.g., a custom role like `service_layer`):
 - **Policy:** **Graceful Fallback**. Generate a "generic" prompt containing default architectural constraints instead of an error.
-- **Reasoning:** Archflow is designed to be extensible. Users should be able to define custom roles and still get a functional (if un-optimized) prompt without the tool crashing.
+- **Reasoning:** Batonel is designed to be extensible. Users should be able to define custom roles and still get a functional (if un-optimized) prompt without the tool crashing.
 
 ### 4. Output Mode Failure
 If an invalid `--mode` is provided via CLI:
@@ -47,7 +47,7 @@ If an invalid `--mode` is provided via CLI:
 
 ## コンテキスト
 
-Phase 3 (AI Handoff Layer) において、Archflow CLI は Contract の読み込み、パース、およびプロンプト生成に関連する特定のエラーを処理する必要があります。このポリシーは、[ADR-0008](./0008-minimal-cli-error-handling-policy-for-phase-2.md) をプロンプト生成ワークフローに拡張したものです。
+Phase 3 (AI Handoff Layer) において、Batonel CLI は Contract の読み込み、パース、およびプロンプト生成に関連する特定のエラーを処理する必要があります。このポリシーは、[ADR-0008](./0008-minimal-cli-error-handling-policy-for-phase-2.md) をプロンプト生成ワークフローに拡張したものです。
 
 目的は、設定エラーに対して予測可能な「フェイルファスト（Fail Fast）」な挙動を維持しつつ、カスタム拡張ポイント（Role）に対して不必要なクラッシュを起こさない柔軟性を確保することです。
 
@@ -67,7 +67,7 @@ Phase 3 では、以下のエラーハンドリング動作を採用します。
 ### 3. 未知の Role に対する動作
 アーティファクトの `role` の値が、内部のロール対応プロンプトマッパーで認識されない場合（例: `service_layer` などのカスタムロール）:
 - **ポリシー:** **緩やかなフォールバック（Graceful Fallback）**。エラーにはせず、デフォルトのアーキテクチャ制約を含む「汎用的なプロンプト」を生成します。
-- **理由:** Archflow は拡張性を重視しています。ユーザーが独自の Role を定義しても、プロンプト生成が中断されることなく機能し続ける（最適化はされなくても動作する）必要があります。
+- **理由:** Batonel は拡張性を重視しています。ユーザーが独自の Role を定義しても、プロンプト生成が中断されることなく機能し続ける（最適化はされなくても動作する）必要があります。
 
 ### 4. 出力モードの失敗
 CLI 経由で無効な `--mode` が指定された場合:

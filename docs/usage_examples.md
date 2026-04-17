@@ -1,4 +1,4 @@
-# Archflow Prompt Generation: Usage Examples
+# Batonel Prompt Generation: Usage Examples
 
 This document provides typical commands to initialize and verify prompt generation across the different example architectures provided in this repository.
 
@@ -11,8 +11,8 @@ Ensure the binary is built and available. You can run it via `cargo run` from th
 A flat architecture with simple domain and application layers.
 
 ```bash
-# Navigate to the archflow configuration directory
-cd examples/minimal/archflow
+# Navigate to the batonel configuration directory
+cd examples/minimal/batonel
 
 # Step A: Generate missing contract and source placeholders
 cargo run --manifest-path ../../../Cargo.toml -- scaffold
@@ -28,7 +28,7 @@ cargo run --manifest-path ../../../Cargo.toml -- prompt create_user
 A traditional N-tier layered architecture.
 
 ```bash
-cd examples/generic-layered/archflow
+cd examples/generic-layered/batonel
 
 # Generate sidecars
 cargo run --manifest-path ../../../Cargo.toml -- scaffold
@@ -44,7 +44,7 @@ cargo run --manifest-path ../../../Cargo.toml -- prompt user_repository
 A sophisticated Hexagonal (Ports & Adapters) architecture with crate isolation.
 
 ```bash
-cd examples/rust-clean-hexagonal/archflow
+cd examples/rust-clean-hexagonal/batonel
 
 # Generate sidecars
 cargo run --manifest-path ../../../Cargo.toml -- scaffold

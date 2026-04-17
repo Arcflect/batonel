@@ -21,8 +21,8 @@ my-rust-service/
         src/repositories/
   Cargo.toml
   Cargo.lock
-  archflow/
-    project.arch.yaml
+  batonel/
+    project.baton.yaml
     placement.rules.yaml
     contracts.template.yaml
     artifacts.plan.yaml
@@ -45,7 +45,7 @@ my-rust-service/
 ## Minimal override example
 
 ```yaml
-# project.arch.yaml (repo naming override)
+# project.baton.yaml (repo naming override)
 project:
   name: my-rust-service
   architecture_style: clean-hexagonal

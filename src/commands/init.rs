@@ -28,9 +28,9 @@ pub fn execute(preset: Option<&str>, project_name: Option<&str>, dry_run: bool) 
   };
 
   if let Some(preset_id) = preset {
-    println!("Archflow Initialization (preset: {})", preset_id);
+    println!("Batonel Initialization (preset: {})", preset_id);
   } else {
-    println!("Archflow Initialization");
+    println!("Batonel Initialization");
   }
   println!("=======================");
 
@@ -78,8 +78,8 @@ pub fn execute(preset: Option<&str>, project_name: Option<&str>, dry_run: bool) 
     println!("Review the plan above, then run the same command without --dry-run to generate files.");
   } else if generated_count > 0 {
     println!("Initialization complete! Explore your configuration files, then run:");
-    println!("  archflow plan");
-    println!("  archflow scaffold");
+    println!("  batonel plan");
+    println!("  batonel scaffold");
   } else {
     println!("Initialization finished. No new configuration files were generated.");
   }
@@ -103,7 +103,7 @@ fn plan_init_actions(
 
   for (filename, original_content) in files {
     let mut content = original_content;
-    if filename == "project.arch.yaml" {
+    if filename == "project.baton.yaml" {
       content = ensure_project_arch_metadata(&content, preset)?;
       if let Some(name) = project_name {
         validate_project_name(name)
@@ -141,12 +141,12 @@ fn collect_init_files(preset: Option<&str>) -> Result<Vec<(String, String)>, Str
 fn default_init_files() -> Vec<(String, String)> {
   vec![
     (
-      "project.arch.yaml".to_string(),
-      format!(r#"archflow:
+      "project.baton.yaml".to_string(),
+      format!(r#"batonel:
   schema_version: "{}"
 
 project:
-  name: archflow-app
+  name: batonel-app
   architecture_style: simple
   language: generic
 
@@ -225,7 +225,7 @@ modules:
     r#"version: 1
 
 required_files:
-  - project.arch.yaml
+  - project.baton.yaml
   - placement.rules.yaml
   - artifacts.plan.yaml
   - contracts.template.yaml
@@ -291,7 +291,7 @@ checks:
 
     let mut files = Vec::new();
     let required = [
-      "project.arch.yaml",
+      "project.baton.yaml",
       "placement.rules.yaml",
       "contracts.template.yaml",
     ];
@@ -383,23 +383,23 @@ checks:
 
 fn ensure_project_arch_metadata(contents: &str, preset: Option<&str>) -> Result<String, String> {
   let mut value: Value = serde_yaml::from_str(contents)
-    .map_err(|e| format!("invalid YAML in project.arch.yaml: {}", e))?;
+    .map_err(|e| format!("invalid YAML in project.baton.yaml: {}", e))?;
 
   let root = value
     .as_mapping_mut()
     .ok_or_else(|| "root YAML document must be a mapping".to_string())?;
 
-  let archflow_key = Value::String("archflow".to_string());
-  if !root.contains_key(&archflow_key) {
-    root.insert(archflow_key.clone(), Value::Mapping(Mapping::new()));
+  let batonel_key = Value::String("batonel".to_string());
+  if !root.contains_key(&batonel_key) {
+    root.insert(batonel_key.clone(), Value::Mapping(Mapping::new()));
   }
 
-  let archflow = root
-    .get_mut(&archflow_key)
+  let batonel = root
+    .get_mut(&batonel_key)
     .and_then(Value::as_mapping_mut)
-    .ok_or_else(|| "archflow must be a mapping".to_string())?;
+    .ok_or_else(|| "batonel must be a mapping".to_string())?;
 
-  archflow.insert(
+  batonel.insert(
     Value::String("schema_version".to_string()),
     Value::String(SUPPORTED_PROJECT_SCHEMA_VERSION.to_string()),
   );
@@ -410,7 +410,7 @@ fn ensure_project_arch_metadata(contents: &str, preset: Option<&str>) -> Result<
       Value::String("id".to_string()),
       Value::String(preset_id.to_string()),
     );
-    archflow.insert(
+    batonel.insert(
       Value::String("preset".to_string()),
       Value::Mapping(preset_mapping),
     );
@@ -421,7 +421,7 @@ fn ensure_project_arch_metadata(contents: &str, preset: Option<&str>) -> Result<
 
   fn override_project_name(contents: &str, project_name: &str) -> Result<String, String> {
     let mut value: Value = serde_yaml::from_str(contents)
-      .map_err(|e| format!("invalid YAML in project.arch.yaml: {}", e))?;
+      .map_err(|e| format!("invalid YAML in project.baton.yaml: {}", e))?;
 
     let root = value
       .as_mapping_mut()
@@ -550,7 +550,7 @@ mod tests {
     assert_eq!(
       filenames,
       vec![
-        "project.arch.yaml",
+        "project.baton.yaml",
         "placement.rules.yaml",
         "artifacts.plan.yaml",
         "contracts.template.yaml",
@@ -588,12 +588,12 @@ modules:
     let value: Value = serde_yaml::from_str(&updated).expect("yaml should parse");
 
     let schema_version = value
-      .get("archflow")
+      .get("batonel")
       .and_then(|entry| entry.get("schema_version"))
       .and_then(Value::as_str)
       .expect("schema version should exist");
     let preset_id = value
-      .get("archflow")
+      .get("batonel")
       .and_then(|entry| entry.get("preset"))
       .and_then(|entry| entry.get("id"))
       .and_then(Value::as_str)

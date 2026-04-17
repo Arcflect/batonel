@@ -205,7 +205,7 @@ pub fn execute(top: Option<usize>, json: bool) {
 }
 
 fn render_triage_plan(plan: &TriagePlan, top: Option<usize>) {
-    println!("Archflow Violation Triage");
+    println!("Batonel Violation Triage");
     println!("=========================");
     println!("Repository : {}", plan.repository);
     println!(
@@ -351,7 +351,7 @@ mod tests {
         let findings = vec![
             make_finding("artifact-name-policy", Severity::Error, "artifact:a"),
             make_finding("artifact-name-policy", Severity::Error, "artifact:b"),
-            make_finding("required-root-file", Severity::Error, "project.arch.yaml"),
+            make_finding("required-root-file", Severity::Error, "project.baton.yaml"),
             make_finding("artifact-path-aligns-role", Severity::Warn, "artifact:c"),
         ];
 

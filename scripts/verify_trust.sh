@@ -2,7 +2,7 @@
 set -eou pipefail
 
 # verify_trust.sh
-# Verifies the origin authenticity of an Archflow asset using SSH Ed25519 signatures.
+# Verifies the origin authenticity of an Batonel asset using SSH Ed25519 signatures.
 # 
 # Usage:
 #   ./scripts/verify_trust.sh <identity> <signature-file> <target-file> [allowed-signers-file]

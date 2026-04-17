@@ -1,4 +1,4 @@
-# Archflow Prompt Generation: Usage Examples
+# Batonel Prompt Generation: Usage Examples
 
 This document provides typical commands to initialize and verify prompt generation across the different example architectures provided in this repository.
 
@@ -16,44 +16,44 @@ Official CLI distribution/update operations are documented in:
 For users, use the official installer script (Linux/macOS).
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Arcflect/archflow/main/scripts/install-archflow.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Arcflect/batonel/main/scripts/install-batonel.sh | bash
 ```
 
 Install a pinned version:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Arcflect/archflow/main/scripts/install-archflow.sh | bash -s -- vX.Y.Z
+curl -fsSL https://raw.githubusercontent.com/Arcflect/batonel/main/scripts/install-batonel.sh | bash -s -- vX.Y.Z
 ```
 
 For CI, prefer pinned binary installation with checksum verification.
 
 ```bash
-ARCHFLOW_VERSION=vX.Y.Z
+BATONEL_VERSION=vX.Y.Z
 if [[ "$(uname -m)" == "aarch64" || "$(uname -m)" == "arm64" ]]; then
-  ARCHFLOW_TARGET=aarch64-unknown-linux-gnu
+  BATONEL_TARGET=aarch64-unknown-linux-gnu
 else
-  ARCHFLOW_TARGET=x86_64-unknown-linux-gnu
+  BATONEL_TARGET=x86_64-unknown-linux-gnu
 fi
 
-curl -fsSL -o archflow.tar.gz "https://github.com/Arcflect/archflow/releases/download/${ARCHFLOW_VERSION}/archflow-${ARCHFLOW_VERSION}-${ARCHFLOW_TARGET}.tar.gz"
-curl -fsSL -o archflow.tar.gz.sha256 "https://github.com/Arcflect/archflow/releases/download/${ARCHFLOW_VERSION}/archflow-${ARCHFLOW_VERSION}-${ARCHFLOW_TARGET}.tar.gz.sha256"
-sha256sum -c archflow.tar.gz.sha256
-tar -xzf archflow.tar.gz
-chmod +x archflow
-./archflow --version
+curl -fsSL -o batonel.tar.gz "https://github.com/Arcflect/batonel/releases/download/${BATONEL_VERSION}/batonel-${BATONEL_VERSION}-${BATONEL_TARGET}.tar.gz"
+curl -fsSL -o batonel.tar.gz.sha256 "https://github.com/Arcflect/batonel/releases/download/${BATONEL_VERSION}/batonel-${BATONEL_VERSION}-${BATONEL_TARGET}.tar.gz.sha256"
+sha256sum -c batonel.tar.gz.sha256
+tar -xzf batonel.tar.gz
+chmod +x batonel
+./batonel --version
 ```
 
 CI guideline:
 
-- Pin `ARCHFLOW_VERSION` explicitly (do not install floating latest)
-- Cache by `${ARCHFLOW_VERSION}-${ARCHFLOW_TARGET}`
-- Validate with `archflow --version` before running pipeline steps
+- Pin `BATONEL_VERSION` explicitly (do not install floating latest)
+- Cache by `${BATONEL_VERSION}-${BATONEL_TARGET}`
+- Validate with `batonel --version` before running pipeline steps
 
 ---
 
-## Preset Bootstrap: `archflow init`
+## Preset Bootstrap: `batonel init`
 
-Use `archflow init` as the minimal startup command.
+Use `batonel init` as the minimal startup command.
 
 Default initialization (no preset):
 
@@ -82,7 +82,7 @@ cargo run -- init --preset generic-layered --project-name my-app
 
 Generated files in current directory:
 
-- `project.arch.yaml`
+- `project.baton.yaml`
 - `placement.rules.yaml`
 - `contracts.template.yaml`
 - `artifacts.plan.yaml` (when included by the chosen preset)
@@ -122,8 +122,8 @@ The check validates:
 A flat architecture with simple domain and application layers.
 
 ```bash
-# Navigate to the archflow configuration directory
-cd examples/minimal/archflow
+# Navigate to the batonel configuration directory
+cd examples/minimal/batonel
 
 # Step A: Generate missing contract and source placeholders
 cargo run --manifest-path ../../../Cargo.toml -- scaffold
@@ -139,7 +139,7 @@ cargo run --manifest-path ../../../Cargo.toml -- prompt create_user
 A traditional N-tier layered architecture.
 
 ```bash
-cd examples/generic-layered/archflow
+cd examples/generic-layered/batonel
 
 # Generate sidecars
 cargo run --manifest-path ../../../Cargo.toml -- scaffold
@@ -155,7 +155,7 @@ cargo run --manifest-path ../../../Cargo.toml -- prompt user_repository
 A sophisticated Hexagonal (Ports & Adapters) architecture with crate isolation.
 
 ```bash
-cd examples/rust-clean-hexagonal/archflow
+cd examples/rust-clean-hexagonal/batonel
 
 # Generate sidecars
 cargo run --manifest-path ../../../Cargo.toml -- scaffold
@@ -185,28 +185,28 @@ cargo run --manifest-path [PATH_TO_CARGO_TOML] -- prompt [ARTIFACT] --mode stand
 
 ---
 
-## Minimal CI Example: `archflow verify`
+## Minimal CI Example: `batonel verify`
 
 Use the workflow file below as a minimal GitHub Actions example:
 
-- `.github/workflows/archflow-verify-example.yml`
+- `.github/workflows/batonel-verify-example.yml`
 
-This example runs `archflow verify` for each bundled example fixture:
+This example runs `batonel verify` for each bundled example fixture:
 
-- `examples/minimal/archflow`
-- `examples/generic-layered/archflow`
-- `examples/rust-clean-hexagonal/archflow`
+- `examples/minimal/batonel`
+- `examples/generic-layered/batonel`
+- `examples/rust-clean-hexagonal/batonel`
 
 Each matrix run also uploads the execution log as a workflow artifact:
 
-- `archflow-verify-log-examples-minimal-archflow`
-- `archflow-verify-log-examples-generic-layered-archflow`
-- `archflow-verify-log-examples-rust-clean-hexagonal-archflow`
+- `batonel-verify-log-examples-minimal-batonel`
+- `batonel-verify-log-examples-generic-layered-batonel`
+- `batonel-verify-log-examples-rust-clean-hexagonal-batonel`
 
 Core command pattern used in CI:
 
 ```bash
-cd examples/minimal/archflow
+cd examples/minimal/batonel
 cargo run --manifest-path ../../../Cargo.toml -- verify
 ```
 
@@ -220,17 +220,17 @@ introducing a full CI platform design.
 
 ---
 
-## PR Gate Example: `archflow audit --strict`
+## PR Gate Example: `batonel audit --strict`
 
 Use the workflow file below as a baseline PR gate setup:
 
-- `.github/workflows/archflow-audit-pr-gate.yml`
+- `.github/workflows/batonel-audit-pr-gate.yml`
 
-This example runs `archflow audit --strict` for each bundled example fixture:
+This example runs `batonel audit --strict` for each bundled example fixture:
 
-- `examples/minimal/archflow`
-- `examples/generic-layered/archflow`
-- `examples/rust-clean-hexagonal/archflow`
+- `examples/minimal/batonel`
+- `examples/generic-layered/batonel`
+- `examples/rust-clean-hexagonal/batonel`
 
 Audit output includes rule-level diagnostics:
 
@@ -247,7 +247,7 @@ Policy baseline behavior:
 Core command pattern used in CI:
 
 ```bash
-cd examples/minimal/archflow
+cd examples/minimal/batonel
 cargo run --manifest-path ../../../Cargo.toml -- audit --strict
 ```
 
@@ -258,7 +258,7 @@ Expected behavior:
 
 ---
 
-## Multi-Repo Compliance Export: `archflow compliance-report`
+## Multi-Repo Compliance Export: `batonel compliance-report`
 
 `compliance-report` aggregates audit outcomes across multiple repositories and exports machine-readable metrics.
 
@@ -266,8 +266,8 @@ Expected behavior:
 
 ```bash
 cargo run -- compliance-report \
-  --repos examples/minimal/archflow \
-  --repos examples/generic-layered/archflow \
+  --repos examples/minimal/batonel \
+  --repos examples/generic-layered/batonel \
   --format json \
   --output compliance-report.json
 ```
@@ -282,8 +282,8 @@ JSON report includes:
 
 ```bash
 cargo run -- compliance-report \
-  --repos examples/minimal/archflow \
-  --repos examples/generic-layered/archflow \
+  --repos examples/minimal/batonel \
+  --repos examples/generic-layered/batonel \
   --format csv \
   --output compliance-report.csv
 ```
@@ -332,9 +332,9 @@ Trend metrics include:
 
 ---
 
-## Conservative Remediation: `archflow fix`
+## Conservative Remediation: `batonel fix`
 
-`archflow fix` introduces conservative automation boundaries.
+`batonel fix` introduces conservative automation boundaries.
 
 Policy in this phase:
 
@@ -357,7 +357,7 @@ cargo run -- fix --apply
 Current classification examples:
 
 - auto-fixable:
-	- missing `project.arch.yaml` / `placement.rules.yaml` / `artifacts.plan.yaml` / `contracts.template.yaml`
+	- missing `project.baton.yaml` / `placement.rules.yaml` / `artifacts.plan.yaml` / `contracts.template.yaml`
 - review-required:
 	- artifact references undefined module
 	- artifact uses undefined role
@@ -370,7 +370,7 @@ previews and exits non-zero so human review remains mandatory.
 
 ## Preset Registry Prototype: `preset-publish` / `preset-install` / `preset-verify`
 
-Archflow provides a prototype local registry workflow for preset sharing and alignment verification.
+Batonel provides a prototype local registry workflow for preset sharing and alignment verification.
 
 ### Verify preset alignment: `preset-verify`
 
@@ -409,7 +409,7 @@ These checks are also run automatically during `preset-publish`. A publish attem
 ### Publish a preset package
 
 ```bash
-cargo run -- preset-publish --preset-dir presets/generic-layered --registry-dir .archflow/registry
+cargo run -- preset-publish --preset-dir presets/generic-layered --registry-dir .batonel/registry
 ```
 
 Publish validation checks:
@@ -425,16 +425,16 @@ Publish validation checks:
 
 ```bash
 # latest compatible version
-cargo run -- preset-install --preset generic-layered --registry-dir .archflow/registry --destination-dir presets
+cargo run -- preset-install --preset generic-layered --registry-dir .batonel/registry --destination-dir presets
 
 # explicit version
-cargo run -- preset-install --preset generic-layered --preset-version 0.1.0 --registry-dir .archflow/registry --destination-dir presets
+cargo run -- preset-install --preset generic-layered --preset-version 0.1.0 --registry-dir .batonel/registry --destination-dir presets
 ```
 
 Install validation checks:
 
 - preset id/version must exist in registry index
-- compatibility range must include current Archflow version
+- compatibility range must include current Batonel version
 - project/policy schema compatibility must match current runtime support
 - destination preset directory must not already exist
 
@@ -446,7 +446,7 @@ Registry index format:
 
 ---
 
-## Sidecar Guard Checks: `archflow guard`
+## Sidecar Guard Checks: `batonel guard`
 
 Guard checks provide sidecar-first policy enforcement with hook points for:
 
@@ -481,7 +481,7 @@ Fallback behavior when guard rules are unavailable:
 
 ## Preset Migration: `preset-migration-plan` / `preset-migration-apply`
 
-Archflow provides preset versioning and migration tooling to help projects upgrade to a newer preset version while preserving architecture guarantees and identifying conflicts early.
+Batonel provides preset versioning and migration tooling to help projects upgrade to a newer preset version while preserving architecture guarantees and identifying conflicts early.
 
 ### Generate a migration plan
 
@@ -490,7 +490,7 @@ cargo run -- preset-migration-plan \
   --preset generic-layered \
   --from-version 0.1.0 \
   --to-version 0.2.0 \
-  --registry-dir .archflow/registry \
+  --registry-dir .batonel/registry \
   --project-dir .
 ```
 
@@ -513,7 +513,7 @@ cargo run -- preset-migration-apply \
   --preset generic-layered \
   --from-version 0.1.0 \
   --to-version 0.2.0 \
-  --registry-dir .archflow/registry \
+  --registry-dir .batonel/registry \
   --project-dir . \
   --dry-run
 
@@ -522,7 +522,7 @@ cargo run -- preset-migration-apply \
   --preset generic-layered \
   --from-version 0.1.0 \
   --to-version 0.2.0 \
-  --registry-dir .archflow/registry \
+  --registry-dir .batonel/registry \
   --project-dir .
 ```
 
@@ -530,7 +530,7 @@ Apply behavior:
 
 - `add` and `update` steps are applied automatically
 - `conflict` steps are **never** auto-applied — they must be resolved manually
-- Before overwriting any existing file, a backup is created in `.archflow/migration-backup/<from-version>/`
+- Before overwriting any existing file, a backup is created in `.batonel/migration-backup/<from-version>/`
 - **Rollback**: restore files from the backup directory if the migration result is unsatisfactory
 
 Apply aborts before writing anything if conflicts are present. Resolve conflicts first, then re-run apply.
@@ -539,7 +539,7 @@ Apply aborts before writing anything if conflicts are present. Resolve conflicts
 
 ## Org/Team Override Precedence Model: `policy-resolve`
 
-Archflow implements a three-level policy override precedence chain:
+Batonel implements a three-level policy override precedence chain:
 
 ```
 org  →  team  →  project  →  default
@@ -547,14 +547,14 @@ org  →  team  →  project  →  default
 ```
 
 Each level contributes overrides, naming rules, forbidden-dependency policies, and required-file
-requirements. The effective policy used by `archflow audit` is computed from all available layers.
+requirements. The effective policy used by `batonel audit` is computed from all available layers.
 
 ### Layer files
 
 | Level | Default path | Notes |
 |-------|--------------|-------|
-| org | `.archflow/org.policy.yaml` | Applies to all repositories in the organisation |
-| team | `.archflow/team.policy.yaml` | Applies to all repositories owned by the team |
+| org | `.batonel/org.policy.yaml` | Applies to all repositories in the organisation |
+| team | `.batonel/team.policy.yaml` | Applies to all repositories owned by the team |
 | project | `policy.profile.yaml` | Repository-local overrides (existing format) |
 
 ### Locking rules
@@ -562,7 +562,7 @@ requirements. The effective policy used by `archflow audit` is computed from all
 Org and team layers can lock specific audit rules to prevent lower-priority layers from overriding them:
 
 ```yaml
-# .archflow/org.policy.yaml
+# .batonel/org.policy.yaml
 version: 1
 label: acme-org
 locked_rules:
@@ -581,8 +581,8 @@ cargo run -- policy-resolve
 
 # Specify explicit paths for each layer (useful in CI or multi-tenant setups)
 cargo run -- policy-resolve \
-  --org-policy .archflow/org.policy.yaml \
-  --team-policy .archflow/team.policy.yaml \
+  --org-policy .batonel/org.policy.yaml \
+  --team-policy .batonel/team.policy.yaml \
   --project-policy policy.profile.yaml
 ```
 

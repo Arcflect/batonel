@@ -1,5 +1,5 @@
 [package]
-name = "archflow"
+name = "batonel"
 version = "1.7.0"
 edition = "2021"
 description = "Architecture-to-Execution Bridge"

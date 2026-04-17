@@ -23,33 +23,33 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Archflow CLI (example)
+      - name: Install Batonel CLI (example)
         run: |
-          ARCHFLOW_VERSION="v0.1.0"
-          ARCHFLOW_TARGET="x86_64-unknown-linux-gnu"
-          curl -fsSL -o archflow.tar.gz "https://github.com/Arcflect/archflow/releases/download/${ARCHFLOW_VERSION}/archflow-${ARCHFLOW_VERSION}-${ARCHFLOW_TARGET}.tar.gz"
-          curl -fsSL -o archflow.tar.gz.sha256 "https://github.com/Arcflect/archflow/releases/download/${ARCHFLOW_VERSION}/archflow-${ARCHFLOW_VERSION}-${ARCHFLOW_TARGET}.tar.gz.sha256"
-          sha256sum -c archflow.tar.gz.sha256
-          tar -xzf archflow.tar.gz
-          chmod +x archflow
-          sudo mv archflow /usr/local/bin/archflow
-          archflow --version
+          BATONEL_VERSION="v0.1.0"
+          BATONEL_TARGET="x86_64-unknown-linux-gnu"
+          curl -fsSL -o batonel.tar.gz "https://github.com/Arcflect/batonel/releases/download/${BATONEL_VERSION}/batonel-${BATONEL_VERSION}-${BATONEL_TARGET}.tar.gz"
+          curl -fsSL -o batonel.tar.gz.sha256 "https://github.com/Arcflect/batonel/releases/download/${BATONEL_VERSION}/batonel-${BATONEL_VERSION}-${BATONEL_TARGET}.tar.gz.sha256"
+          sha256sum -c batonel.tar.gz.sha256
+          tar -xzf batonel.tar.gz
+          chmod +x batonel
+          sudo mv batonel /usr/local/bin/batonel
+          batonel --version
 
       - name: Run plan
-        working-directory: archflow
-        run: archflow plan
+        working-directory: batonel
+        run: batonel plan
 
       - name: Run scaffold
-        working-directory: archflow
-        run: archflow scaffold
+        working-directory: batonel
+        run: batonel scaffold
 
       - name: Generate prompt preview
-        working-directory: archflow
+        working-directory: batonel
         run: |
-          archflow prompt "${{ github.event.inputs.artifact }}" --mode "${{ github.event.inputs.mode }}" > prompt-preview.md
+          batonel prompt "${{ github.event.inputs.artifact }}" --mode "${{ github.event.inputs.mode }}" > prompt-preview.md
 
       - name: Upload prompt preview
         uses: actions/upload-artifact@v7
         with:
-          name: archflow-prompt-preview-${{ github.event.inputs.artifact }}
-          path: archflow/prompt-preview.md
+          name: batonel-prompt-preview-${{ github.event.inputs.artifact }}
+          path: batonel/prompt-preview.md

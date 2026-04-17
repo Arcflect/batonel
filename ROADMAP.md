@@ -1,4 +1,4 @@
-# Archflow Roadmap
+# Batonel Roadmap
 
 For a more practical breakdown of each phase, see [docs/roadmap-detail.md](./docs/roadmap-detail.md).
 
@@ -32,7 +32,7 @@ Related docs:
 ### Phase 1: Core design model
 
 Goal:
-Define the minimum stable concepts of Archflow.
+Define the minimum stable concepts of Batonel.
 
 Scope:
 - project definition model
@@ -61,9 +61,9 @@ Goal:
 Provide the first usable command-line flow.
 
 Scope:
-- `archflow init`
-- `archflow plan`
-- `archflow scaffold`
+- `batonel init`
+- `batonel plan`
+- `batonel scaffold`
 
 Deliverables:
 - config initialization
@@ -80,7 +80,7 @@ Goal:
 Make each artifact directly usable by lightweight coding models.
 
 Scope:
-- `archflow prompt`
+- `batonel prompt`
 - prompt templates
 - contract-to-prompt conversion
 
@@ -99,7 +99,7 @@ Goal:
 Check structural and contract consistency.
 
 Scope:
-- `archflow verify`
+- `batonel verify`
 - required contract checks
 - path rule checks
 - status checks
@@ -115,7 +115,7 @@ Related docs:
 ### Phase 5: Presets and ecosystem fit
 
 Goal:
-Make Archflow easier to adopt in real projects.
+Make Batonel easier to adopt in real projects.
 
 Scope:
 - Rust preset
@@ -142,13 +142,13 @@ Stabilize first-run experience and make architecture contracts explicit.
 
 Scope:
 - stabilize deterministic behavior for `init` and `plan`
-- standardize `project.arch.yaml` as contract source
+- standardize `project.baton.yaml` as contract source
 - expand docs, examples, and onboarding e2e tests
 
 Related docs:
-- [#127](https://github.com/Arcflect/archflow/issues/127)
-- [#128](https://github.com/Arcflect/archflow/issues/128)
-- [#129](https://github.com/Arcflect/archflow/issues/129)
+- [#127](https://github.com/Arcflect/batonel/issues/127)
+- [#128](https://github.com/Arcflect/batonel/issues/128)
+- [#129](https://github.com/Arcflect/batonel/issues/129)
 
 ### Phase 7: Audit / Policy / CI integration
 
@@ -161,9 +161,9 @@ Scope:
 - apply minimum policy profile (required files, naming, forbidden dependencies)
 
 Related docs:
-- [#130](https://github.com/Arcflect/archflow/issues/130)
-- [#131](https://github.com/Arcflect/archflow/issues/131)
-- [#132](https://github.com/Arcflect/archflow/issues/132)
+- [#130](https://github.com/Arcflect/batonel/issues/130)
+- [#131](https://github.com/Arcflect/batonel/issues/131)
+- [#132](https://github.com/Arcflect/batonel/issues/132)
 
 ### Phase 8: Preset Registry & Guard
 
@@ -176,9 +176,9 @@ Scope:
 - verify preset alignment with architectural intent
 
 Related docs:
-- [#133](https://github.com/Arcflect/archflow/issues/133)
-- [#134](https://github.com/Arcflect/archflow/issues/134)
-- [#135](https://github.com/Arcflect/archflow/issues/135)
+- [#133](https://github.com/Arcflect/batonel/issues/133)
+- [#134](https://github.com/Arcflect/batonel/issues/134)
+- [#135](https://github.com/Arcflect/batonel/issues/135)
 
 ### Phase 9: Migration / Org-level Control / Reporting
 
@@ -191,9 +191,9 @@ Scope:
 - multi-repo compliance reporting exports
 
 Related docs:
-- [#136](https://github.com/Arcflect/archflow/issues/136)
-- [#137](https://github.com/Arcflect/archflow/issues/137)
-- [#138](https://github.com/Arcflect/archflow/issues/138)
+- [#136](https://github.com/Arcflect/batonel/issues/136)
+- [#137](https://github.com/Arcflect/batonel/issues/137)
+- [#138](https://github.com/Arcflect/batonel/issues/138)
 
 ### Phase 10: Autonomous Governance
 
@@ -201,14 +201,14 @@ Goal:
 Automate governance operations while preserving safe human review boundaries.
 
 Scope:
-- standardize `archflow` CLI distribution and release operations
+- standardize `batonel` CLI distribution and release operations
 - automate violation triage and remediation prioritization
 - introduce approval-gated `fix` rollout workflow
 
 Related docs:
-- [#152](https://github.com/Arcflect/archflow/issues/152)
-- [#153](https://github.com/Arcflect/archflow/issues/153)
-- [#154](https://github.com/Arcflect/archflow/issues/154)
+- [#152](https://github.com/Arcflect/batonel/issues/152)
+- [#153](https://github.com/Arcflect/batonel/issues/153)
+- [#154](https://github.com/Arcflect/batonel/issues/154)
 
 ### Phase 11: Enterprise Control Plane
 
@@ -221,9 +221,9 @@ Scope:
 - strengthen audit evidence retention and extraction workflow
 
 Related docs:
-- [#155](https://github.com/Arcflect/archflow/issues/155)
-- [#156](https://github.com/Arcflect/archflow/issues/156)
-- [#157](https://github.com/Arcflect/archflow/issues/157)
+- [#155](https://github.com/Arcflect/batonel/issues/155)
+- [#156](https://github.com/Arcflect/batonel/issues/156)
+- [#157](https://github.com/Arcflect/batonel/issues/157)
 
 ### Phase 12: Ecosystem & Marketplace
 
@@ -236,32 +236,32 @@ Scope:
 - publish ecosystem compliance maturity benchmark model
 
 Related docs:
-- [#158](https://github.com/Arcflect/archflow/issues/158)
-- [#159](https://github.com/Arcflect/archflow/issues/159)
-- [#160](https://github.com/Arcflect/archflow/issues/160)
+- [#158](https://github.com/Arcflect/batonel/issues/158)
+- [#159](https://github.com/Arcflect/batonel/issues/159)
+- [#160](https://github.com/Arcflect/batonel/issues/160)
 
 Tracking issues:
-- [#127](https://github.com/Arcflect/archflow/issues/127) Phase6 Task 1: Stabilize init/plan deterministic onboarding
-- [#128](https://github.com/Arcflect/archflow/issues/128) Phase6 Task 2: Standardize project.arch.yaml contract schema
-- [#129](https://github.com/Arcflect/archflow/issues/129) Phase6 Task 3: Expand docs, examples, and onboarding e2e coverage
-- [#130](https://github.com/Arcflect/archflow/issues/130) Phase7 Task 1: Implement audit baseline and PR gate integration
-- [#131](https://github.com/Arcflect/archflow/issues/131) Phase7 Task 2: Define safe fix boundaries and conservative automation
-- [#132](https://github.com/Arcflect/archflow/issues/132) Phase7 Task 3: Apply minimum policy profile across repositories
-- [#133](https://github.com/Arcflect/archflow/issues/133) Phase8 Task 1: Prototype preset registry publish/install workflow
-- [#134](https://github.com/Arcflect/archflow/issues/134) Phase8 Task 2: Introduce Guard sidecar policy checks
-- [#135](https://github.com/Arcflect/archflow/issues/135) Phase8 Task 3: Verify contract-first and sidecar-first preset alignment
-- [#136](https://github.com/Arcflect/archflow/issues/136) Phase9 Task 1: Deliver preset versioning and migration tooling
-- [#137](https://github.com/Arcflect/archflow/issues/137) Phase9 Task 2: Implement org/team override precedence model
-- [#138](https://github.com/Arcflect/archflow/issues/138) Phase9 Task 3: Build multi-repo compliance reporting exports
-- [#152](https://github.com/Arcflect/archflow/issues/152) Phase10 Task 1: Standardize archflow CLI distribution and release operations
-- [#153](https://github.com/Arcflect/archflow/issues/153) Phase10 Task 2: Automate violation triage and remediation prioritization
-- [#154](https://github.com/Arcflect/archflow/issues/154) Phase10 Task 3: Introduce approval-gated fix rollout workflow
-- [#155](https://github.com/Arcflect/archflow/issues/155) Phase11 Task 1: Deliver RBAC role model for governance operations
-- [#156](https://github.com/Arcflect/archflow/issues/156) Phase11 Task 2: Implement expiring override lifecycle and policy exceptions
-- [#157](https://github.com/Arcflect/archflow/issues/157) Phase11 Task 3: Strengthen audit evidence retention and extraction workflow
-- [#158](https://github.com/Arcflect/archflow/issues/158) Phase12 Task 1: Define preset signature and trust verification pipeline
-- [#159](https://github.com/Arcflect/archflow/issues/159) Phase12 Task 2: Build partner preset submission and review flow
-- [#160](https://github.com/Arcflect/archflow/issues/160) Phase12 Task 3: Publish ecosystem compliance maturity benchmark model
+- [#127](https://github.com/Arcflect/batonel/issues/127) Phase6 Task 1: Stabilize init/plan deterministic onboarding
+- [#128](https://github.com/Arcflect/batonel/issues/128) Phase6 Task 2: Standardize project.baton.yaml contract schema
+- [#129](https://github.com/Arcflect/batonel/issues/129) Phase6 Task 3: Expand docs, examples, and onboarding e2e coverage
+- [#130](https://github.com/Arcflect/batonel/issues/130) Phase7 Task 1: Implement audit baseline and PR gate integration
+- [#131](https://github.com/Arcflect/batonel/issues/131) Phase7 Task 2: Define safe fix boundaries and conservative automation
+- [#132](https://github.com/Arcflect/batonel/issues/132) Phase7 Task 3: Apply minimum policy profile across repositories
+- [#133](https://github.com/Arcflect/batonel/issues/133) Phase8 Task 1: Prototype preset registry publish/install workflow
+- [#134](https://github.com/Arcflect/batonel/issues/134) Phase8 Task 2: Introduce Guard sidecar policy checks
+- [#135](https://github.com/Arcflect/batonel/issues/135) Phase8 Task 3: Verify contract-first and sidecar-first preset alignment
+- [#136](https://github.com/Arcflect/batonel/issues/136) Phase9 Task 1: Deliver preset versioning and migration tooling
+- [#137](https://github.com/Arcflect/batonel/issues/137) Phase9 Task 2: Implement org/team override precedence model
+- [#138](https://github.com/Arcflect/batonel/issues/138) Phase9 Task 3: Build multi-repo compliance reporting exports
+- [#152](https://github.com/Arcflect/batonel/issues/152) Phase10 Task 1: Standardize batonel CLI distribution and release operations
+- [#153](https://github.com/Arcflect/batonel/issues/153) Phase10 Task 2: Automate violation triage and remediation prioritization
+- [#154](https://github.com/Arcflect/batonel/issues/154) Phase10 Task 3: Introduce approval-gated fix rollout workflow
+- [#155](https://github.com/Arcflect/batonel/issues/155) Phase11 Task 1: Deliver RBAC role model for governance operations
+- [#156](https://github.com/Arcflect/batonel/issues/156) Phase11 Task 2: Implement expiring override lifecycle and policy exceptions
+- [#157](https://github.com/Arcflect/batonel/issues/157) Phase11 Task 3: Strengthen audit evidence retention and extraction workflow
+- [#158](https://github.com/Arcflect/batonel/issues/158) Phase12 Task 1: Define preset signature and trust verification pipeline
+- [#159](https://github.com/Arcflect/batonel/issues/159) Phase12 Task 2: Build partner preset submission and review flow
+- [#160](https://github.com/Arcflect/batonel/issues/160) Phase12 Task 3: Publish ecosystem compliance maturity benchmark model
 
 ---
 
@@ -287,7 +287,7 @@ OSS としての土台を整える。
 ### Phase 1: コア設計モデル
 
 目標:
-Archflow の最小概念を安定化する。
+Batonel の最小概念を安定化する。
 
 対象:
 - project definition model
@@ -316,9 +316,9 @@ Archflow の最小概念を安定化する。
 最初の実用的なコマンドフローを作る。
 
 対象:
-- `archflow init`
-- `archflow plan`
-- `archflow scaffold`
+- `batonel init`
+- `batonel plan`
+- `batonel scaffold`
 
 成果物:
 - config 初期化
@@ -335,7 +335,7 @@ Archflow の最小概念を安定化する。
 各 artifact を軽量モデルへ直接渡せる状態にする。
 
 対象:
-- `archflow prompt`
+- `batonel prompt`
 - prompt template
 - contract から prompt への変換
 
@@ -354,7 +354,7 @@ Archflow の最小概念を安定化する。
 構造と contract の整合を検査できるようにする。
 
 対象:
-- `archflow verify`
+- `batonel verify`
 - contract 必須項目チェック
 - path rule チェック
 - status チェック
@@ -397,13 +397,13 @@ Archflow の最小概念を安定化する。
 
 対象:
 - `init` / `plan` の決定論的挙動を安定化
-- `project.arch.yaml` を契約ソースとして標準化
+- `project.baton.yaml` を契約ソースとして標準化
 - ドキュメント、サンプル、オンボーディングe2eテストを拡充
 
 関連ドキュメント:
-- [#127](https://github.com/Arcflect/archflow/issues/127)
-- [#128](https://github.com/Arcflect/archflow/issues/128)
-- [#129](https://github.com/Arcflect/archflow/issues/129)
+- [#127](https://github.com/Arcflect/batonel/issues/127)
+- [#128](https://github.com/Arcflect/batonel/issues/128)
+- [#129](https://github.com/Arcflect/batonel/issues/129)
 
 ### Phase 7: Audit / Policy / CI 統合
 
@@ -416,9 +416,9 @@ Archflow の最小概念を安定化する。
 - 最小ポリシープロファイル（必須ファイル、命名、禁止依存）適用
 
 関連ドキュメント:
-- [#130](https://github.com/Arcflect/archflow/issues/130)
-- [#131](https://github.com/Arcflect/archflow/issues/131)
-- [#132](https://github.com/Arcflect/archflow/issues/132)
+- [#130](https://github.com/Arcflect/batonel/issues/130)
+- [#131](https://github.com/Arcflect/batonel/issues/131)
+- [#132](https://github.com/Arcflect/batonel/issues/132)
 
 ### Phase 8: Preset Registry と Guard
 
@@ -431,9 +431,9 @@ contract-first / sidecar-first の思想を維持したまま、preset再利用�
 - preset が設計意図に整合することを検証
 
 関連ドキュメント:
-- [#133](https://github.com/Arcflect/archflow/issues/133)
-- [#134](https://github.com/Arcflect/archflow/issues/134)
-- [#135](https://github.com/Arcflect/archflow/issues/135)
+- [#133](https://github.com/Arcflect/batonel/issues/133)
+- [#134](https://github.com/Arcflect/batonel/issues/134)
+- [#135](https://github.com/Arcflect/batonel/issues/135)
 
 ### Phase 9: Migration / Org-level Control / Reporting
 
@@ -446,9 +446,9 @@ contract-first / sidecar-first の思想を維持したまま、preset再利用�
 - 複数repo横断のコンプライアンスレポート
 
 関連ドキュメント:
-- [#136](https://github.com/Arcflect/archflow/issues/136)
-- [#137](https://github.com/Arcflect/archflow/issues/137)
-- [#138](https://github.com/Arcflect/archflow/issues/138)
+- [#136](https://github.com/Arcflect/batonel/issues/136)
+- [#137](https://github.com/Arcflect/batonel/issues/137)
+- [#138](https://github.com/Arcflect/batonel/issues/138)
 
 ### Phase 10: Autonomous Governance
 
@@ -456,14 +456,14 @@ contract-first / sidecar-first の思想を維持したまま、preset再利用�
 安全なレビュー境界を維持しつつ、ガバナンス運用を自動化する。
 
 対象:
-- `archflow` CLI配布・リリース運用の標準化
+- `batonel` CLI配布・リリース運用の標準化
 - 違反トリアージと是正優先度付けの自動化
 - 承認付き `fix` 段階適用ワークフローの導入
 
 関連ドキュメント:
-- [#152](https://github.com/Arcflect/archflow/issues/152)
-- [#153](https://github.com/Arcflect/archflow/issues/153)
-- [#154](https://github.com/Arcflect/archflow/issues/154)
+- [#152](https://github.com/Arcflect/batonel/issues/152)
+- [#153](https://github.com/Arcflect/batonel/issues/153)
+- [#154](https://github.com/Arcflect/batonel/issues/154)
 
 ### Phase 11: Enterprise Control Plane
 
@@ -476,9 +476,9 @@ contract-first / sidecar-first の思想を維持したまま、preset再利用�
 - 監査証跡の保持・抽出フロー強化
 
 関連ドキュメント:
-- [#155](https://github.com/Arcflect/archflow/issues/155)
-- [#156](https://github.com/Arcflect/archflow/issues/156)
-- [#157](https://github.com/Arcflect/archflow/issues/157)
+- [#155](https://github.com/Arcflect/batonel/issues/155)
+- [#156](https://github.com/Arcflect/batonel/issues/156)
+- [#157](https://github.com/Arcflect/batonel/issues/157)
 
 ### Phase 12: Ecosystem & Marketplace
 
@@ -491,29 +491,29 @@ contract-first / sidecar-first の思想を維持したまま、preset再利用�
 - エコシステム準拠成熟度ベンチマークモデルの公開
 
 関連ドキュメント:
-- [#158](https://github.com/Arcflect/archflow/issues/158)
-- [#159](https://github.com/Arcflect/archflow/issues/159)
-- [#160](https://github.com/Arcflect/archflow/issues/160)
+- [#158](https://github.com/Arcflect/batonel/issues/158)
+- [#159](https://github.com/Arcflect/batonel/issues/159)
+- [#160](https://github.com/Arcflect/batonel/issues/160)
 
 トラッキングIssue:
-- [#127](https://github.com/Arcflect/archflow/issues/127) Phase6 Task 1: Stabilize init/plan deterministic onboarding
-- [#128](https://github.com/Arcflect/archflow/issues/128) Phase6 Task 2: Standardize project.arch.yaml contract schema
-- [#129](https://github.com/Arcflect/archflow/issues/129) Phase6 Task 3: Expand docs, examples, and onboarding e2e coverage
-- [#130](https://github.com/Arcflect/archflow/issues/130) Phase7 Task 1: Implement audit baseline and PR gate integration
-- [#131](https://github.com/Arcflect/archflow/issues/131) Phase7 Task 2: Define safe fix boundaries and conservative automation
-- [#132](https://github.com/Arcflect/archflow/issues/132) Phase7 Task 3: Apply minimum policy profile across repositories
-- [#133](https://github.com/Arcflect/archflow/issues/133) Phase8 Task 1: Prototype preset registry publish/install workflow
-- [#134](https://github.com/Arcflect/archflow/issues/134) Phase8 Task 2: Introduce Guard sidecar policy checks
-- [#135](https://github.com/Arcflect/archflow/issues/135) Phase8 Task 3: Verify contract-first and sidecar-first preset alignment
-- [#136](https://github.com/Arcflect/archflow/issues/136) Phase9 Task 1: Deliver preset versioning and migration tooling
-- [#137](https://github.com/Arcflect/archflow/issues/137) Phase9 Task 2: Implement org/team override precedence model
-- [#138](https://github.com/Arcflect/archflow/issues/138) Phase9 Task 3: Build multi-repo compliance reporting exports
-- [#152](https://github.com/Arcflect/archflow/issues/152) Phase10 Task 1: Standardize archflow CLI distribution and release operations
-- [#153](https://github.com/Arcflect/archflow/issues/153) Phase10 Task 2: Automate violation triage and remediation prioritization
-- [#154](https://github.com/Arcflect/archflow/issues/154) Phase10 Task 3: Introduce approval-gated fix rollout workflow
-- [#155](https://github.com/Arcflect/archflow/issues/155) Phase11 Task 1: Deliver RBAC role model for governance operations
-- [#156](https://github.com/Arcflect/archflow/issues/156) Phase11 Task 2: Implement expiring override lifecycle and policy exceptions
-- [#157](https://github.com/Arcflect/archflow/issues/157) Phase11 Task 3: Strengthen audit evidence retention and extraction workflow
-- [#158](https://github.com/Arcflect/archflow/issues/158) Phase12 Task 1: Define preset signature and trust verification pipeline
-- [#159](https://github.com/Arcflect/archflow/issues/159) Phase12 Task 2: Build partner preset submission and review flow
-- [#160](https://github.com/Arcflect/archflow/issues/160) Phase12 Task 3: Publish ecosystem compliance maturity benchmark model
+- [#127](https://github.com/Arcflect/batonel/issues/127) Phase6 Task 1: Stabilize init/plan deterministic onboarding
+- [#128](https://github.com/Arcflect/batonel/issues/128) Phase6 Task 2: Standardize project.baton.yaml contract schema
+- [#129](https://github.com/Arcflect/batonel/issues/129) Phase6 Task 3: Expand docs, examples, and onboarding e2e coverage
+- [#130](https://github.com/Arcflect/batonel/issues/130) Phase7 Task 1: Implement audit baseline and PR gate integration
+- [#131](https://github.com/Arcflect/batonel/issues/131) Phase7 Task 2: Define safe fix boundaries and conservative automation
+- [#132](https://github.com/Arcflect/batonel/issues/132) Phase7 Task 3: Apply minimum policy profile across repositories
+- [#133](https://github.com/Arcflect/batonel/issues/133) Phase8 Task 1: Prototype preset registry publish/install workflow
+- [#134](https://github.com/Arcflect/batonel/issues/134) Phase8 Task 2: Introduce Guard sidecar policy checks
+- [#135](https://github.com/Arcflect/batonel/issues/135) Phase8 Task 3: Verify contract-first and sidecar-first preset alignment
+- [#136](https://github.com/Arcflect/batonel/issues/136) Phase9 Task 1: Deliver preset versioning and migration tooling
+- [#137](https://github.com/Arcflect/batonel/issues/137) Phase9 Task 2: Implement org/team override precedence model
+- [#138](https://github.com/Arcflect/batonel/issues/138) Phase9 Task 3: Build multi-repo compliance reporting exports
+- [#152](https://github.com/Arcflect/batonel/issues/152) Phase10 Task 1: Standardize batonel CLI distribution and release operations
+- [#153](https://github.com/Arcflect/batonel/issues/153) Phase10 Task 2: Automate violation triage and remediation prioritization
+- [#154](https://github.com/Arcflect/batonel/issues/154) Phase10 Task 3: Introduce approval-gated fix rollout workflow
+- [#155](https://github.com/Arcflect/batonel/issues/155) Phase11 Task 1: Deliver RBAC role model for governance operations
+- [#156](https://github.com/Arcflect/batonel/issues/156) Phase11 Task 2: Implement expiring override lifecycle and policy exceptions
+- [#157](https://github.com/Arcflect/batonel/issues/157) Phase11 Task 3: Strengthen audit evidence retention and extraction workflow
+- [#158](https://github.com/Arcflect/batonel/issues/158) Phase12 Task 1: Define preset signature and trust verification pipeline
+- [#159](https://github.com/Arcflect/batonel/issues/159) Phase12 Task 2: Build partner preset submission and review flow
+- [#160](https://github.com/Arcflect/batonel/issues/160) Phase12 Task 3: Publish ecosystem compliance maturity benchmark model

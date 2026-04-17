@@ -1,6 +1,6 @@
 # Preset Onboarding Guide
 
-This guide helps new users start projects quickly from Archflow presets.
+This guide helps new users start projects quickly from Batonel presets.
 
 It focuses on practical onboarding, not advanced customization.
 
@@ -20,7 +20,7 @@ Preset packages live under:
 
 Each preset includes reusable defaults for:
 
-- project context (`project.arch.yaml`)
+- project context (`project.baton.yaml`)
 - role-to-path placement (`placement.rules.yaml`)
 - role-based contract defaults (`contracts.template.yaml`)
 - optional starter artifacts (`artifacts.plan.yaml`)
@@ -54,18 +54,18 @@ Simple rule of thumb:
 
 ```bash
 # Generic layered baseline
-archflow init --preset generic-layered --project-name my-service
+batonel init --preset generic-layered --project-name my-service
 
 # Rust clean/hexagonal baseline
-archflow init --preset rust-clean-hexagonal --project-name my-rust-service
+batonel init --preset rust-clean-hexagonal --project-name my-rust-service
 
 # Preview generated files without writing them
-archflow init --preset generic-layered --project-name my-service --dry-run
+batonel init --preset generic-layered --project-name my-service --dry-run
 ```
 
 Generated files in the current directory:
 
-- `project.arch.yaml`
+- `project.baton.yaml`
 - `placement.rules.yaml`
 - `contracts.template.yaml`
 - `artifacts.plan.yaml` (when included by the preset)
@@ -75,15 +75,15 @@ Generated files in the current directory:
 ### 2. Continue standard flow
 
 ```bash
-archflow plan
-archflow scaffold
+batonel plan
+batonel scaffold
 ```
 
 Use prompt or verify as needed:
 
 ```bash
-archflow prompt <artifact>
-archflow verify
+batonel prompt <artifact>
+batonel verify
 ```
 
 ---
@@ -115,7 +115,7 @@ Presets are starting points, not locked architecture truth.
 
 You are expected to customize:
 
-- `project.arch.yaml`: project name, module names, feature naming
+- `project.baton.yaml`: project name, module names, feature naming
 - `placement.rules.yaml`: path prefixes and file extensions
 - `contracts.template.yaml`: responsibilities and must_not constraints
 - `artifacts.plan.yaml`: starter artifact list
@@ -153,7 +153,7 @@ All onboarding failures exit with code `1`.
 Deterministic preview behavior:
 
 - `--dry-run` prints the file actions in a stable order without writing files
-- `archflow plan` prints artifact results in a single ordered stream so successes and errors remain reviewable in sequence
+- `batonel plan` prints artifact results in a single ordered stream so successes and errors remain reviewable in sequence
 
 ---
 
@@ -180,9 +180,9 @@ without requiring full application implementations.
 
 ## Customization checklist after bootstrap
 
-After `archflow init --preset ...`, review these in order:
+After `batonel init --preset ...`, review these in order:
 
-1. `project.arch.yaml`
+1. `project.baton.yaml`
 2. `placement.rules.yaml`
 3. `contracts.template.yaml`
 4. `artifacts.plan.yaml` (if present)

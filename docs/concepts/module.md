@@ -2,13 +2,13 @@
 
 ## Overview
 
-In Archflow, a **Module** is a named architectural area within a project.
+In Batonel, a **Module** is a named architectural area within a project.
 
 A module groups related artifacts and features into a coherent unit.
 It usually represents a business capability, a bounded functional area,
 or a stable architectural grouping.
 
-Modules help Archflow organize artifacts in a way that is meaningful
+Modules help Batonel organize artifacts in a way that is meaningful
 beyond raw directory structure.
 
 ---
@@ -128,7 +128,7 @@ A module should not:
 
 ## Why it matters
 
-Modules help Archflow keep structure understandable.
+Modules help Batonel keep structure understandable.
 
 They are useful because they allow the project to express:
 
@@ -177,7 +177,7 @@ For example:
   - `get_user`
   - `update_user`
 
-This distinction helps Archflow avoid treating every feature
+This distinction helps Batonel avoid treating every feature
 as if it were a top-level architectural unit.
 
 ---
@@ -221,7 +221,7 @@ In the future, modules may also support:
 
 ## 概要
 
-Archflow における **Module** は、プロジェクト内の名前付きアーキテクチャ領域です。
+Batonel における **Module** は、プロジェクト内の名前付きアーキテクチャ領域です。
 
 モジュールは関連する artifact と機能をグループ化します。
 通常はビジネス機能または凝集した技術的領域に合わせて配置されます。
@@ -307,7 +307,7 @@ modules:
 
 ---
 
-## モジュールが Archflow で重要な理由
+## モジュールが Batonel で重要な理由
 
 モジュールは artifact に文脈を与えます。
 

@@ -5,7 +5,7 @@
 
 ## Context
 
-As Archflow enters Phase 2 (Minimal CLI), it requires a consistent strategy for how and when the CLI communicates failures to the user.
+As Batonel enters Phase 2 (Minimal CLI), it requires a consistent strategy for how and when the CLI communicates failures to the user.
 
 A common pitfall inside code-generation tools is overbuilding UX (such as beautiful colored diagnostic spans, auto-recovery mechanisms, or complex fallback defaults) before the concepts themselves are stable. Alternatively, under-building error handling results in silent crashes or opaque stack traces that hurt early contributor adoption.
 
@@ -20,7 +20,7 @@ We need a policy that defines:
 We will adopt a **"Fail Fast on Context, Aggregate on Execution"** error handling strategy for Phase 2.
 
 ### 1. Missing File Behavior
-If a root context configuration file (`project.arch.yaml`, `placement.rules.yaml`, `artifacts.plan.yaml`) is missing, the CLI will output a clear standard error message containing the missing filepath and immediately exit with code `1`.
+If a root context configuration file (`project.baton.yaml`, `placement.rules.yaml`, `artifacts.plan.yaml`) is missing, the CLI will output a clear standard error message containing the missing filepath and immediately exit with code `1`.
 - **Policy:** Explicit failure. No auto-recovery, no implicit discovery.
 
 ### 2. Invalid YAML Behavior
@@ -57,7 +57,7 @@ This explicitly satisfies the Phase 2 roadmap goal: *"Do not overbuild. Clear an
 
 ## コンテキスト
 
-Archflow が Phase 2 (Minimal CLI) に入るにあたり、CLI が エラー をユーザーにどのように伝えるかについての、一貫した戦略が必要になります。
+Batonel が Phase 2 (Minimal CLI) に入るにあたり、CLI が エラー をユーザーにどのように伝えるかについての、一貫した戦略が必要になります。
 
 コード生成ツールにおけるよくある失敗は、概念そのものが安定する前に UX (美しいダイアグノスティックの表示、自動復旧メカニズム、複雑なフォールバック設定など) を過剰に作り込んでしまうことです。一方で、エラー処理を手抜きしすぎると、無言のクラッシュや不可解なスタックトレースが発生し、初期のコントリビューターの参加を阻害します。
 
@@ -72,7 +72,7 @@ Archflow が Phase 2 (Minimal CLI) に入るにあたり、CLI が エラー を
 Phase 2 では、**「コンテキストはフェイルファスト、実行は集約（Fail Fast on Context, Aggregate on Execution）」** のエラーハンドリング戦略を採用します。
 
 ### 1. 設定ファイル不足時の動作
-ベースとなる設定ファイル (`project.arch.yaml`, `placement.rules.yaml`, `artifacts.plan.yaml`) が見つからない場合、CLI は不足しているパスを含む明確な標準エラーメッセージを出力し、直ちに終了コード `1` で終了します。
+ベースとなる設定ファイル (`project.baton.yaml`, `placement.rules.yaml`, `artifacts.plan.yaml`) が見つからない場合、CLI は不足しているパスを含む明確な標準エラーメッセージを出力し、直ちに終了コード `1` で終了します。
 - **ポリシー:** 明示的な失敗。自動復旧や暗黙的なファイル探索は行いません。
 
 ### 2. 不正な YAML に関する動作

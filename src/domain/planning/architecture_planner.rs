@@ -21,7 +21,7 @@ impl ArchitecturePlanner {
                     status: PlannedArtifactStatus::Error,
                     resolved_path: None,
                     error_message: Some(format!(
-                        "module '{}' is not defined in project.arch.yaml",
+                        "module '{}' is not defined in project.baton.yaml",
                         artifact.module
                     )),
                 });

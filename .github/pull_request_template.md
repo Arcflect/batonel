@@ -26,7 +26,7 @@ For architecture-sensitive PRs, complete the architecture checklist items above 
 - `feat: add policy-resolve command for org/team override diagnostics`
 - `feat: support aarch64 target in release workflow`
 - `fix: avoid binary version mismatch when tag differs from Cargo.toml`
-- `fix: preset-install rejects incompatible archflow version range`
+- `fix: preset-install rejects incompatible batonel version range`
 - `refactor: extract reusable audit report API from audit command`
 - `perf: reduce YAML parse overhead in plan command`
 - `docs: update release-operations with release-drafter flow`
@@ -41,5 +41,5 @@ For architecture-sensitive PRs, complete the architecture checklist items above 
 Use `!` when the change is breaking.
 
 Examples:
-- `feat!: change project.arch.yaml schema_version to 2`
+- `feat!: change project.baton.yaml schema_version to 2`
 - `feat!: rename preset-migration-plan to preset-upgrade-plan`

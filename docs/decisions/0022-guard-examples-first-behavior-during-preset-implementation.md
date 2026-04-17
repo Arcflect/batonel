@@ -5,7 +5,7 @@
 
 ## Context
 
-Archflow now has active preset implementation work in parallel with established
+Batonel now has active preset implementation work in parallel with established
 examples and onboarding documentation.
 
 This creates a sequencing risk:
@@ -73,7 +73,7 @@ For preset-related pull requests, reviewers should explicitly check:
 
 - Preset work remains incremental and tied to proven examples.
 - Contributors get a simple sequence gate for deciding where work belongs.
-- Archflow preserves examples-first intent while still enabling gradual preset adoption.
+- Batonel preserves examples-first intent while still enabling gradual preset adoption.
 
 ---
 
@@ -86,7 +86,7 @@ For preset-related pull requests, reviewers should explicitly check:
 
 ## コンテキスト
 
-Archflow では、確立した examples と onboarding docs と並行して、
+Batonel では、確立した examples と onboarding docs と並行して、
 preset 実装作業が進んでいます。
 
 この状況にはシーケンス上のリスクがあります。
@@ -154,4 +154,4 @@ preset 関連 PR では、レビュー時に次を明示確認します。
 
 - preset 作業は、実証済み example に結びついた段階的進化を維持できる。
 - contributors は、作業の置き場所を判断するための単純なシーケンスゲートを得る。
-- Archflow は examples-first 意図を保ちながら、preset 採用を段階的に進められる。
+- Batonel は examples-first 意図を保ちながら、preset 採用を段階的に進められる。

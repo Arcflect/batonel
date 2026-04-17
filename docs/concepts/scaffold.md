@@ -2,7 +2,7 @@
 
 ## Overview
 
-In Archflow, a **Scaffold** is the generated structural output created from architectural definitions.
+In Batonel, a **Scaffold** is the generated structural output created from architectural definitions.
 
 A scaffold is the practical result of turning project context, placement rules,
 artifact plans, and contracts into concrete implementation-ready structure.
@@ -79,7 +79,7 @@ src/
 ├─ application/
 │  └─ usecases/
 │     └─ create_user.rs
-└─ .archflow/
+└─ .batonel/
    ├─ contracts/
    │  ├─ user.contract.yaml
    │  └─ create_user.contract.yaml
@@ -108,11 +108,11 @@ The relationship is:
 - the prompt defines AI handoff
 - the scaffold materializes all of this into repository structure
 
-This makes scaffold one of the main operational outputs of Archflow.
+This makes scaffold one of the main operational outputs of Batonel.
 
-## Why scaffold matters in Archflow
+## Why scaffold matters in Batonel
 
-Scaffolding matters because Archflow is not only a documentation system.
+Scaffolding matters because Batonel is not only a documentation system.
 
 It is meant to help users move from:
 
@@ -161,7 +161,7 @@ A scaffold is not exactly the same as a template.
 - a **template** is usually a reusable pattern or starting file shape
 - a **scaffold** is the generated structural result for one concrete project state
 
-Archflow may use templates internally,
+Batonel may use templates internally,
 but the scaffold is the actual output created from the current project configuration.
 
 This means scaffolding is project-specific and context-aware.
@@ -185,7 +185,7 @@ A scaffold is not the final implementation.
 - a **scaffold** prepares the structure for implementation
 - an **implementation** fills that structure with working code or logic
 
-This distinction is important because Archflow is designed to be useful
+This distinction is important because Batonel is designed to be useful
 even before production code exists.
 
 ## Types of scaffold output
@@ -217,7 +217,7 @@ A more complete scaffold may include:
 - contracts
 - prompts
 
-This progression aligns with the broader Archflow roadmap.
+This progression aligns with the broader Batonel roadmap.
 
 ## Why scaffold is important for AI-assisted development
 
@@ -231,7 +231,7 @@ In AI-assisted workflows, implementation often starts best when the unit of work
 Scaffolding helps create that state.
 
 Instead of asking an AI model to both invent structure and implement logic,
-Archflow can first provide:
+Batonel can first provide:
 
 - the target file
 - the target role
@@ -264,11 +264,11 @@ a scaffold turns architectural definitions into implementation-ready structure.
 
 ## 概要
 
-Archflow における **Scaffold** は、アーキテクチャ定義を実装可能な構造に変換する操作です。
+Batonel における **Scaffold** は、アーキテクチャ定義を実装可能な構造に変換する操作です。
 
 スキャフォルドは次のような問いに答えます。
 
-- project.arch.yaml、placement.rules.yaml、artifacts.plan.yaml を定義したら、実際のファイルと構造はどのように見えるか？
+- project.baton.yaml、placement.rules.yaml、artifacts.plan.yaml を定義したら、実際のファイルと構造はどのように見えるか？
 
 スキャフォルドはアーキテクチャの意図とリポジトリの実際の内容の間のブリッジです。
 
@@ -286,7 +286,7 @@ Archflow における **Scaffold** は、アーキテクチャ定義を実装可
 - どのような sidecar ファイル（contract、prompt）を生成すべきか？
 - どのような既存のファイルが期待される場所に存在するか？
 
-スキャフォルドがなければ、Archflow の計画ステップは実際のリポジトリ変更に接続されません。
+スキャフォルドがなければ、Batonel の計画ステップは実際のリポジトリ変更に接続されません。
 
 ---
 
@@ -343,7 +343,7 @@ Archflow における **Scaffold** は、アーキテクチャ定義を実装可
 
 ## Sidecar ファーストスキャフォルド
 
-Archflow は sidecar ファーストモデルをサポートします。
+Batonel は sidecar ファーストモデルをサポートします。
 
 これが意味することは：
 
@@ -351,7 +351,7 @@ Archflow は sidecar ファーストモデルをサポートします。
 - スキャフォルドが完了した後に AI ツールに artifact をハンドオフできます
 - contract と prompt は実装と一緒または実装の前に生成できます
 
-このモデルにより、Archflow は設計段階とコーディング段階の間で有用です。
+このモデルにより、Batonel は設計段階とコーディング段階の間で有用です。
 
 ---
 

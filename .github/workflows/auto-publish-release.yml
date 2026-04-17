@@ -66,8 +66,8 @@ jobs:
           TAG="${{ steps.cargo_tag.outputs.value }}"
           gh api \
             -X POST \
-            "repos/${{ github.repository }}/actions/workflows/archflow-release-cli.yml/dispatches" \
+            "repos/${{ github.repository }}/actions/workflows/batonel-release-cli.yml/dispatches" \
             -f ref=main \
             -f "inputs[tag]=${TAG}"
 
-          echo "Triggered archflow-release-cli.yml for ${TAG}"
+          echo "Triggered batonel-release-cli.yml for ${TAG}"

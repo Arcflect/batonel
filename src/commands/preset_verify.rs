@@ -234,7 +234,7 @@ pub fn render_report(report: &AlignmentReport) {
         .filter(|finding| finding.severity == AlignmentSeverity::Warn)
         .count();
 
-    println!("Archflow Preset Alignment Report");
+    println!("Batonel Preset Alignment Report");
     println!("================================");
     println!(
         "Preset: {} ({})",
@@ -495,15 +495,15 @@ architecture_style: layered
 ecosystem: generic
 includes:
   required:
-    - project.arch.yaml
+    - project.baton.yaml
     - placement.rules.yaml
     - contracts.template.yaml
 package:
   version: 0.1.0
   visibility: public
   compatibility:
-    min_archflow_version: 0.1.0
-    max_archflow_version: 0.1.99
+    min_batonel_version: 0.1.0
+    max_batonel_version: 0.1.99
     project_schema_version: "1"
     policy_profile_version: 1
 "#
@@ -574,7 +574,7 @@ architecture_style: layered
 ecosystem: generic
 includes:
   required:
-    - project.arch.yaml
+    - project.baton.yaml
     - placement.rules.yaml
     - contracts.template.yaml
   optional:
@@ -583,8 +583,8 @@ package:
   version: 0.1.0
   visibility: public
   compatibility:
-    min_archflow_version: 0.1.0
-    max_archflow_version: 0.1.99
+    min_batonel_version: 0.1.0
+    max_batonel_version: 0.1.99
     project_schema_version: "1"
     policy_profile_version: 1
 "#;
@@ -615,7 +615,7 @@ architecture_style: layered
 ecosystem: generic
 includes:
   required:
-    - project.arch.yaml
+    - project.baton.yaml
     - placement.rules.yaml
   optional:
     - contracts.template.yaml
@@ -623,8 +623,8 @@ package:
   version: 0.1.0
   visibility: public
   compatibility:
-    min_archflow_version: 0.1.0
-    max_archflow_version: 0.1.99
+    min_batonel_version: 0.1.0
+    max_batonel_version: 0.1.99
     project_schema_version: "1"
     policy_profile_version: 1
 "#;
@@ -689,7 +689,7 @@ architecture_style: layered
 ecosystem: generic
 includes:
   required:
-    - project.arch.yaml
+    - project.baton.yaml
     - placement.rules.yaml
     - contracts.template.yaml
   optional:
@@ -698,8 +698,8 @@ package:
   version: 0.1.0
   visibility: public
   compatibility:
-    min_archflow_version: 0.1.0
-    max_archflow_version: 0.1.99
+    min_batonel_version: 0.1.0
+    max_batonel_version: 0.1.99
     project_schema_version: "1"
     policy_profile_version: 1
 "#;

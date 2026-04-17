@@ -94,7 +94,7 @@ pub fn execute_cli(
         std::process::exit(1);
     }
 
-    println!("Archflow Compliance Report Export");
+    println!("Batonel Compliance Report Export");
     println!("===============================");
     println!("repositories: {}", export.summary.repository_count);
     println!("failed: {}", export.summary.failed_count);

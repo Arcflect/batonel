@@ -2,9 +2,9 @@
 
 ## Overview
 
-Archflow allows strict structural and architectural contracts across your organization. Once you deploy these rules, you must establish an operational boundary between standard development activities and governance operations (changing the rules or overriding the architecture).
+Batonel allows strict structural and architectural contracts across your organization. Once you deploy these rules, you must establish an operational boundary between standard development activities and governance operations (changing the rules or overriding the architecture).
 
-Archflow's Role-Based Access Control (RBAC) maps operational actors (such as GitHub teams or users) to built-in Archflow governance roles.
+Batonel's Role-Based Access Control (RBAC) maps operational actors (such as GitHub teams or users) to built-in Batonel governance roles.
 
 ## Core Governance Roles
 
@@ -32,7 +32,7 @@ The system supports the following built-in governance roles:
 
 ## Configuring Governance Roles
 
-You can map an actor to a role by adding `governance_roles` blocks in your policy layer files (`.archflow/org.policy.yaml`, `.archflow/team.policy.yaml`, etc.).
+You can map an actor to a role by adding `governance_roles` blocks in your policy layer files (`.batonel/org.policy.yaml`, `.batonel/team.policy.yaml`, etc.).
 
 ```yaml
 version: 1
@@ -57,13 +57,13 @@ Typically, you define your `policy_admin` in `org.policy.yaml` and delegate `arc
 
 ## Enforcement in CI vs Local
 
-Because Archflow is primarily a CLI toolkit, an actor mapping doesn't inherently verify the cryptographic identity of the active user. Instead, operators structure their physical boundaries inside CI via `CODEOWNERS` files referencing the same names.
+Because Batonel is primarily a CLI toolkit, an actor mapping doesn't inherently verify the cryptographic identity of the active user. Instead, operators structure their physical boundaries inside CI via `CODEOWNERS` files referencing the same names.
 
-For example, a physical CI boundary involves generating a `.github/CODEOWNERS` configuration dynamically based on your `.archflow/org.policy.yaml`.
+For example, a physical CI boundary involves generating a `.github/CODEOWNERS` configuration dynamically based on your `.batonel/org.policy.yaml`.
 
-During pipeline executions (like merging PRs or rolling out fixes), Archflow can be invoked explicitly with the `--actor` argument to test simulated governance flows locally or apply strict enforcement rules:
+During pipeline executions (like merging PRs or rolling out fixes), Batonel can be invoked explicitly with the `--actor` argument to test simulated governance flows locally or apply strict enforcement rules:
 ```bash
-archflow policy-resolve --actor "@alice"
+batonel policy-resolve --actor "@alice"
 ```
 ```bash
 # Example showing a rejection message:

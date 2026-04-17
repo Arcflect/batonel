@@ -24,7 +24,7 @@ pub fn collect_findings(root: &Path) -> Vec<FixFinding> {
     let mut findings = Vec::new();
 
     let required_files = [
-        "project.arch.yaml",
+        "project.baton.yaml",
         "placement.rules.yaml",
         "artifacts.plan.yaml",
         "contracts.template.yaml",
@@ -40,12 +40,12 @@ pub fn collect_findings(root: &Path) -> Vec<FixFinding> {
             class: FixClass::AutoFixable,
             target: filename.to_string(),
             message: format!("missing required root file: {}", filename),
-            remediation: "Generate missing root files via `archflow init` (non-destructive for existing files).".to_string(),
+            remediation: "Generate missing root files via `batonel init` (non-destructive for existing files).".to_string(),
             patch_preview: None,
         });
     }
 
-    let project_config = ProjectConfig::load(root.join("project.arch.yaml")).ok();
+    let project_config = ProjectConfig::load(root.join("project.baton.yaml")).ok();
     let placement_config = PlacementRulesConfig::load(root.join("placement.rules.yaml")).ok();
     let artifacts_config = ArtifactsPlanConfig::load(root.join("artifacts.plan.yaml")).ok();
 
@@ -175,7 +175,7 @@ fn expected_role_path(artifact: &Artifact, role: &RolePlacement) -> String {
 
 fn module_patch_preview(module_name: &str) -> String {
     format!(
-        "--- a/project.arch.yaml\n+++ b/project.arch.yaml\n@@\n modules:\n   - name: <existing_module>\n+  - name: {}\n",
+        "--- a/project.baton.yaml\n+++ b/project.baton.yaml\n@@\n modules:\n   - name: <existing_module>\n+  - name: {}\n",
         module_name
     )
 }
@@ -204,7 +204,7 @@ fn render_fix_report(findings: &[FixFinding], dry_run: bool, apply: bool) {
         .filter(|finding| finding.class == FixClass::ReviewRequired)
         .count();
 
-    println!("Archflow Conservative Fix");
+    println!("Batonel Conservative Fix");
     println!("=========================");
     println!(
         "Mode: {}",
@@ -268,7 +268,7 @@ mod tests {
 
     fn base_project() -> ProjectConfig {
         ProjectConfig {
-            archflow: Some(crate::config::project::ArchflowMetadata {
+            batonel: Some(crate::config::project::BatonelMetadata {
                 schema_version: crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION.to_string(),
                 preset: None,
             }),

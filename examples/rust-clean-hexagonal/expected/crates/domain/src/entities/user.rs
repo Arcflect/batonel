@@ -5,5 +5,5 @@
 // Module: user
 //
 // The implementation is not included here.
-// Archflow is expected to generate the placement, contract,
+// Batonel is expected to generate the placement, contract,
 // and AI handoff prompt before the actual code is written.

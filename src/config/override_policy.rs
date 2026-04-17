@@ -1,4 +1,4 @@
-/// Org/team override precedence model for Archflow policy profiles.
+/// Org/team override precedence model for Batonel policy profiles.
 ///
 /// Precedence chain (highest to lowest priority):
 ///   org   →  team  →  project
@@ -62,8 +62,8 @@ impl OverrideLevel {
 /// A single policy layer loaded from org, team, or project level.
 ///
 /// Stored in any of:
-///   `.archflow/org.policy.yaml`
-///   `.archflow/team.policy.yaml`
+///   `.batonel/org.policy.yaml`
+///   `.batonel/team.policy.yaml`
 ///   `policy.profile.yaml`  (project level — existing format)
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PolicyLayer {
@@ -273,8 +273,8 @@ fn rule_pair(module: &NamingRule, artifact: &NamingRule) -> NamingPolicy {
 // ---------------------------------------------------------------------------
 
 /// Standard lookup paths for each policy level.
-pub const ORG_POLICY_PATH: &str = ".archflow/org.policy.yaml";
-pub const TEAM_POLICY_PATH: &str = ".archflow/team.policy.yaml";
+pub const ORG_POLICY_PATH: &str = ".batonel/org.policy.yaml";
+pub const TEAM_POLICY_PATH: &str = ".batonel/team.policy.yaml";
 pub const PROJECT_POLICY_PATH: &str = "policy.profile.yaml";
 
 /// Load all layers and resolve the effective policy.
@@ -724,7 +724,7 @@ required_files:
         assert!(filenames.contains(&"org-required.yaml"), "expected org-required.yaml in {:?}", filenames);
         assert!(filenames.contains(&"project-required.yaml"), "expected project-required.yaml in {:?}", filenames);
         // Default files should also be present.
-        assert!(filenames.contains(&"project.arch.yaml"), "expected project.arch.yaml in {:?}", filenames);
+        assert!(filenames.contains(&"project.baton.yaml"), "expected project.baton.yaml in {:?}", filenames);
     }
 
     #[test]

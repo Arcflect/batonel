@@ -9,5 +9,5 @@ This example demonstrates:
 - artifact contracts generated alongside scaffolded files
 - AI handoff prompts for artifact-level implementation
 
-Use this example to understand how Archflow can support projects
+Use this example to understand how Batonel can support projects
 that want clear boundaries without being tied to a specific language or framework.

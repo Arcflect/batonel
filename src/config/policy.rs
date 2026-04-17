@@ -85,7 +85,7 @@ impl PolicyProfileConfig {
         Self {
             version: SUPPORTED_POLICY_PROFILE_VERSION,
             required_files: vec![
-                "project.arch.yaml".to_string(),
+                "project.baton.yaml".to_string(),
                 "placement.rules.yaml".to_string(),
                 "artifacts.plan.yaml".to_string(),
                 "contracts.template.yaml".to_string(),
@@ -235,7 +235,7 @@ mod tests {
         assert!(config
             .required_files
             .iter()
-            .any(|filename| filename == "project.arch.yaml"));
+            .any(|filename| filename == "project.baton.yaml"));
     }
 
     #[test]
@@ -246,7 +246,7 @@ mod tests {
             &path,
             r#"version: 1
 required_files:
-  - project.arch.yaml
+  - project.baton.yaml
 naming:
   module: lowercase-identifier
   artifact: lowercase-identifier
@@ -271,7 +271,7 @@ overrides:
             &path,
             r#"version: 1
 required_files:
-  - project.arch.yaml
+  - project.baton.yaml
 naming:
   module: lowercase-identifier
   artifact: lowercase-identifier

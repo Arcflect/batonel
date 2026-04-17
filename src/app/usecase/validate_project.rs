@@ -28,7 +28,7 @@ impl ValidateProjectUseCase {
     {
         Self::execute_with_paths_output_and_verifier(
             _input,
-            "project.arch.yaml",
+            "project.baton.yaml",
             "placement.rules.yaml",
             "artifacts.plan.yaml",
             output,
@@ -125,7 +125,7 @@ mod tests {
         let mut output = FakeOutput::default();
         let result = ValidateProjectUseCase::execute_with_paths_output_and_verifier(
             ValidateProjectInput,
-            "missing-project.arch.yaml",
+            "missing-project.baton.yaml",
             "missing-placement.rules.yaml",
             "missing-artifacts.plan.yaml",
             &mut output,
@@ -134,7 +134,7 @@ mod tests {
 
         let err = result.expect_err("expected config load error");
         let msg = err.to_string();
-        assert!(msg.contains("missing-project.arch.yaml"));
+        assert!(msg.contains("missing-project.baton.yaml"));
     }
 
     #[test]
@@ -142,8 +142,8 @@ mod tests {
         let temp = tempdir().expect("tempdir should be created");
         let root = temp.path();
         std::fs::write(
-            root.join("project.arch.yaml"),
-            r#"archflow:
+            root.join("project.baton.yaml"),
+            r#"batonel:
   schema_version: "1"
 project:
   name: sample-app
@@ -178,7 +178,7 @@ modules:
         let mut output = FakeOutput::default();
         let result = ValidateProjectUseCase::execute_with_paths_output_and_verifier(
             ValidateProjectInput,
-            root.join("project.arch.yaml")
+            root.join("project.baton.yaml")
                 .to_str()
                 .expect("project path utf8"),
             root.join("placement.rules.yaml")

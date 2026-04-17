@@ -5,7 +5,7 @@
 
 ## Context
 
-Archflow now has:
+Batonel now has:
 
 - a minimal preset model (ADR-0015)
 - a preset packaging approach (ADR-0016)
@@ -47,7 +47,7 @@ For each example, files and content are classified as follows.
 
 Reusable defaults (eligible for preset packaging):
 
-- project defaults (`project.arch.yaml`)
+- project defaults (`project.baton.yaml`)
 - role-to-path defaults (`placement.rules.yaml`)
 - role-based contract defaults (`contracts.template.yaml`)
 - optional starter artifact plan when it is broadly reusable
@@ -87,7 +87,7 @@ This keeps examples and presets connected without collapsing them into the same 
 - The relationship between current examples and future presets is explicit.
 - Contributors can evolve examples with clear transition expectations.
 - Preset implementation can proceed incrementally without ambiguity about source examples.
-- Archflow keeps examples descriptive and presets operational, consistent with ADR-0005.
+- Batonel keeps examples descriptive and presets operational, consistent with ADR-0005.
 
 ---
 
@@ -100,7 +100,7 @@ This keeps examples and presets connected without collapsing them into the same 
 
 ## コンテキスト
 
-Archflow には現在、次があります。
+Batonel には現在、次があります。
 
 - 最小 preset モデル（ADR-0015）
 - preset パッケージング方針（ADR-0016）
@@ -142,7 +142,7 @@ Preset id は ADR-0016 の命名規則に従い、
 
 再利用可能デフォルト（preset packaging 対象）:
 
-- project defaults（`project.arch.yaml`）
+- project defaults（`project.baton.yaml`）
 - role-to-path defaults（`placement.rules.yaml`）
 - role-based contract defaults（`contracts.template.yaml`）
 - 広く再利用できる場合に限る optional starter artifact plan
@@ -182,4 +182,4 @@ example 更新時は次を行います。
 - current examples と future presets の関係が明示化される。
 - コントリビューターは明確な移行期待を持って example を進化できる。
 - preset 実装は source examples に対する曖昧さなく段階的に進められる。
-- Archflow は、ADR-0005 と整合して examples を記述的、presets を運用的に維持できる。
+- Batonel は、ADR-0005 と整合して examples を記述的、presets を運用的に維持できる。

@@ -5,7 +5,7 @@
 
 ## Context
 
-As Archflow enters Phase 4 (Verification), it requires a structured internal model to represent the state of architectural consistency checks. This model must be robust enough to handle the initial scope of [ADR-0006](./0006-verify-starts-with-structure-and-contract-consistency.md) while remaining extensible for future code-aware analysis.
+As Batonel enters Phase 4 (Verification), it requires a structured internal model to represent the state of architectural consistency checks. This model must be robust enough to handle the initial scope of [ADR-0006](./0006-verify-starts-with-structure-and-contract-consistency.md) while remaining extensible for future code-aware analysis.
 
 Without a consistent result structure, the verification logic would likely become a collection of ad-hoc `eprintln!` calls, making it difficult to generate aggregated reports or integrate with external CI systems.
 
@@ -50,7 +50,7 @@ Results are packaged into a unified `VerifyReport`, which provides:
 
 ## コンテキスト
 
-Archflow が Phase 4 (Verification) に移行するにあたり、アーキテクチャの一貫性チェックの状態を表現するための構造化された内部モデルが必要となります。このモデルは、[ADR-0006](./0006-verify-starts-with-structure-and-contract-consistency.md) で定義された初期スコープをカバーしつつ、将来のコード認識解析に向けた拡張性を備えている必要があります。
+Batonel が Phase 4 (Verification) に移行するにあたり、アーキテクチャの一貫性チェックの状態を表現するための構造化された内部モデルが必要となります。このモデルは、[ADR-0006](./0006-verify-starts-with-structure-and-contract-consistency.md) で定義された初期スコープをカバーしつつ、将来のコード認識解析に向けた拡張性を備えている必要があります。
 
 一貫した結果構造がないと、検証ロジックはアドホックな `eprintln!` の集まりになり、集計レポートの生成や外部 CI システムとの統合が困難になります。
 

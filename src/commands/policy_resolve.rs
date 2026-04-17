@@ -57,7 +57,7 @@ pub fn execute_default_cli(actor: Option<&str>) {
 }
 
 pub fn render_effective_policy(ep: &EffectivePolicy) {
-    println!("Archflow Effective Policy Resolution");
+    println!("Batonel Effective Policy Resolution");
     println!("=====================================");
     println!();
 

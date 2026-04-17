@@ -1,11 +1,11 @@
 name: generic-layered
-summary: Language-agnostic layered starter preset for Archflow
+summary: Language-agnostic layered starter preset for Batonel
 architecture_style: layered
 ecosystem: generic
 source_example: examples/generic-layered
 includes:
   required:
-    - project.arch.yaml
+    - project.baton.yaml
     - placement.rules.yaml
     - contracts.template.yaml
   optional:
@@ -17,7 +17,7 @@ package:
   version: 0.1.0
   visibility: public
   compatibility:
-    min_archflow_version: 0.1.0
-    max_archflow_version: 0.1.99
+    min_batonel_version: 0.1.0
+    max_batonel_version: 0.1.99
     project_schema_version: "1"
     policy_profile_version: 1

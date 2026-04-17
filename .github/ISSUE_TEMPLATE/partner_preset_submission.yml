@@ -5,8 +5,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        Use this form to submit your organization's preset public key (Ed25519) to Archflow's `allowed_signers` file to become a verified partner.
-        Presetの公開鍵（Ed25519）をArchflowの `allowed_signers` に登録し、検証済みパートナーとなるためにこのフォームを使用します。
+        Use this form to submit your organization's preset public key (Ed25519) to Batonel's `allowed_signers` file to become a verified partner.
+        Presetの公開鍵（Ed25519）をBatonelの `allowed_signers` に登録し、検証済みパートナーとなるためにこのフォームを使用します。
   - type: input
     id: organization_name
     attributes:
@@ -36,14 +36,14 @@ body:
     attributes:
       label: Preset Repository / Presetリポジトリ
       description: Link to the repository where your preset is maintained. / Presetが管理されているリポジトリへのリンク。
-      placeholder: https://github.com/example/archflow-preset
+      placeholder: https://github.com/example/batonel-preset
     validations:
       required: true
   - type: textarea
     id: verification_contact
     attributes:
       label: Out-of-band Verification Contact / アウトオブバンド検証用連絡先
-      description: How can Archflow governance reviewers securely contact you to verify this key out-of-band? / Archflowガバナンス審査員がこの鍵をアウトオブバンドで安全に確認するための連絡方法。
+      description: How can Batonel governance reviewers securely contact you to verify this key out-of-band? / Batonelガバナンス審査員がこの鍵をアウトオブバンドで安全に確認するための連絡方法。
       placeholder: |
         Security lead email: security@example.com
         Identity verification context: ...

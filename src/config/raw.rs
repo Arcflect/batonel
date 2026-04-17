@@ -7,7 +7,7 @@ pub struct RawPresetReference {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RawArchflowMetadata {
+pub struct RawBatonelMetadata {
     pub schema_version: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub preset: Option<RawPresetReference>,
@@ -16,7 +16,7 @@ pub struct RawArchflowMetadata {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RawProjectConfig {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub archflow: Option<RawArchflowMetadata>,
+    pub batonel: Option<RawBatonelMetadata>,
     pub project: crate::model::project::Project,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub workspace: Option<crate::model::project::Workspace>,

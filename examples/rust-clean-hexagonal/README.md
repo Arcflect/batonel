@@ -9,5 +9,5 @@ This example demonstrates:
 - artifact contracts generated alongside scaffolded files
 - AI handoff prompts for artifact-level implementation
 
-Use this example to understand how Archflow can support a Rust project
+Use this example to understand how Batonel can support a Rust project
 that values architectural boundaries and explicit placement rules.

@@ -2,7 +2,7 @@ schema:
   name: policy-profile
   version: 0.1.0
   description: >
-    Defines minimum governance policy controls for Archflow repositories.
+    Defines minimum governance policy controls for Batonel repositories.
 
 required:
   - version
@@ -18,7 +18,7 @@ fields:
   required_files:
     type: list[string]
     required: true
-    description: Required repository files validated by `archflow audit`.
+    description: Required repository files validated by `batonel audit`.
 
   naming:
     type: map
@@ -87,7 +87,7 @@ fields:
 example:
   version: 1
   required_files:
-    - project.arch.yaml
+    - project.baton.yaml
     - placement.rules.yaml
     - artifacts.plan.yaml
     - contracts.template.yaml
@@ -107,7 +107,7 @@ example:
   governance_roles:
     - role: policy_admin
       members:
-        - "@archflow/core"
+        - "@batonel/core"
     - role: architect
       members:
-        - "@archflow/architecture-committee"
+        - "@batonel/architecture-committee"

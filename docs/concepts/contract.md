@@ -2,12 +2,12 @@
 
 ## Overview
 
-In Archflow, a **Contract** defines the responsibilities and constraints of an artifact.
+In Batonel, a **Contract** defines the responsibilities and constraints of an artifact.
 
 A contract explains what an artifact is supposed to do, what it must not do,
 what dependencies it may rely on, and what outputs it is expected to provide.
 
-The contract is the main mechanism Archflow uses to preserve architectural intent
+The contract is the main mechanism Batonel uses to preserve architectural intent
 during implementation.
 
 ---
@@ -112,7 +112,7 @@ A contract belongs to an artifact.
 - the contract defines its behavioral boundary
 - the prompt turns the contract into AI-ready implementation context
 
-The contract is the most important architectural safeguard in Archflow.
+The contract is the most important architectural safeguard in Batonel.
 
 ---
 
@@ -166,7 +166,7 @@ Without contracts, architecture often exists only in:
 
 That makes implementation drift likely, especially when using lightweight AI models.
 
-Contracts give Archflow a way to preserve architecture at the artifact level.
+Contracts give Batonel a way to preserve architecture at the artifact level.
 
 They are useful for:
 
@@ -216,7 +216,7 @@ In the future, contracts may also support:
 
 ## 概要
 
-Archflow における **Contract** は、artifact の責務と制約の定義です。
+Batonel における **Contract** は、artifact の責務と制約の定義です。
 
 contract は次のことを記述します。
 
@@ -227,7 +227,7 @@ contract は次のことを記述します。
 - どのような入力と出力が期待されるか
 - 実装がどの程度集中しているべきか
 
-Contract は Archflow が実装中にアーキテクチャの意図を保全する主な方法です。
+Contract は Batonel が実装中にアーキテクチャの意図を保全する主な方法です。
 
 ---
 
@@ -330,9 +330,9 @@ contract は複数の他の概念に接続します。
 
 ---
 
-## Contract が Archflow で中心的な理由
+## Contract が Batonel で中心的な理由
 
-Contract は Archflow の操作上の中心です。
+Contract は Batonel の操作上の中心です。
 
 なぜなら：
 
@@ -341,8 +341,8 @@ Contract は Archflow の操作上の中心です。
 - plan と implementation handoff の間のブリッジを確立する
 - 将来の verify の基礎を形成する
 
-Contract がなければ、Archflow はスキャフォルドツールに過ぎなくなります。
-Contract により、Archflow は artifact レベルで実行可能になります。
+Contract がなければ、Batonel はスキャフォルドツールに過ぎなくなります。
+Contract により、Batonel は artifact レベルで実行可能になります。
 
 ---
 

@@ -1,6 +1,6 @@
 # Preset Trust Verification
 
-Archflow ensures the integrity and origin authenticity of distribution presets using cryptographically signed release assets. This document defines the structural governance operations for maintaining this pipeline.
+Batonel ensures the integrity and origin authenticity of distribution presets using cryptographically signed release assets. This document defines the structural governance operations for maintaining this pipeline.
 
 The target audience for this document includes platform operators, security auditors, and release engineers who need to understand how trust is established, verified, and safely rotated over time.
 
@@ -56,7 +56,7 @@ Verification tooling explicitly rejects signatures matching a revoked public key
 
 # Preset のトラスト検証
 
-Archflow は、暗号学的に署名されたリリースアセットを用いることで、配布される Preset の完全性とオリジンの真正性を保証します。本ドキュメントでは、このパイプラインを維持するための構造的ガバナンス運用について定義します。
+Batonel は、暗号学的に署名されたリリースアセットを用いることで、配布される Preset の完全性とオリジンの真正性を保証します。本ドキュメントでは、このパイプラインを維持するための構造的ガバナンス運用について定義します。
 
 本ドキュメントは、トラストがどのように確立され、検証され、安全にローテーションされるかを理解する必要があるプラットフォーム・オペレーター、セキュリティ監査員、およびリリース・エンジニアを対象としています。
 

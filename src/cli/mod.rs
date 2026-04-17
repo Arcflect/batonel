@@ -48,12 +48,12 @@ impl std::fmt::Display for OutputMode {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Initialize a new Archflow project configuration
+    /// Initialize a new Batonel project configuration
     Init {
         /// Preset id under presets/ (e.g. generic-layered, rust-clean-hexagonal)
         #[arg(long)]
         preset: Option<String>,
-        /// Override project.name in project.arch.yaml during initialization
+        /// Override project.name in project.baton.yaml during initialization
         #[arg(long)]
         project_name: Option<String>,
         /// Preview generated files without writing them to disk
@@ -102,7 +102,7 @@ pub enum Commands {
         #[arg(long)]
         preset_dir: String,
         /// Local registry root directory
-        #[arg(long, default_value = ".archflow/registry")]
+        #[arg(long, default_value = ".batonel/registry")]
         registry_dir: String,
     },
     /// Install a preset package from a local registry index
@@ -114,7 +114,7 @@ pub enum Commands {
         #[arg(long = "preset-version")]
         preset_version: Option<String>,
         /// Local registry root directory
-        #[arg(long, default_value = ".archflow/registry")]
+        #[arg(long, default_value = ".batonel/registry")]
         registry_dir: String,
         /// Destination directory to install into
         #[arg(long, default_value = "presets")]
@@ -150,7 +150,7 @@ pub enum Commands {
         #[arg(long)]
         to_version: String,
         /// Local registry root directory
-        #[arg(long, default_value = ".archflow/registry")]
+        #[arg(long, default_value = ".batonel/registry")]
         registry_dir: String,
         /// Project directory to compare (defaults to current directory)
         #[arg(long, default_value = ".")]
@@ -168,7 +168,7 @@ pub enum Commands {
         #[arg(long)]
         to_version: String,
         /// Local registry root directory
-        #[arg(long, default_value = ".archflow/registry")]
+        #[arg(long, default_value = ".batonel/registry")]
         registry_dir: String,
         /// Project directory to apply migration into
         #[arg(long, default_value = ".")]
@@ -179,10 +179,10 @@ pub enum Commands {
     },
     /// Show the effective policy after applying org/team/project override precedence
     PolicyResolve {
-        /// Path to org-level policy file (default: .archflow/org.policy.yaml)
+        /// Path to org-level policy file (default: .batonel/org.policy.yaml)
         #[arg(long)]
         org_policy: Option<String>,
-        /// Path to team-level policy file (default: .archflow/team.policy.yaml)
+        /// Path to team-level policy file (default: .batonel/team.policy.yaml)
         #[arg(long)]
         team_policy: Option<String>,
         /// Path to project-level policy file (default: policy.profile.yaml)

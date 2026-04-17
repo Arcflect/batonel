@@ -2,12 +2,12 @@
 
 ## Overview
 
-In Archflow, a **Placement Rule** defines where artifacts of a given role should live.
+In Batonel, a **Placement Rule** defines where artifacts of a given role should live.
 
 A placement rule maps a role such as `entity`, `usecase`, or `controller`
 to a path in the project structure.
 
-Placement rules are one of the core mechanisms Archflow uses to turn
+Placement rules are one of the core mechanisms Batonel uses to turn
 architectural intent into scaffoldable structure.
 
 ---
@@ -23,7 +23,7 @@ A placement rule answers questions such as:
 - Should this role use a particular file extension or naming pattern?
 
 Without placement rules, artifacts can exist conceptually,
-but Archflow cannot consistently resolve them into concrete locations.
+but Batonel cannot consistently resolve them into concrete locations.
 
 ---
 
@@ -176,9 +176,9 @@ In the future, placement rules may also support:
 
 ## 概要
 
-Archflow における **Placement Rule** は、ロールをプロジェクト構造の場所にマッピングするルールです。
+Batonel における **Placement Rule** は、ロールをプロジェクト構造の場所にマッピングするルールです。
 
-配置ルールは Archflow が各 artifact のロールに基づいてファイルパスを解決するのに役立ちます。
+配置ルールは Batonel が各 artifact のロールに基づいてファイルパスを解決するのに役立ちます。
 
 ---
 
@@ -192,7 +192,7 @@ Archflow における **Placement Rule** は、ロールをプロジェクト構
 - `usecase` ロールを持つ artifact はどこに配置すべきか？
 - `controller` ロールを持つ artifact はどこに配置すべきか？
 
-配置ルールがなければ、Archflow はアーキテクチャの意図を具体的な構造に変換できません。
+配置ルールがなければ、Batonel はアーキテクチャの意図を具体的な構造に変換できません。
 
 ---
 
@@ -238,7 +238,7 @@ roles:
 - `entity` ロールのすべての artifact は `src/domain/entities/` に配置される
 - `usecase` ロールのすべての artifact は `src/application/usecases/` に配置される
 
-これにより Archflow はアーキテクチャスタイルの宣言から直接パスを解決できます。
+これにより Batonel はアーキテクチャスタイルの宣言から直接パスを解決できます。
 
 ---
 

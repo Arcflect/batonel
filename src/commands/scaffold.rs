@@ -3,7 +3,7 @@ use crate::domain::generation::{ArtifactGenerationStatus, ArtifactGenerator};
 use crate::domain::project::ProjectContext;
 
 pub fn execute() {
-    let project_config = match ProjectConfig::load("project.arch.yaml") {
+    let project_config = match ProjectConfig::load("project.baton.yaml") {
         Ok(config) => config,
         Err(e) => {
             eprintln!("Error loading project: {}", e);
@@ -27,7 +27,7 @@ pub fn execute() {
         }
     };
 
-    println!("Archflow Scaffold Generation");
+    println!("Batonel Scaffold Generation");
     println!("============================");
     println!("Project: {}", project_config.project.name);
     println!("Style:   {}", project_config.project.architecture_style);

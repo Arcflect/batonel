@@ -2,7 +2,7 @@
 set -eou pipefail
 
 # check_compliance_level.sh
-# Evaluates the Archflow ecosystem compliance maturity level of the current repository.
+# Evaluates the Batonel ecosystem compliance maturity level of the current repository.
 #
 # Usage:
 #   ./scripts/check_compliance_level.sh [repo_root]
@@ -212,7 +212,7 @@ check_l4() {
 # ─────────────────────────────────────────────────────────────
 # Main
 # ─────────────────────────────────────────────────────────────
-echo "Checking Archflow ecosystem compliance maturity..."
+echo "Checking Batonel ecosystem compliance maturity..."
 echo "Repository root: $REPO_ROOT"
 
 # L0 is always met (it is the absence of controls)

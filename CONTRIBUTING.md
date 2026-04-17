@@ -1,9 +1,9 @@
-# Contributing to Archflow
+# Contributing to Batonel
 
-Thank you for your interest in Archflow.
+Thank you for your interest in Batonel.
 This project is still early, so clear communication and small, well-scoped contributions are especially appreciated.
 
-Archflow is an architecture-to-execution bridge for AI-assisted development.
+Batonel is an architecture-to-execution bridge for AI-assisted development.
 It aims to turn architectural intent into artifact-level scaffolding, contracts, and AI handoff prompts.
 
 ---
@@ -167,7 +167,7 @@ If something is unclear, asking a focused question is better than making a large
 
 ### 貢献のしかた
 
-Archflow には、次のような形で貢献できます。
+Batonel には、次のような形で貢献できます。
 
 - バグ報告
 - 機能提案

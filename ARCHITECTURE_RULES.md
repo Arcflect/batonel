@@ -1,10 +1,10 @@
-# Archflow Architecture Rules
+# Batonel Architecture Rules
 
 ## Purpose
 
-This document defines the mandatory architecture and coding rules for Archflow.
+This document defines the mandatory architecture and coding rules for Batonel.
 
-Archflow is a CLI tool, but it must be treated as an application with clear boundaries.
+Batonel is a CLI tool, but it must be treated as an application with clear boundaries.
 The project adopts a **Hexagonal Architecture (Ports and Adapters)** style on top of a **Modular Monolith** structure.
 
 This document is written for both humans and generative AI.
@@ -20,14 +20,14 @@ For review and day-to-day implementation:
 
 ## 1. Architecture Decision
 
-Archflow adopts the following architecture:
+Batonel adopts the following architecture:
 
 - **Style**: Hexagonal Architecture (Ports and Adapters)
 - **Deployment shape**: Modular Monolith
 - **Interaction model**: CLI entrypoints mapped to Application UseCases
 - **Primary goal**: keep architecture decisions, planning logic, validation logic, and generation logic independent from I/O and framework details
 
-Archflow is not a thin CLI wrapper.
+Batonel is not a thin CLI wrapper.
 It is an architecture decision engine exposed through a CLI.
 
 ---
@@ -62,7 +62,7 @@ The codebase MUST follow these principles:
 
 ## 3. Layer Definitions
 
-Archflow code must be separated into the following layers.
+Batonel code must be separated into the following layers.
 
 ### 3.1 `cli/`
 
@@ -105,7 +105,7 @@ Responsibility:
 Rules:
 - MUST be independent from `clap`, `tokio`, `std::fs`, `reqwest`, git command execution, and terminal rendering
 - MUST NOT know where data comes from or where results are written
-- MUST contain the most important business logic in Archflow
+- MUST contain the most important business logic in Batonel
 
 ### 3.4 `ports/`
 
@@ -228,7 +228,7 @@ The domain must not fetch data by itself.
 
 ## 6. Feature Modeling Rules
 
-Archflow features must be modeled around concepts, not technical mechanisms.
+Batonel features must be modeled around concepts, not technical mechanisms.
 
 ### Good module examples
 
@@ -258,10 +258,10 @@ Each top-level CLI command MUST map to a UseCase.
 
 Examples:
 
-- `archflow init` -> `InitProjectUseCase`
-- `archflow plan` -> `PlanArchitectureUseCase`
-- `archflow validate` -> `ValidateProjectUseCase`
-- `archflow generate` -> `GenerateArtifactsUseCase`
+- `batonel init` -> `InitProjectUseCase`
+- `batonel plan` -> `PlanArchitectureUseCase`
+- `batonel validate` -> `ValidateProjectUseCase`
+- `batonel generate` -> `GenerateArtifactsUseCase`
 
 ### Mandatory rules
 
@@ -280,7 +280,7 @@ Examples:
 
 ## 8. Domain Rules
 
-The domain layer is the heart of Archflow.
+The domain layer is the heart of Batonel.
 
 ### Domain should contain
 
@@ -355,7 +355,7 @@ Examples:
 
 ## 10. Configuration Rules
 
-Archflow will likely read project configuration files such as `project.arch.yaml`.
+Batonel will likely read project configuration files such as `project.baton.yaml`.
 
 ### Mandatory configuration rules
 
@@ -377,7 +377,7 @@ Do not mix parsing and business decisions in a single function.
 
 ## 11. Output Rules
 
-Archflow may support multiple output formats such as text, markdown, and json.
+Batonel may support multiple output formats such as text, markdown, and json.
 
 ### Mandatory rules
 
@@ -426,7 +426,7 @@ Examples:
 
 ## 13. Testing Rules
 
-Testing is mandatory because Archflow is a decision tool.
+Testing is mandatory because Batonel is a decision tool.
 
 ### Domain tests
 
@@ -458,7 +458,7 @@ May verify:
 
 ### Mandatory testing principle
 
-The more central the logic is to Archflow’s decision-making, the less it should depend on integration tests alone.
+The more central the logic is to Batonel’s decision-making, the less it should depend on integration tests alone.
 
 ---
 
@@ -649,5 +649,5 @@ A change should not be merged unless all of the following are true:
 
 When there is a conflict between convenience and architecture consistency, prefer architecture consistency unless there is a documented reason not to.
 
-Archflow is itself a tool for architecture thinking.
+Batonel is itself a tool for architecture thinking.
 Its internal structure is part of the product’s credibility.

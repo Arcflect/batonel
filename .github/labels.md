@@ -1,4 +1,4 @@
-# Recommended Labels for Archflow
+# Recommended Labels for Batonel
 
 ## English
 

@@ -56,7 +56,7 @@ fi
 cargo run --quiet --manifest-path "$ROOT_DIR/Cargo.toml" -- init "${INIT_ARGS[@]}" | tee "$LOG_DIR/init.log"
 
 required_files=(
-  "project.arch.yaml"
+  "project.baton.yaml"
   "placement.rules.yaml"
   "contracts.template.yaml"
   "artifacts.plan.yaml"
@@ -68,14 +68,14 @@ for file in "${required_files[@]}"; do
   fi
 done
 
-if ! grep -Eq '^\s*schema_version:\s*['"'"']?1['"'"']?\s*$' project.arch.yaml; then
-  echo "project.arch.yaml must contain archflow.schema_version=1" >&2
+if ! grep -Eq '^\s*schema_version:\s*['"'"']?1['"'"']?\s*$' project.baton.yaml; then
+  echo "project.baton.yaml must contain batonel.schema_version=1" >&2
   exit 1
 fi
 
 if [[ -n "$PRESET" ]]; then
-  if ! grep -Eq "^\s*id:\s*['\"]?$PRESET['\"]?\s*$" project.arch.yaml; then
-    echo "project.arch.yaml must contain archflow.preset.id=$PRESET" >&2
+  if ! grep -Eq "^\s*id:\s*['\"]?$PRESET['\"]?\s*$" project.baton.yaml; then
+    echo "project.baton.yaml must contain batonel.preset.id=$PRESET" >&2
     exit 1
   fi
 fi

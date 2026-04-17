@@ -2,7 +2,7 @@
 
 ## Overview
 
-In Archflow, a **Prompt** is the AI handoff representation of an artifact contract.
+In Batonel, a **Prompt** is the AI handoff representation of an artifact contract.
 
 A prompt translates project context, artifact identity, and contract constraints
 into a form that can be directly given to an AI coding tool or lightweight model.
@@ -65,7 +65,7 @@ Typical prompt sections include:
 
 ## Canonical Section Order
 
-To ensure consistency across multiple artifacts and different output modes, Archflow follows a strict canonical section order:
+To ensure consistency across multiple artifacts and different output modes, Batonel follows a strict canonical section order:
 
 1.  **Identity**: Artifact Name, Role, and Module.
 2.  **Scope**: Responsibilities and "Must Not" constraints.
@@ -190,7 +190,7 @@ It is context precision.
 
 Repository-wide instructions help, but they are often too broad.
 
-Prompts allow Archflow to hand over implementation in smaller, clearer units.
+Prompts allow Batonel to hand over implementation in smaller, clearer units.
 
 This makes them useful for:
 
@@ -237,7 +237,7 @@ Best for lightweight/fast models or in-editor inline completion. Strips metadata
 
 ## Role-Aware Defaults
 
-Phase 3 introduces **Role-Aware Prompts**. Even if you leave your contract relatively simple, Archflow automatically injects "Completion Criteria" based on the architectural role.
+Phase 3 introduces **Role-Aware Prompts**. Even if you leave your contract relatively simple, Batonel automatically injects "Completion Criteria" based on the architectural role.
 
 | Role | Default AI Guidance |
 | :--- | :--- |
@@ -265,7 +265,7 @@ In the future, prompts may also support:
 
 ## 概要
 
-Archflow における **Prompt** は、artifact contract の AI ハンドオフ表現です。
+Batonel における **Prompt** は、artifact contract の AI ハンドオフ表現です。
 
 prompt は、プロジェクトコンテキスト、artifact のアイデンティティ、contract の境界を、AI コーディングツールに直接渡せる形式に変換します。
 
@@ -291,7 +291,7 @@ prompt は次のような質問に答えます。
 
 ## 標準的なセクション順序
 
-複数のアーティファクト間や異なる出力モード間での一貫性を保つため、Archflow は厳格なセクション順序に従います。
+複数のアーティファクト間や異なる出力モード間での一貫性を保つため、Batonel は厳格なセクション順序に従います。
 
 1.  **Identity（アイデンティティ）**: Artifact 名、Role、Module。
 2.  **Scope（スコープ）**: 責務（Responsibilities）と禁止事項（Must Not）。
@@ -301,7 +301,7 @@ prompt は次のような質問に答えます。
 
 この安定した順序により、人間も AI モデルもプロンプトをスキャンし、比較することが容易になります。
 
-Prompt がなければ、Archflow から AI ツールへの接続は手動で行われる必要があります。
+Prompt がなければ、Batonel から AI ツールへの接続は手動で行われる必要があります。
 
 ---
 
@@ -325,7 +325,7 @@ Prompt は次の責務を持ちません。
 
 ## Prompt と Contract の関係
 
-これは Archflow における最も重要な関係の 1 つです。
+これは Batonel における最も重要な関係の 1 つです。
 
 - **contract** は artifact の境界の権威ある定義です
 - **prompt** は contract データを AI 向けの実装指示に変換したものです
@@ -391,7 +391,7 @@ Prompt は次のものと接続します。
 - **module**: prompt が属するコンテキスト
 - **role**: prompt のメタデータの一部
 
-Prompt は Archflow のアーキテクチャモデルと AI ツールの間のブリッジです。
+Prompt は Batonel のアーキテクチャモデルと AI ツールの間のブリッジです。
 
 ---
 

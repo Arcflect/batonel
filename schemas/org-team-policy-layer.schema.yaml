@@ -3,7 +3,7 @@ schema:
   version: 0.1.0
   description: >
     Schema for org-level and team-level policy override layers.
-    Files are placed at .archflow/org.policy.yaml and .archflow/team.policy.yaml.
+    Files are placed at .batonel/org.policy.yaml and .batonel/team.policy.yaml.
 
 required:
   - version
