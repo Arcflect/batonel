@@ -52,18 +52,20 @@ Pin a specific version:
 curl -fsSL https://raw.githubusercontent.com/Arcflect/batonel/main/scripts/install-batonel.sh | bash -s -- v1.6.0
 ```
 
-**Initialize a project from a preset:**
+**Run the Primary Workflow:**
 
 ```bash
-# Preview what will be generated (no files written)
-batonel init --preset generic-layered --project-name my-service --dry-run
-
-# Initialize and generate the artifact plan
+# 1. Initialize a project from a preset
 batonel init --preset generic-layered --project-name my-service
+
+# 2. Plan the architecture
 batonel plan
 
-# Run a structural audit
-batonel audit --strict
+# 3. Scaffold the directories and contracts
+batonel scaffold
+
+# 4. Verify project consistency against contracts
+batonel verify
 ```
 
 Two presets are included out of the box:
@@ -75,6 +77,36 @@ Two presets are included out of the box:
 
 → See [docs/preset-onboarding.md](./docs/preset-onboarding.md) for the full onboarding flow.
 → See [docs/release-operations.md](./docs/release-operations.md) for CI pinned-version install.
+
+---
+
+## Command Hierarchy
+
+Batonel features a unified **Golden Path** alongside distinct advanced operations.
+Run `batonel --help` to see all commands grouped by category.
+
+### 1. Primary Workflow
+The core loop of converting an architectural preset into an executable reality.
+- `init` - Initialize project configurations
+- `plan` - Calculate definitions based on contracts
+- `scaffold` - Generate structure into directories
+- `verify` - Check compliance against strict rules
+
+### 2. Advanced Usage
+Operations meant to bridge the gap with AI tooling and triage workflows.
+- `prompt` - Generate AI handoff context
+- `triage` - Create remediation prioritization
+
+### 3. Governance and Trust
+Operations that maintain and enforce long-term compliance policies across teams.
+- `audit`, `guard`, `compliance-report` - CI/CD and cross-repo audit checks
+- `fix`, `fix-rollout-plan`, `fix-rollout-approve`, `fix-rollout-apply` - Managed remediations
+- `policy-resolve` - Test merged organization policies
+
+### 4. Preset Management
+Local distribution for architecture packages.
+- `preset-install`, `preset-publish`, `preset-verify`
+- `preset-migration-plan`, `preset-migration-apply`
 
 ---
 

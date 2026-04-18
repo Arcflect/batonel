@@ -8,6 +8,7 @@ pub enum GovernanceOperation {
     /// Authorize applying global config changes or locked rules.
     EditPolicy,
     /// Authorize applying a patch via rollout.
+    #[allow(dead_code)]
     FixRollout,
     /// Standard viewing/audit execution capabilities.
     RunAudit,
