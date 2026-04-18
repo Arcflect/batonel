@@ -32,6 +32,9 @@ struct FixRolloutApproveInput {
 
 pub fn handle(command: Commands) {
     match command {
+        // ==========================================
+        // Primary Workflow Commands
+        // ==========================================
         Commands::Init {
             preset,
             project_name,
@@ -106,9 +109,6 @@ pub fn handle(command: Commands) {
             };
             render_usecase_result(output.success, "generate artifacts");
         }
-        Commands::Prompt { target, mode } => {
-            crate::commands::prompt::execute(&target, mode);
-        }
         Commands::Verify => {
             let mut output_adapter = crate::infra::ConsoleOutputAdapter;
             let output = match crate::app::usecase::ValidateProjectUseCase::execute_with_output(
@@ -123,30 +123,22 @@ pub fn handle(command: Commands) {
             };
             render_usecase_result(output.success, "validate project");
         }
+
+        // ==========================================
+        // Advanced Workflow Commands
+        // ==========================================
+        Commands::Prompt { target, mode } => {
+            crate::commands::prompt::execute(&target, mode);
+        }
+        Commands::Triage { top, json } => {
+            crate::commands::triage::execute(top, json);
+        }
+
+        // ==========================================
+        // Governance Commands
+        // ==========================================
         Commands::Audit { strict, evidence_export } => {
             crate::commands::audit::execute(strict, evidence_export);
-        }
-        Commands::Fix { dry_run, apply } => {
-            crate::commands::fix::execute(dry_run, apply);
-        }
-        Commands::PresetPublish {
-            preset_dir,
-            registry_dir,
-        } => {
-            crate::commands::preset_registry::publish(&preset_dir, &registry_dir);
-        }
-        Commands::PresetInstall {
-            preset,
-            preset_version,
-            registry_dir,
-            destination_dir,
-        } => {
-            crate::commands::preset_registry::install(
-                &preset,
-                preset_version.as_deref(),
-                &registry_dir,
-                &destination_dir,
-            );
         }
         Commands::Guard { hook, strict } => {
             let hook_point = match hook {
@@ -156,21 +148,34 @@ pub fn handle(command: Commands) {
             };
             crate::commands::guard::execute_cli(hook_point, strict);
         }
-        Commands::PresetVerify { preset_dir, strict } => {
-            crate::commands::preset_verify::execute_cli(&preset_dir, strict);
-        }
-        Commands::PolicyResolve {
-            org_policy,
-            team_policy,
-            project_policy,
-            actor,
+        Commands::ComplianceReport {
+            repos,
+            repos_file,
+            format,
+            output,
+            baseline_json,
         } => {
-            crate::commands::policy_resolve::execute_cli(
-                org_policy.as_deref(),
-                team_policy.as_deref(),
-                project_policy.as_deref(),
-                actor.as_deref(),
+            let input = ComplianceReportInput {
+                repos,
+                repos_file,
+                format,
+                output,
+                baseline_json,
+            };
+            let report_format = match input.format {
+                ComplianceReportFormat::Json => crate::commands::compliance_report::ReportFormat::Json,
+                ComplianceReportFormat::Csv => crate::commands::compliance_report::ReportFormat::Csv,
+            };
+            crate::commands::compliance_report::execute_cli(
+                &input.repos,
+                input.repos_file.as_deref(),
+                report_format,
+                &input.output,
+                input.baseline_json.as_deref(),
             );
+        }
+        Commands::Fix { dry_run, apply } => {
+            crate::commands::fix::execute(dry_run, apply);
         }
         Commands::FixRolloutPlan { output } => {
             crate::commands::fix_rollout::execute_plan(std::path::Path::new("."), &output);
@@ -200,34 +205,44 @@ pub fn handle(command: Commands) {
         Commands::FixRolloutApply { plan_file, strict } => {
             crate::commands::fix_rollout::execute_apply(&plan_file, strict);
         }
-        Commands::Triage { top, json } => {
-            crate::commands::triage::execute(top, json);
-        }
-        Commands::ComplianceReport {
-            repos,
-            repos_file,
-            format,
-            output,
-            baseline_json,
+        Commands::PolicyResolve {
+            org_policy,
+            team_policy,
+            project_policy,
+            actor,
         } => {
-            let input = ComplianceReportInput {
-                repos,
-                repos_file,
-                format,
-                output,
-                baseline_json,
-            };
-            let report_format = match input.format {
-                ComplianceReportFormat::Json => crate::commands::compliance_report::ReportFormat::Json,
-                ComplianceReportFormat::Csv => crate::commands::compliance_report::ReportFormat::Csv,
-            };
-            crate::commands::compliance_report::execute_cli(
-                &input.repos,
-                input.repos_file.as_deref(),
-                report_format,
-                &input.output,
-                input.baseline_json.as_deref(),
+            crate::commands::policy_resolve::execute_cli(
+                org_policy.as_deref(),
+                team_policy.as_deref(),
+                project_policy.as_deref(),
+                actor.as_deref(),
             );
+        }
+
+        // ==========================================
+        // Preset Commands
+        // ==========================================
+        Commands::PresetInstall {
+            preset,
+            preset_version,
+            registry_dir,
+            destination_dir,
+        } => {
+            crate::commands::preset_registry::install(
+                &preset,
+                preset_version.as_deref(),
+                &registry_dir,
+                &destination_dir,
+            );
+        }
+        Commands::PresetPublish {
+            preset_dir,
+            registry_dir,
+        } => {
+            crate::commands::preset_registry::publish(&preset_dir, &registry_dir);
+        }
+        Commands::PresetVerify { preset_dir, strict } => {
+            crate::commands::preset_verify::execute_cli(&preset_dir, strict);
         }
         Commands::PresetMigrationPlan {
             preset,
