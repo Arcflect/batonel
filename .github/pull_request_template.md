@@ -6,12 +6,18 @@
 ## Checklist
 
 - [ ] PR title follows: `type: summary`
-- [ ] Architecture rules still hold, or I documented the temporary deviation
-- [ ] New behavior follows `cli -> app -> domain/ports` flow where practical
-- [ ] I did not introduce a generic bucket such as `helpers`, `common`, `services`, `manager`, or `processor`
 - [ ] I added or updated tests if needed
 - [ ] I updated docs if needed
 - [ ] I checked release note impact
+
+**For Core/Rust contributions:**
+- [ ] Architecture rules still hold, or I documented the temporary deviation
+- [ ] New behavior follows `cli -> app -> domain/ports` flow where practical
+- [ ] I did not introduce a generic bucket such as `helpers`, `common`, `services`, `manager`, or `processor`
+
+**For Presets & Governance contributions:**
+- [ ] Presets adhere to the ecosystem compliance maturity model
+- [ ] Public keys or review exceptions are clearly documented
 
 If this PR changes architecture-sensitive code, review against:
 

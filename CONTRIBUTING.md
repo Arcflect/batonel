@@ -12,15 +12,23 @@ It aims to turn architectural intent into artifact-level scaffolding, contracts,
 
 ### Ways to contribute
 
-You can contribute in several ways:
+You can contribute in several ways across the project's core areas:
 
-- report bugs
-- propose features
-- suggest architecture rules
-- improve docs
-- improve examples
+**Core**:
+- report core bugs
+- propose CLI features
 - refine schemas
-- implement scoped issues
+- implement scoped CLI issues
+
+**Presets & Governance**:
+- suggest architecture rules
+- propose new partner presets
+- improve ecosystem compliance
+
+**Docs & Examples**:
+- improve core documentation
+- improve examples
+- clarify concept definitions
 
 If you want to understand where contributions are especially helpful right now, see:
 
@@ -167,15 +175,23 @@ If something is unclear, asking a focused question is better than making a large
 
 ### 貢献のしかた
 
-Batonel には、次のような形で貢献できます。
+プロジェクトの主要領域を通じて、さまざまな形で貢献いただけます:
 
-- バグ報告
-- 機能提案
-- アーキテクチャルール提案
-- ドキュメント改善
-- サンプル改善
+**Core**:
+- コアのバグ報告
+- CLI の機能提案
 - schema の改善
-- 小さく分割された issue の実装
+- 小さく分割された CLI issue の実装
+
+**Presets & Governance**:
+- アーキテクチャルールの提案
+- パートナー Preset の提案
+- エコシステムのコンプライアンス改善
+
+**Docs & Examples**:
+- コアドキュメントの改善
+- examples の改善
+- 概念定義の明確化
 
 いまどこに貢献しやすいかを知りたい場合は、次も見てください。
 
