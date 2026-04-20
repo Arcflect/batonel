@@ -6,3 +6,6 @@ docs,0075ca,Documentation work
 good first issue,7057ff,Suitable for first-time contributors
 discussion,fbca04,Needs open discussion before implementation
 blocked,b60205,Waiting on another issue or decision
+core,0052cc,Core CLI or parser improvements
+presets,1d76db,Ecosystem presets and conventions
+governance,006b75,Trust compliance and review processes

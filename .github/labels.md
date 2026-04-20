@@ -12,6 +12,12 @@ Suggested initial labels:
 - `discussion` — requires open discussion before implementation
 - `blocked` — waiting on another issue or decision
 
+Area tracking labels:
+
+- `core` — core CLI or parser improvements
+- `presets` — ecosystem presets and conventions
+- `governance` — trust, compliance, and review processes
+
 ## 日本語
 
 初期ラベル案:
@@ -23,3 +29,9 @@ Suggested initial labels:
 - `good first issue` — 初回貢献向け
 - `discussion` — 実装前に議論が必要
 - `blocked` — 他 issue や判断待ち
+
+領域管理ラベル:
+
+- `core` — コアCLIやパーサーの改善
+- `presets` — エコシステムのPresetと規約
+- `governance` — 信頼性とコンプライアンス、レビュープロセス
