@@ -1,0 +1,11 @@
+version: 1
+
+hooks:
+  init: true
+  plan: true
+  ci: true
+
+checks:
+  require_contracts_template: true
+  require_role_templates_for_artifact_roles: true
+  enforce_sidecar_suffixes: true
