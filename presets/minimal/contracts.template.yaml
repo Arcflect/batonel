@@ -1,0 +1,17 @@
+role_templates:
+  usecase:
+    responsibilities:
+      - "Execute one application use case"
+      - "Coordinate domain behavior"
+    must_not:
+      - "Access infrastructure details directly"
+      - "Return transport-specific responses"
+    implementation_size: "small"
+
+  entity:
+    responsibilities:
+      - "Represent a core business concept"
+      - "Protect domain invariants"
+    must_not:
+      - "Depend on transport or persistence details"
+    implementation_size: "small"

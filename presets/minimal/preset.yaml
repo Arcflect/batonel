@@ -1,0 +1,21 @@
+name: minimal
+summary: "Minimal starter preset for exploring Batonel mechanics"
+architecture_style: simple
+ecosystem: generic
+source_example: examples/minimal
+includes:
+  required:
+    - project.baton.yaml
+    - placement.rules.yaml
+    - contracts.template.yaml
+  optional:
+    - artifacts.plan.yaml
+    - guard.sidecar.yaml
+
+package:
+  version: 0.1.0
+  visibility: public
+  compatibility:
+    min_batonel_version: 0.1.0
+    max_batonel_version: 0.1.99
+    project_schema_version: "1"
