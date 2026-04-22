@@ -1,0 +1,30 @@
+name: Batonel Verify Parity
+
+on:
+  pull_request:
+    paths:
+      - "examples/**"
+      - "presets/**"
+      - "schemas/**"
+      - "scripts/verify_parity.sh"
+      - ".github/workflows/batonel-verify-parity.yml"
+  workflow_dispatch:
+
+jobs:
+  verify-parity:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Run verify_parity.sh
+        run: ./scripts/verify_parity.sh
