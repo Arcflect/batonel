@@ -205,6 +205,14 @@ Examples:
 
 ---
 
+## Parity
+
+The strict alignment between examples, presets, schemas, and generated outputs.
+
+When Parity is maintained, it is guaranteed mechanically that teaching examples share the exact same configuration as their derived presets, and that expected outputs match the current generation rules.
+
+---
+
 ## AI Handoff
 
 The act of passing an artifact to an AI system for implementation.
@@ -464,6 +472,14 @@ Example は記述的です。
 例：
 - Rust クリーン / ヘキサゴナルプリセット
 - 汎用レイヤードプリセット
+
+---
+
+### Parity（パリティ・等価性）
+
+examples、presets、schemas、および生成される出力の間の厳密な整合性。
+
+Parity が維持されている場合、学習用 example がそこから派生した preset と完全に同じ設定を共有していること、および期待される出力が現在の生成ルールと一致していることが機械的に保証されます。
 
 ---
 
