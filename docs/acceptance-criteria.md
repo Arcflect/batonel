@@ -1,7 +1,7 @@
 # Batonel Acceptance Criteria
 
 This document defines the product-level guarantees that **Batonel** must satisfy to be considered stable and release-ready. 
-These criteria elevate core CI workflows from implementation details to documented product promises.
+These criteria elevate core CI workflows from implementation details to documented product promises, rooted in the [Batonel Quality & Trust Model](./quality-model.md).
 
 ---
 

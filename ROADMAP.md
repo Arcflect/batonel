@@ -7,6 +7,7 @@ Related documents:
 - [docs/architecture-flow.md](./docs/architecture-flow.md)
 - [docs/presets.md](./docs/presets.md)
 - [docs/acceptance-criteria.md](./docs/acceptance-criteria.md)
+- [docs/quality-model.md](./docs/quality-model.md)
 - [docs/decisions/README.md](./docs/decisions/README.md)
 
 ---

@@ -150,17 +150,17 @@ The contract model is precise enough for a CI audit gate. It is also structured 
 
 ---
 
-## Governance and trust pipeline
+## Trust & Quality Model
 
-Batonel ships with a complete preset governance model:
+Batonel establishes a verifiable bridge between design and code through a layered **Quality & Trust Model**:
 
-- **Ed25519 SSH signatures** for signed preset bundles
-- **Allowed signers trust store** (`.github/trust/allowed_signers`) for verifiable key anchors
-- **Partner review workflow** with mandatory out-of-band identity verification
-- **Ecosystem compliance maturity benchmark** — a five-level model (L0–L4) for assessing governance posture
-- **CI enforcement** — compliance gate runs on every governance-sensitive PR
+- **Structural Validity**: Core consistency check between plan and execution (`batonel verify`).
+- **Example Parity**: Byte-for-byte synchronization between documentation and presets (`verify_parity.sh`).
+- **Preset Integrity**: Cryptographic origin authenticity using **Ed25519 SSH signatures**.
+- **Continuous Compliance**: Five-level maturity benchmark (L0–L4) enforced via CI gates.
 
-→ See [docs/ecosystem-compliance-maturity.md](./docs/ecosystem-compliance-maturity.md) for the benchmark levels.
+→ See **[docs/quality-model.md](./docs/quality-model.md)** for the full trust framework.
+→ See [docs/acceptance-criteria.md](./docs/acceptance-criteria.md) for release-gating definitions.
 
 ---
 
@@ -344,17 +344,17 @@ Batonel はその中間にあります。設計意図を実行可能にします
 
 ---
 
-## ガバナンスと信頼パイプライン
+## 信頼と品質のモデル (Trust & Quality)
 
-Batonel には完全な preset ガバナンスモデルが含まれています：
+Batonel は、多層的な **Quality & Trust Model** を通じて、設計とコードの間に検証可能な橋を架けます：
 
-- 署名済み preset バンドルのための **Ed25519 SSH 署名**
-- 検証可能な鍵アンカーのための **allowed signers トラストストア**
-- 帯域外アイデンティティ確認を義務付けた **パートナーレビューワークフロー**
-- ガバナンスポスチャを評価する **5 段階のエコシステム準拠成熟度ベンチマーク（L0–L4）**
-- ガバナンス関連 PR すべてに適用される **CI 強制ゲート**
+- **構造的妥当性**: 計画と実装の整合性を自動検証 (`batonel verify`)
+- **例示の整合性**: ドキュメントとプリセットの完全な同期を保証 (`verify_parity.sh`)
+- **プリセットの完全性**: **Ed25519 SSH 署名**によるオリジンの真正性保証
+- **継続的コンプライアンス**: 5 段階の成熟度ベンチマーク (L0–L4) によるガバナンス監査
 
-→ ベンチマークの各レベルは [docs/ecosystem-compliance-maturity.md](./docs/ecosystem-compliance-maturity.md) を参照してください。
+→ 詳細は **[docs/quality-model.md](./docs/quality-model.md)** を参照してください。
+→ リリース基準は [docs/acceptance-criteria.md](./docs/acceptance-criteria.md) を参照してください。
 
 ---
 
