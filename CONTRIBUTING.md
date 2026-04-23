@@ -117,6 +117,7 @@ Before submitting a PR, please confirm:
 
 - the change is scoped and explained
 - documentation is updated if needed
+- the change satisfies or updates the relevant [Acceptance Criteria](./docs/acceptance-criteria.md)
 - naming is consistent
 - the intent is clear for both humans and AI users
 - examples are updated when behavior changes
@@ -278,6 +279,7 @@ PR を送る前に、次を確認してください。
 
 - 変更範囲が明確か
 - 必要なドキュメント更新があるか
+- 関連する [受け入れ基準 (Acceptance Criteria)](./docs/acceptance-criteria.md) を満たしているか（または更新したか）
 - 命名が一貫しているか
 - 人間にも AI にも意図が伝わるか
 - 振る舞いが変わるなら examples も更新されているか

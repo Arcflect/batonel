@@ -6,6 +6,7 @@ Related documents:
 - [docs/schema-guide.md](./docs/schema-guide.md)
 - [docs/architecture-flow.md](./docs/architecture-flow.md)
 - [docs/presets.md](./docs/presets.md)
+- [docs/acceptance-criteria.md](./docs/acceptance-criteria.md)
 - [docs/decisions/README.md](./docs/decisions/README.md)
 
 ---
@@ -252,7 +253,7 @@ Related docs:
 Tracking issues:
 - [#127](https://github.com/Arcflect/batonel/issues/127) Phase6 Task 1: Stabilize init/plan deterministic onboarding
 - [#128](https://github.com/Arcflect/batonel/issues/128) Phase6 Task 2: Standardize project.baton.yaml contract schema
-- [#129](https://github.com/Arcflect/batonel/issues/129) Phase6 Task 3: Expand docs, examples, and onboarding e2e coverage
+- [#129](https://github.com/Arcflect/batonel/issues/129) Phase6 Task 3: Expand docs, examples, and onboarding e2e coverage (see [Acceptance Criteria](./docs/acceptance-criteria.md))
 - [#130](https://github.com/Arcflect/batonel/issues/130) Phase7 Task 1: Implement audit baseline and PR gate integration
 - [#131](https://github.com/Arcflect/batonel/issues/131) Phase7 Task 2: Define safe fix boundaries and conservative automation
 - [#132](https://github.com/Arcflect/batonel/issues/132) Phase7 Task 3: Apply minimum policy profile across repositories

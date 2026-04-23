@@ -190,6 +190,7 @@ This area turns concepts and schemas into a working tool.
 - scaffold generation
 - prompt generation
 - verification entry points
+- **acceptance criteria verification** (see [Acceptance Criteria](./acceptance-criteria.md))
 
 ### Good contribution types
 
@@ -257,6 +258,7 @@ Verification protects architectural intent after initial generation.
 
 - define verify scope
 - suggest first verification rules
+- expand **Product Guarantees** (see [Acceptance Criteria](./acceptance-criteria.md))
 - identify required consistency checks
 - propose example verification output
 - design status and file presence checks
@@ -637,6 +639,7 @@ CLI は Batonel が実用的になる場所です。
 - スキャフォルド生成
 - prompt 生成
 - verify のエントリポイント
+- **受け入れ基準（Acceptance Criteria）の検証** (詳細は [こちら](./acceptance-criteria.md))
 
 #### 良いコントリビューションの種類
 
@@ -702,6 +705,7 @@ Verify は初期生成後のアーキテクチャの意図を保護します。
 
 - verify のスコープを定義する
 - 最初の verify ルールを提案する
+- **製品保証（Product Guarantees）の拡充** (詳細は [こちら](./acceptance-criteria.md))
 - 必要な整合性チェックを特定する
 - verify 出力の例を設計する
 - ステータスとファイル存在チェックを設計する

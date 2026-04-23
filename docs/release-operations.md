@@ -142,7 +142,19 @@ and optionally include `BREAKING CHANGE` in the PR body.
 Release Drafter auto-assigns the `major` label and bumps the major version accordingly.
 The generated release body describes all breaking changes from merged PR titles.
 
-## 7. Verification checklist
+## 7. Release Gating (Acceptance Criteria)
+
+Every release must pass the formal **Acceptance Criteria** defined in [docs/acceptance-criteria.md](./acceptance-criteria.md).
+
+The following CI workflows act as hard gates:
+
+- **Batonel Verify Example**: Ensures core `verify` logic works on all standard examples.
+- **Onboarding Init-Plan E2E**: Ensures `init` and `plan` (determinism) work correctly for new projects.
+- **Batonel Verify Parity**: Ensures presets and examples stay synchronized.
+
+If any of these workflows fail, the release must be blocked until the root cause is resolved.
+
+## 8. Verification checklist
 
 After a release is published, verify at least once in a fresh environment:
 
