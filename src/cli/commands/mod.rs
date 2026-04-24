@@ -41,10 +41,22 @@ pub fn handle(command: Commands) {
             dry_run,
         } => {
             let input = crate::app::usecase::InitProjectInput {
-                preset,
+                preset: preset.clone(),
                 project_name,
                 dry_run,
             };
+
+            if let Some(preset_id) = preset.as_deref() {
+                println!("Batonel Initialization (preset: {})", preset_id);
+            } else {
+                println!("Batonel Initialization");
+            }
+            println!("=======================");
+
+            if dry_run {
+                println!("  [i] Dry run mode enabled. No files will be written.");
+            }
+
             let output = match crate::app::usecase::InitProjectUseCase::execute(input) {
                 Ok(output) => output,
                 Err(err) => {
@@ -52,9 +64,36 @@ pub fn handle(command: Commands) {
                     std::process::exit(1);
                 }
             };
-            if let Some(preset) = output.resolved_preset.as_deref() {
-                println!("Resolved preset: {}", preset);
+
+            for result in &output.file_results {
+                if dry_run {
+                    if result.created {
+                        println!("  [plan] create {}", result.filename);
+                    } else {
+                        println!("  [plan] skip {} (already exists)", result.filename);
+                    }
+                } else if result.created {
+                    println!("  [+] Generated {}", result.filename);
+                } else {
+                    println!("  [~] {} already exists, skipping.", result.filename);
+                }
             }
+
+            println!();
+            if dry_run {
+                println!(
+                    "Dry run complete. {} file(s) would be generated, {} file(s) would be skipped.",
+                    output.generated_count, output.skipped_count
+                );
+                println!("Review the plan above, then run the same command without --dry-run to generate files.");
+            } else if output.generated_count > 0 {
+                println!("Initialization complete! Explore your configuration files, then run:");
+                println!("  batonel plan");
+                println!("  batonel scaffold");
+            } else {
+                println!("Initialization finished. No new configuration files were generated.");
+            }
+
             render_usecase_result(output.success, "init project");
         }
         Commands::Plan { format } => {
@@ -107,13 +146,19 @@ pub fn handle(command: Commands) {
                     std::process::exit(1);
                 }
             };
+            println!();
+            println!(
+                "Scaffold result: {} generated, {} errors.",
+                output.generated_count, output.error_count
+            );
             render_usecase_result(output.success, "generate artifacts");
         }
         Commands::Verify => {
-            let mut output_adapter = crate::infra::ConsoleOutputAdapter;
-            let output = match crate::app::usecase::ValidateProjectUseCase::execute_with_output(
+            println!("Batonel Architectural Verification");
+            println!("==================================");
+
+            let output = match crate::app::usecase::ValidateProjectUseCase::execute(
                 crate::app::usecase::ValidateProjectInput,
-                &mut output_adapter,
             ) {
                 Ok(output) => output,
                 Err(err) => {
@@ -121,6 +166,15 @@ pub fn handle(command: Commands) {
                     std::process::exit(1);
                 }
             };
+
+            if output.structural_errors > 0 || output.structural_warnings > 0 {
+                println!(
+                    "Structural validation: {} error(s), {} warning(s)",
+                    output.structural_errors, output.structural_warnings
+                );
+            }
+
+            crate::commands::verify::render_report(&output.report);
             render_usecase_result(output.success, "validate project");
         }
 

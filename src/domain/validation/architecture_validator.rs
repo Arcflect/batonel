@@ -18,10 +18,10 @@ impl ArchitectureValidator {
 
             if !context.has_module(&artifact.module) {
                 result.push(Violation {
-                    rule_id: "artifact-module-defined".to_string(),
+                    _rule_id: "artifact-module-defined".to_string(),
                     severity: ViolationSeverity::Error,
-                    target: target.clone(),
-                    message: format!(
+                    _target: target.clone(),
+                    _message: format!(
                         "artifact '{}' references undefined module '{}'",
                         artifact.name, artifact.module
                     ),
@@ -30,10 +30,10 @@ impl ArchitectureValidator {
 
             if !placement.roles.contains_key(&artifact.role) {
                 result.push(Violation {
-                    rule_id: "artifact-role-defined".to_string(),
+                    _rule_id: "artifact-role-defined".to_string(),
                     severity: ViolationSeverity::Error,
-                    target,
-                    message: format!(
+                    _target: target,
+                    _message: format!(
                         "artifact '{}' uses undefined role '{}'",
                         artifact.name, artifact.role
                     ),
@@ -49,10 +49,10 @@ impl ArchitectureValidator {
                 let expected = expected_role_path(artifact, role);
                 if explicit_path != expected {
                     result.push(Violation {
-                        rule_id: "artifact-path-aligns-role".to_string(),
+                        _rule_id: "artifact-path-aligns-role".to_string(),
                         severity: ViolationSeverity::Warn,
-                        target: format!("artifact:{}", artifact.name),
-                        message: format!(
+                        _target: format!("artifact:{}", artifact.name),
+                        _message: format!(
                             "explicit path '{}' deviates from role '{}' expected path '{}'",
                             explicit_path, artifact.role, expected
                         ),

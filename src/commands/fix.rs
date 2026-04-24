@@ -80,7 +80,13 @@ pub fn execute(dry_run: bool, apply: bool) {
 
     if apply {
         if auto_fixable_count > 0 {
-            crate::commands::init::execute(None, None, false);
+            let _ = crate::app::usecase::InitProjectUseCase::execute(
+                crate::app::usecase::InitProjectInput {
+                    preset: None,
+                    project_name: None,
+                    dry_run: false,
+                },
+            );
         }
 
         if review_required_count > 0 {

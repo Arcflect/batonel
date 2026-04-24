@@ -6,10 +6,10 @@ pub enum ViolationSeverity {
 
 #[derive(Debug, Clone)]
 pub struct Violation {
-    pub rule_id: String,
+    pub _rule_id: String,
     pub severity: ViolationSeverity,
-    pub target: String,
-    pub message: String,
+    pub _target: String,
+    pub _message: String,
 }
 
 #[derive(Debug, Clone, Default)]

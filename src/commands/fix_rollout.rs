@@ -319,7 +319,13 @@ pub fn execute_apply(plan_file: &str, strict: bool) {
     // Apply AutoFixable items.
     if has_auto_fixable {
         println!("Applying auto-fixable items via `batonel init`…");
-        crate::commands::init::execute(None, None, false);
+        let _ = crate::app::usecase::InitProjectUseCase::execute(
+            crate::app::usecase::InitProjectInput {
+                preset: None,
+                project_name: None,
+                dry_run: false,
+            },
+        );
         println!("  Auto-fixable items applied.");
         println!();
     }
