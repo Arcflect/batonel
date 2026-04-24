@@ -1,3 +1,31 @@
+use std::collections::BTreeSet;
+use std::fs;
+use std::path::{Path, PathBuf};
+use serde_yaml::{Mapping, Value};
+
+use crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION;
+
+// ---------------------------------------------------------------------------
+// Action types
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum InitActionKind {
+    Create,
+    SkipExisting,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct InitAction {
+    pub(crate) filename: String,
+    pub(crate) content: String,
+    pub(crate) kind: InitActionKind,
+}
+
+// ---------------------------------------------------------------------------
+// UseCase public types
+// ---------------------------------------------------------------------------
+
 #[derive(Debug, Clone)]
 pub struct InitProjectInput {
     pub preset: Option<String>,
@@ -5,11 +33,24 @@ pub struct InitProjectInput {
     pub dry_run: bool,
 }
 
+/// Per-file outcome returned by the use case so the CLI adapter can render it.
+#[derive(Debug, Clone)]
+pub struct InitFileResult {
+    pub filename: String,
+    pub created: bool, // false → skipped (already existed)
+}
+
 #[derive(Debug, Clone)]
 pub struct InitProjectOutput {
     pub success: bool,
-    pub resolved_preset: Option<String>,
+    pub generated_count: usize,
+    pub skipped_count: usize,
+    pub file_results: Vec<InitFileResult>,
 }
+
+// ---------------------------------------------------------------------------
+// UseCase
+// ---------------------------------------------------------------------------
 
 pub struct InitProjectUseCase;
 
@@ -17,7 +58,24 @@ impl InitProjectUseCase {
     pub fn execute(
         input: InitProjectInput,
     ) -> Result<InitProjectOutput, crate::app::error::AppError> {
-        let resolved_preset = if let Some(preset_id) = input.preset.as_deref() {
+        Self::execute_with_guard(input, |planned_files| {
+            crate::commands::guard::run_hook(
+                crate::commands::guard::GuardHookPoint::Init,
+                Some(planned_files),
+            )
+        })
+    }
+
+    /// Testable variant: accepts an injected guard runner so tests stay I/O-free.
+    pub(crate) fn execute_with_guard<F>(
+        input: InitProjectInput,
+        guard_runner: F,
+    ) -> Result<InitProjectOutput, crate::app::error::AppError>
+    where
+        F: FnOnce(&[String]) -> crate::commands::guard::GuardReport,
+    {
+        // Validate / resolve preset id
+        let _resolved_preset = if let Some(preset_id) = input.preset.as_deref() {
             let trimmed = preset_id.trim();
             if trimmed.is_empty() {
                 return Err(crate::app::error::PresetResolutionError::EmptyPresetId.into());
@@ -30,19 +88,431 @@ impl InitProjectUseCase {
             }
             Some(trimmed.to_string())
         } else {
-            crate::domain::preset::PresetResolver::resolve(None, None, None).map(|preset| preset.id)
+            crate::domain::preset::PresetResolver::resolve(None, None, None)
+                .map(|preset| preset.id)
         };
 
-        crate::commands::init::execute(
-            input.preset.as_deref(),
-            input.project_name.as_deref(),
-            input.dry_run,
-        );
+        // Build action list
+        let actions =
+            plan_init_actions(input.preset.as_deref(), input.project_name.as_deref())
+                .map_err(|e| crate::app::error::AppError::Render(e))?;
+
+        let planned_files: Vec<String> =
+            actions.iter().map(|a| a.filename.clone()).collect();
+
+        // Execute actions
+        let mut generated_count = 0usize;
+        let mut skipped_count = 0usize;
+        let mut file_results: Vec<InitFileResult> = Vec::with_capacity(actions.len());
+
+        for action in &actions {
+            match action.kind {
+                InitActionKind::Create if input.dry_run => {
+                    file_results.push(InitFileResult {
+                        filename: action.filename.clone(),
+                        created: true,
+                    });
+                    generated_count += 1;
+                }
+                InitActionKind::SkipExisting if input.dry_run => {
+                    file_results.push(InitFileResult {
+                        filename: action.filename.clone(),
+                        created: false,
+                    });
+                    skipped_count += 1;
+                }
+                InitActionKind::Create => {
+                    fs::write(Path::new(&action.filename), &action.content).map_err(|e| {
+                        crate::app::error::AppError::Render(format!(
+                            "Failed to write {}: {}",
+                            action.filename, e
+                        ))
+                    })?;
+                    file_results.push(InitFileResult {
+                        filename: action.filename.clone(),
+                        created: true,
+                    });
+                    generated_count += 1;
+                }
+                InitActionKind::SkipExisting => {
+                    file_results.push(InitFileResult {
+                        filename: action.filename.clone(),
+                        created: false,
+                    });
+                    skipped_count += 1;
+                }
+            }
+        }
+
+        // Run guard hook
+        let guard_report = guard_runner(&planned_files);
+        let guard_has_errors = guard_report.has_errors();
+
         Ok(InitProjectOutput {
-            success: true,
-            resolved_preset,
+            success: !guard_has_errors,
+            generated_count,
+            skipped_count,
+            file_results,
         })
     }
+}
+
+// ---------------------------------------------------------------------------
+// Private helpers
+// ---------------------------------------------------------------------------
+
+fn plan_init_actions(
+    preset: Option<&str>,
+    project_name: Option<&str>,
+) -> Result<Vec<InitAction>, String> {
+    let files = collect_init_files(preset)?;
+    let mut actions = Vec::with_capacity(files.len());
+
+    for (filename, original_content) in files {
+        let mut content = original_content;
+        if filename == "project.baton.yaml" {
+            content = ensure_project_arch_metadata(&content, preset)?;
+            if let Some(name) = project_name {
+                validate_project_name(name)
+                    .map_err(|err| format!("Invalid --project-name value: {}", err))?;
+                content = override_project_name(&content, name).map_err(|err| {
+                    format!("Failed to override project name in {}: {}", filename, err)
+                })?;
+            }
+        }
+
+        let kind = if Path::new(&filename).exists() {
+            InitActionKind::SkipExisting
+        } else {
+            InitActionKind::Create
+        };
+
+        actions.push(InitAction { filename, content, kind });
+    }
+
+    Ok(actions)
+}
+
+fn collect_init_files(preset: Option<&str>) -> Result<Vec<(String, String)>, String> {
+    if let Some(preset_id) = preset {
+        collect_preset_files(preset_id)
+    } else {
+        Ok(default_init_files())
+    }
+}
+
+fn default_init_files() -> Vec<(String, String)> {
+    vec![
+        (
+            "project.baton.yaml".to_string(),
+            format!(
+                r#"batonel:
+  schema_version: "{}"
+
+project:
+  name: batonel-app
+  architecture_style: simple
+  language: generic
+
+modules:
+  - name: user
+    features:
+      - create_user
+      - user_entity
+"#,
+                SUPPORTED_PROJECT_SCHEMA_VERSION
+            ),
+        ),
+        (
+            "placement.rules.yaml".to_string(),
+            r#"roles:
+  usecase:
+    path: "src/application/usecases/"
+    file_extension: rs
+  entity:
+    path: "src/domain/entities/"
+    file_extension: rs
+"#
+            .to_string(),
+        ),
+        (
+            "artifacts.plan.yaml".to_string(),
+            r#"artifacts:
+  - name: create_user
+    module: user
+    role: usecase
+    inputs:
+      - CreateUserCommand
+    outputs:
+      - CreateUserResult
+
+  - name: user
+    module: user
+    role: entity
+    outputs:
+      - User
+"#
+            .to_string(),
+        ),
+        (
+            "contracts.template.yaml".to_string(),
+            r#"role_templates:
+  usecase:
+    responsibilities:
+      - "Execute one application use case"
+      - "Coordinate domain behavior"
+    must_not:
+      - "Access infrastructure details directly"
+      - "Return transport-specific responses"
+    implementation_size: "small"
+
+  entity:
+    responsibilities:
+      - "Represent a core business concept"
+      - "Protect domain invariants"
+    must_not:
+      - "Depend on transport or persistence details"
+    implementation_size: "small"
+  "#
+            .to_string(),
+        ),
+        (
+            "policy.profile.yaml".to_string(),
+            default_policy_profile_contents(),
+        ),
+        (
+            "guard.sidecar.yaml".to_string(),
+            default_guard_sidecar_contents(),
+        ),
+    ]
+}
+
+fn default_policy_profile_contents() -> String {
+    r#"version: 1
+
+required_files:
+  - project.baton.yaml
+  - placement.rules.yaml
+  - artifacts.plan.yaml
+  - contracts.template.yaml
+
+naming:
+  module: lowercase-identifier
+  artifact: lowercase-identifier
+
+forbidden_dependencies: []
+
+overrides: []
+"#
+    .to_string()
+}
+
+fn default_guard_sidecar_contents() -> String {
+    r#"version: 1
+
+hooks:
+  init: true
+  plan: true
+  ci: true
+
+checks:
+  require_contracts_template: true
+  require_role_templates_for_artifact_roles: true
+  enforce_sidecar_suffixes: true
+"#
+    .to_string()
+}
+
+fn collect_preset_files(preset_id: &str) -> Result<Vec<(String, String)>, String> {
+    let preset_dir = match find_preset_dir(preset_id) {
+        Some(path) => path,
+        None => {
+            let available = list_available_presets();
+            let hint = if available.is_empty() {
+                "No presets are currently available under presets/".to_string()
+            } else {
+                format!("Available presets: {}", available.join(", "))
+            };
+            return Err(format!("Preset '{}' was not found. {}", preset_id, hint));
+        }
+    };
+
+    if !preset_dir.exists() {
+        let available = list_available_presets();
+        let hint = if available.is_empty() {
+            "No presets are currently available under presets/".to_string()
+        } else {
+            format!("Available presets: {}", available.join(", "))
+        };
+        return Err(format!(
+            "Preset '{}' was not found at {}. {}",
+            preset_id,
+            preset_dir.display(),
+            hint
+        ));
+    }
+
+    let mut files = Vec::new();
+    let required = [
+        "project.baton.yaml",
+        "placement.rules.yaml",
+        "contracts.template.yaml",
+    ];
+    for filename in required {
+        let source = preset_dir.join(filename);
+        let contents = fs::read_to_string(&source).map_err(|e| {
+            format!(
+                "Failed to read required preset file {}: {}",
+                source.display(),
+                e
+            )
+        })?;
+        files.push((filename.to_string(), contents));
+    }
+
+    let optional = ["artifacts.plan.yaml", "policy.profile.yaml", "guard.sidecar.yaml"];
+    let mut has_policy_profile = false;
+    let mut has_guard_sidecar = false;
+    for filename in optional {
+        let source = preset_dir.join(filename);
+        if source.exists() {
+            let contents = fs::read_to_string(&source).map_err(|e| {
+                format!(
+                    "Failed to read optional preset file {}: {}",
+                    source.display(),
+                    e
+                )
+            })?;
+            files.push((filename.to_string(), contents));
+            if filename == "policy.profile.yaml" {
+                has_policy_profile = true;
+            }
+            if filename == "guard.sidecar.yaml" {
+                has_guard_sidecar = true;
+            }
+        }
+    }
+
+    if !has_policy_profile {
+        files.push((
+            "policy.profile.yaml".to_string(),
+            default_policy_profile_contents(),
+        ));
+    }
+    if !has_guard_sidecar {
+        files.push((
+            "guard.sidecar.yaml".to_string(),
+            default_guard_sidecar_contents(),
+        ));
+    }
+
+    Ok(files)
+}
+
+fn list_available_presets() -> Vec<String> {
+    let mut presets = BTreeSet::new();
+    for root in preset_roots() {
+        if let Ok(entries) = fs::read_dir(root) {
+            for entry in entries.flatten() {
+                if entry.path().is_dir() {
+                    if let Some(name) = entry.file_name().to_str() {
+                        presets.insert(name.to_string());
+                    }
+                }
+            }
+        }
+    }
+    presets.into_iter().collect()
+}
+
+fn find_preset_dir(preset_id: &str) -> Option<PathBuf> {
+    for root in preset_roots() {
+        let candidate = root.join(preset_id);
+        if candidate.is_dir() {
+            return Some(candidate);
+        }
+    }
+    None
+}
+
+fn preset_roots() -> Vec<PathBuf> {
+    vec![
+        PathBuf::from("presets"),
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("presets"),
+    ]
+}
+
+fn ensure_project_arch_metadata(contents: &str, preset: Option<&str>) -> Result<String, String> {
+    let mut value: Value = serde_yaml::from_str(contents)
+        .map_err(|e| format!("invalid YAML in project.baton.yaml: {}", e))?;
+
+    let root = value
+        .as_mapping_mut()
+        .ok_or_else(|| "root YAML document must be a mapping".to_string())?;
+
+    let batonel_key = Value::String("batonel".to_string());
+    if !root.contains_key(&batonel_key) {
+        root.insert(batonel_key.clone(), Value::Mapping(Mapping::new()));
+    }
+
+    let batonel = root
+        .get_mut(&batonel_key)
+        .and_then(Value::as_mapping_mut)
+        .ok_or_else(|| "batonel must be a mapping".to_string())?;
+
+    batonel.insert(
+        Value::String("schema_version".to_string()),
+        Value::String(SUPPORTED_PROJECT_SCHEMA_VERSION.to_string()),
+    );
+
+    if let Some(preset_id) = preset {
+        let mut preset_mapping = Mapping::new();
+        preset_mapping.insert(
+            Value::String("id".to_string()),
+            Value::String(preset_id.to_string()),
+        );
+        batonel.insert(
+            Value::String("preset".to_string()),
+            Value::Mapping(preset_mapping),
+        );
+    }
+
+    serde_yaml::to_string(&value)
+        .map_err(|e| format!("failed to serialize updated YAML: {}", e))
+}
+
+fn override_project_name(contents: &str, project_name: &str) -> Result<String, String> {
+    let mut value: Value = serde_yaml::from_str(contents)
+        .map_err(|e| format!("invalid YAML in project.baton.yaml: {}", e))?;
+
+    let root = value
+        .as_mapping_mut()
+        .ok_or_else(|| "root YAML document must be a mapping".to_string())?;
+
+    let project_key = Value::String("project".to_string());
+    if !root.contains_key(&project_key) {
+        root.insert(project_key.clone(), Value::Mapping(Mapping::new()));
+    }
+
+    let project = root
+        .get_mut(&project_key)
+        .and_then(Value::as_mapping_mut)
+        .ok_or_else(|| "project must be a mapping".to_string())?;
+
+    project.insert(
+        Value::String("name".to_string()),
+        Value::String(project_name.to_string()),
+    );
+
+    serde_yaml::to_string(&value)
+        .map_err(|e| format!("failed to serialize updated YAML: {}", e))
+}
+
+fn validate_project_name(project_name: &str) -> Result<(), String> {
+    if project_name.trim().is_empty() {
+        return Err("project name cannot be empty".to_string());
+    }
+    Ok(())
 }
 
 fn is_kebab_case(value: &str) -> bool {
@@ -57,7 +527,148 @@ fn is_kebab_case(value: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{is_kebab_case, InitProjectInput, InitProjectUseCase};
+    use super::{
+        ensure_project_arch_metadata, is_kebab_case, override_project_name, plan_init_actions,
+        validate_project_name, InitActionKind, InitProjectInput, InitProjectUseCase,
+    };
+    use crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION;
+    use serde_yaml::Value;
+    use std::env;
+    use std::fs;
+    use std::sync::{Mutex, MutexGuard, OnceLock};
+    use tempfile::tempdir;
+
+    fn cwd_test_lock() -> &'static Mutex<()> {
+        static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+        LOCK.get_or_init(|| Mutex::new(()))
+    }
+
+    struct CurrentDirGuard {
+        _lock: MutexGuard<'static, ()>,
+        original: std::path::PathBuf,
+    }
+
+    impl CurrentDirGuard {
+        fn set_to(path: &std::path::Path) -> Self {
+            let lock = cwd_test_lock().lock().expect("cwd lock should be acquirable");
+            let original = env::current_dir().expect("current dir should resolve");
+            env::set_current_dir(path).expect("current dir should be changed for test");
+            Self { _lock: lock, original }
+        }
+    }
+
+    impl Drop for CurrentDirGuard {
+        fn drop(&mut self) {
+            let _ = env::set_current_dir(&self.original);
+        }
+    }
+
+    #[test]
+    fn override_project_name_updates_existing_name() {
+        let input = r#"project:
+  name: old-name
+  architecture_style: layered
+"#;
+        let updated = override_project_name(input, "new-name").expect("override should succeed");
+        let value: Value = serde_yaml::from_str(&updated).expect("yaml should parse");
+        let name = value
+            .get("project")
+            .and_then(|p| p.get("name"))
+            .and_then(Value::as_str)
+            .expect("project.name must exist");
+        assert_eq!(name, "new-name");
+    }
+
+    #[test]
+    fn override_project_name_creates_project_block_when_missing() {
+        let input = r#"modules:
+  - name: user
+"#;
+        let updated = override_project_name(input, "new-name").expect("override should succeed");
+        let value: Value = serde_yaml::from_str(&updated).expect("yaml should parse");
+        let name = value
+            .get("project")
+            .and_then(|p| p.get("name"))
+            .and_then(Value::as_str)
+            .expect("project.name must exist");
+        assert_eq!(name, "new-name");
+    }
+
+    #[test]
+    fn validate_project_name_rejects_empty_value() {
+        let err = validate_project_name("   ").expect_err("empty value should be rejected");
+        assert_eq!(err, "project name cannot be empty");
+    }
+
+    #[test]
+    fn plan_init_actions_preserves_default_file_order_and_marks_existing_files() {
+        let temp = tempdir().expect("tempdir should be created");
+        let _guard = CurrentDirGuard::set_to(temp.path());
+        fs::write("placement.rules.yaml", "existing").expect("existing file should be created");
+
+        let actions =
+            plan_init_actions(None, Some("demo-service")).expect("plan should succeed");
+        let filenames: Vec<_> =
+            actions.iter().map(|action| action.filename.as_str()).collect();
+        let placement_action = actions
+            .iter()
+            .find(|action| action.filename == "placement.rules.yaml")
+            .expect("placement action should exist");
+
+        assert_eq!(
+            filenames,
+            vec![
+                "project.baton.yaml",
+                "placement.rules.yaml",
+                "artifacts.plan.yaml",
+                "contracts.template.yaml",
+                "policy.profile.yaml",
+                "guard.sidecar.yaml"
+            ]
+        );
+        assert_eq!(actions[0].kind, InitActionKind::Create);
+        assert_eq!(placement_action.kind, InitActionKind::SkipExisting);
+        assert!(actions[0].content.contains("name: demo-service"));
+    }
+
+    #[test]
+    fn plan_init_actions_rejects_invalid_project_name_before_writing() {
+        let temp = tempdir().expect("tempdir should be created");
+        let _guard = CurrentDirGuard::set_to(temp.path());
+
+        let err = plan_init_actions(None, Some("   ")).expect_err("invalid name should fail");
+        assert_eq!(err, "Invalid --project-name value: project name cannot be empty");
+    }
+
+    #[test]
+    fn ensure_project_arch_metadata_injects_schema_version_and_preset_id() {
+        let input = r#"project:
+  name: sample-app
+  architecture_style: layered
+  language: generic
+
+modules:
+  - name: user
+"#;
+        let updated = ensure_project_arch_metadata(input, Some("generic-layered"))
+            .expect("metadata injection should succeed");
+        let value: Value = serde_yaml::from_str(&updated).expect("yaml should parse");
+
+        let schema_version = value
+            .get("batonel")
+            .and_then(|entry| entry.get("schema_version"))
+            .and_then(Value::as_str)
+            .expect("schema version should exist");
+        let preset_id = value
+            .get("batonel")
+            .and_then(|entry| entry.get("preset"))
+            .and_then(|entry| entry.get("id"))
+            .and_then(Value::as_str)
+            .expect("preset id should exist");
+
+        assert_eq!(schema_version, SUPPORTED_PROJECT_SCHEMA_VERSION);
+        assert_eq!(preset_id, "generic-layered");
+    }
 
     #[test]
     fn kebab_case_validator_accepts_and_rejects_expected_patterns() {
@@ -73,25 +684,51 @@ mod tests {
 
     #[test]
     fn execute_rejects_empty_preset_id_before_running_init_flow() {
-        let result = InitProjectUseCase::execute(InitProjectInput {
-            preset: Some("   ".to_string()),
-            project_name: None,
-            dry_run: true,
-        });
-
+        let result = InitProjectUseCase::execute_with_guard(
+            InitProjectInput {
+                preset: Some("   ".to_string()),
+                project_name: None,
+                dry_run: true,
+            },
+            |_| crate::commands::guard::GuardReport { findings: vec![] },
+        );
         let err = result.expect_err("empty preset id should be rejected");
         assert!(err.to_string().contains("preset id must not be empty"));
     }
 
     #[test]
     fn execute_rejects_non_kebab_case_preset_id() {
-        let result = InitProjectUseCase::execute(InitProjectInput {
-            preset: Some("Rust_Clean".to_string()),
-            project_name: None,
-            dry_run: true,
-        });
-
+        let result = InitProjectUseCase::execute_with_guard(
+            InitProjectInput {
+                preset: Some("Rust_Clean".to_string()),
+                project_name: None,
+                dry_run: true,
+            },
+            |_| crate::commands::guard::GuardReport { findings: vec![] },
+        );
         let err = result.expect_err("invalid preset id should be rejected");
         assert!(err.to_string().contains("kebab-case"));
+    }
+
+    #[test]
+    fn dry_run_returns_counts_without_writing_files() {
+        let temp = tempdir().expect("tempdir should be created");
+        let _guard = CurrentDirGuard::set_to(temp.path());
+
+        let output = InitProjectUseCase::execute_with_guard(
+            InitProjectInput {
+                preset: None,
+                project_name: Some("dry-test".to_string()),
+                dry_run: true,
+            },
+            |_| crate::commands::guard::GuardReport { findings: vec![] },
+        )
+        .expect("dry run should succeed");
+
+        assert!(output.success);
+        assert_eq!(output.generated_count, 6);
+        assert_eq!(output.skipped_count, 0);
+        // No files should have been created
+        assert!(!temp.path().join("project.baton.yaml").exists());
     }
 }

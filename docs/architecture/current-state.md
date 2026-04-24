@@ -79,15 +79,19 @@ yet fully aligned in final shape.
 
 ### 3.2 App layer still calls legacy command/config code
 
-Observed examples:
+This gap has been **resolved** as of issue #260.
 
-- `app/usecase/init_project.rs` still delegates to `commands::init::execute`
-- `app/usecase/validate_project.rs` still delegates to `commands::verify::execute`
-- `app/usecase/generate_artifacts.rs` still delegates to `commands::scaffold::execute`
-- `app/usecase/plan_architecture.rs` still depends on legacy config loading and guard types
+Previously observed delegation:
 
-This means some use cases are still wrappers around old execution paths rather than
-the final application orchestration boundary described in the rules.
+- `app/usecase/init_project.rs` delegated to `commands::init::execute` ✅ resolved
+- `app/usecase/validate_project.rs` delegated to `commands::verify::execute` ✅ resolved
+- `app/usecase/generate_artifacts.rs` delegated to `commands::scaffold::execute` ✅ resolved
+- `app/usecase/plan_architecture.rs` was already self-contained ✅
+
+All four primary-flow use cases now own their orchestration directly.
+The legacy command modules (`commands/init.rs`, `commands/scaffold.rs`) are
+stub-only files. `commands/verify.rs` retains the `render_report` / `build_report_lines`
+helpers used by the CLI adapter, but no orchestration logic.
 
 ### 3.3 Raw config loading is still coupled to legacy config modules
 
@@ -123,10 +127,11 @@ Until the migration is complete, reviewers should treat architecture alignment a
 
 The next architecture-alignment wins are:
 
-1. Move remaining command execution logic out of legacy `commands::*` into app/usecase flows.
-2. Replace direct legacy config access with narrower app-facing loaders or ports where helpful.
-3. Keep shrinking `model` and `generator` toward domain/infra ownership.
-4. Introduce `shared/` only if a primitive is truly stable and cross-cutting.
+1. Replace direct legacy config access with narrower app-facing loaders or ports where helpful.
+2. Keep shrinking `model` and `generator` toward domain/infra ownership.
+3. Introduce `shared/` only if a primitive is truly stable and cross-cutting.
+4. Move report rendering helpers from `commands/verify.rs` into `infra/` once a
+   `VerifyRendererAdapter` is introduced, completing the full `commands/` cleanup.
 
 ## 6. Status summary
 
@@ -134,3 +139,4 @@ The next architecture-alignment wins are:
 - [x] aligned areas identified
 - [x] remaining gaps identified
 - [x] review interpretation recorded for future PRs
+- [x] app/usecase layer owns orchestration for init, plan, scaffold, verify (#260)

@@ -12,7 +12,7 @@ pub struct GenerationItem {
     pub artifact: crate::model::artifact::Artifact,
     pub status: ArtifactGenerationStatus,
     pub resolved_path: Option<std::path::PathBuf>,
-    pub error_message: Option<String>,
+    pub _error_message: Option<String>,
 }
 
 #[derive(Debug, Clone, Default)]
@@ -54,7 +54,7 @@ impl ArtifactGenerator {
                     artifact: artifact.clone(),
                     status: ArtifactGenerationStatus::Error,
                     resolved_path: None,
-                    error_message: Some(format!(
+                    _error_message: Some(format!(
                         "module '{}' is not defined in project.baton.yaml",
                         artifact.module
                     )),
@@ -67,13 +67,13 @@ impl ArtifactGenerator {
                     artifact: artifact.clone(),
                     status: ArtifactGenerationStatus::Ready,
                     resolved_path: Some(path),
-                    error_message: None,
+                    _error_message: None,
                 }),
                 Err(err) => items.push(GenerationItem {
                     artifact: artifact.clone(),
                     status: ArtifactGenerationStatus::Error,
                     resolved_path: None,
-                    error_message: Some(err.to_string()),
+                    _error_message: Some(err.to_string()),
                 }),
             }
         }

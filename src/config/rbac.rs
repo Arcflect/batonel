@@ -4,8 +4,10 @@ use crate::config::override_policy::EffectivePolicy;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GovernanceOperation {
     /// Authorize applying policy overrides to suppress audit bounds.
+    #[allow(dead_code)]
     ApproveOverride,
     /// Authorize applying global config changes or locked rules.
+    #[allow(dead_code)]
     EditPolicy,
     /// Authorize applying a patch via rollout.
     #[allow(dead_code)]
