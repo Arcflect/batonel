@@ -11,7 +11,7 @@ pub fn execute(target: &str, mode: OutputMode) {
         let placement_config = match PlacementRulesConfig::load("placement.rules.yaml") {
             Ok(config) => config,
             Err(e) => {
-                eprintln!("Error: Loading placement rules failed: {}", e);
+                eprintln!("[!] loading placement rules failed: {}", e);
                 std::process::exit(1);
             }
         };
@@ -19,7 +19,7 @@ pub fn execute(target: &str, mode: OutputMode) {
         let artifacts_config = match ArtifactsPlanConfig::load("artifacts.plan.yaml") {
             Ok(config) => config,
             Err(e) => {
-                eprintln!("Error: Loading artifacts plan failed: {}", e);
+                eprintln!("[!] loading artifacts plan failed: {}", e);
                 std::process::exit(1);
             }
         };
@@ -28,10 +28,7 @@ pub fn execute(target: &str, mode: OutputMode) {
         let artifact = match artifacts_config.artifacts.iter().find(|a| a.name == target) {
             Some(a) => a,
             None => {
-                eprintln!(
-                    "Error: Artifact '{}' not found in artifacts.plan.yaml",
-                    target
-                );
+                eprintln!("[!] artifact '{}' not found in artifacts.plan.yaml", target);
                 std::process::exit(1);
             }
         };
@@ -41,7 +38,7 @@ pub fn execute(target: &str, mode: OutputMode) {
             match crate::generator::resolver::resolve_artifact_path(artifact, &placement_config) {
                 Ok(p) => p,
                 Err(e) => {
-                    eprintln!("Error: Resolving artifact path failed: {}", e);
+                    eprintln!("[!] resolving artifact path failed: {}", e);
                     std::process::exit(1);
                 }
             };
@@ -62,11 +59,7 @@ pub fn execute(target: &str, mode: OutputMode) {
     let contract_config = match ContractConfig::load(&contract_path) {
         Ok(config) => config,
         Err(e) => {
-            eprintln!(
-                "Error: Loading contract at {} failed: {}",
-                contract_path.display(),
-                e
-            );
+            eprintln!("[!] loading contract at {} failed: {}", contract_path.display(), e);
             std::process::exit(1);
         }
     };

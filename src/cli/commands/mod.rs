@@ -1,18 +1,5 @@
 use crate::cli::{Commands, ComplianceReportFormat, GuardHook, PlanOutputFormat};
-
-fn render_usecase_result(success: bool, context: &str) {
-    if !success {
-        eprintln!("[!] {} failed", context);
-        std::process::exit(1);
-    }
-}
-
-fn write_rendered_output(renderer_output: &str) {
-    let mut output = crate::infra::ConsoleOutputAdapter;
-    for line in renderer_output.lines() {
-        crate::ports::OutputPort::write_line(&mut output, crate::ports::OutputLevel::Info, line);
-    }
-}
+use crate::cli::runner;
 
 struct ComplianceReportInput {
     repos: Vec<String>,
@@ -47,23 +34,18 @@ pub fn handle(command: Commands) {
             };
 
             if let Some(preset_id) = preset.as_deref() {
-                println!("Batonel Initialization (preset: {})", preset_id);
+                runner::print_command_header(&format!("Batonel Initialization (preset: {})", preset_id));
             } else {
-                println!("Batonel Initialization");
+                runner::print_command_header("Batonel Initialization");
             }
-            println!("=======================");
 
             if dry_run {
                 println!("  [i] Dry run mode enabled. No files will be written.");
             }
 
-            let output = match crate::app::usecase::InitProjectUseCase::execute(input) {
-                Ok(output) => output,
-                Err(err) => {
-                    eprintln!("[!] init project failed: {}", err);
-                    std::process::exit(1);
-                }
-            };
+            let output = runner::run_usecase("init project", || {
+                crate::app::usecase::InitProjectUseCase::execute(input)
+            });
 
             for result in &output.file_results {
                 if dry_run {
@@ -94,7 +76,7 @@ pub fn handle(command: Commands) {
                 println!("Initialization finished. No new configuration files were generated.");
             }
 
-            render_usecase_result(output.success, "init project");
+            runner::exit_on_failure(output.success, "init project");
         }
         Commands::Plan { format } => {
             let usecase_format = match format {
@@ -103,69 +85,52 @@ pub fn handle(command: Commands) {
                 PlanOutputFormat::Markdown => crate::app::usecase::PlanRenderFormat::Markdown,
             };
 
-            let usecase_output = match crate::app::usecase::PlanArchitectureUseCase::execute(
-                crate::app::usecase::PlanArchitectureInput {
-                    format: usecase_format,
-                },
-            ) {
-                Ok(result) => result,
-                Err(err) => {
-                    eprintln!("[!] plan architecture failed: {}", err);
-                    std::process::exit(1);
-                }
-            };
+            let usecase_output = runner::run_usecase("plan architecture", || {
+                crate::app::usecase::PlanArchitectureUseCase::execute(
+                    crate::app::usecase::PlanArchitectureInput {
+                        format: usecase_format,
+                    },
+                )
+            });
 
             let rendered = match format {
                 PlanOutputFormat::Text => {
                     crate::infra::PlanRendererAdapter::render_text(&usecase_output)
                 }
                 PlanOutputFormat::Json => {
-                    match crate::infra::PlanRendererAdapter::render_json(&usecase_output) {
-                        Ok(s) => s,
-                        Err(err) => {
-                            eprintln!("[!] failed to render json output: {}", err);
-                            std::process::exit(1);
-                        }
-                    }
+                    runner::run_usecase("render json output", || {
+                        crate::infra::PlanRendererAdapter::render_json(&usecase_output)
+                    })
                 }
                 PlanOutputFormat::Markdown => {
                     crate::infra::PlanRendererAdapter::render_markdown(&usecase_output)
                 }
             };
 
-            write_rendered_output(&rendered);
-            render_usecase_result(usecase_output.success, "plan architecture");
+            runner::write_output(&rendered);
+            runner::exit_on_failure(usecase_output.success, "plan architecture");
         }
         Commands::Scaffold => {
-            let output = match crate::app::usecase::GenerateArtifactsUseCase::execute(
-                crate::app::usecase::GenerateArtifactsInput,
-            ) {
-                Ok(output) => output,
-                Err(err) => {
-                    eprintln!("[!] generate artifacts failed: {}", err);
-                    std::process::exit(1);
-                }
-            };
+            let output = runner::run_usecase("generate artifacts", || {
+                crate::app::usecase::GenerateArtifactsUseCase::execute(
+                    crate::app::usecase::GenerateArtifactsInput,
+                )
+            });
             println!();
             println!(
                 "Scaffold result: {} generated, {} errors.",
                 output.generated_count, output.error_count
             );
-            render_usecase_result(output.success, "generate artifacts");
+            runner::exit_on_failure(output.success, "generate artifacts");
         }
         Commands::Verify => {
-            println!("Batonel Architectural Verification");
-            println!("==================================");
+            runner::print_command_header("Batonel Architectural Verification");
 
-            let output = match crate::app::usecase::ValidateProjectUseCase::execute(
-                crate::app::usecase::ValidateProjectInput,
-            ) {
-                Ok(output) => output,
-                Err(err) => {
-                    eprintln!("[!] validate project failed: {}", err);
-                    std::process::exit(1);
-                }
-            };
+            let output = runner::run_usecase("validate project", || {
+                crate::app::usecase::ValidateProjectUseCase::execute(
+                    crate::app::usecase::ValidateProjectInput,
+                )
+            });
 
             if output.structural_errors > 0 || output.structural_warnings > 0 {
                 println!(
@@ -175,7 +140,7 @@ pub fn handle(command: Commands) {
             }
 
             crate::commands::verify::render_report(&output.report);
-            render_usecase_result(output.success, "validate project");
+            runner::exit_on_failure(output.success, "validate project");
         }
 
         // ==========================================
