@@ -450,6 +450,23 @@ These tests SHOULD use fakes or mocks for ports.
 
 ### Integration tests
 
+Batonel uses two distinct integration testing strategies:
+
+**1. Rust-native Integration Tests (`tests/`)**
+These tests compile the CLI binary and test it against a real filesystem using `assert_cmd` and `predicates`.
+They MUST be used for:
+- Main product flows (`init`, `plan`, `scaffold`, `verify`)
+- CLI argument parsing validation
+- Expected file modifications and stdout/stderr assertions
+- Deterministic failure paths for CLI commands
+
+**2. Shell Scripts (`scripts/`)**
+These are legacy or specialized tools that exist outside the core test harness.
+They SHOULD ONLY be used for:
+- End-to-end environment checks
+- CI workflow simulations (e.g. GitHub Actions testing)
+- Operations that require external tools (e.g. `git`, `ssh-keygen`, or ecosystem compliance benchmarks)
+
 May verify:
 - config loading
 - real filesystem interaction

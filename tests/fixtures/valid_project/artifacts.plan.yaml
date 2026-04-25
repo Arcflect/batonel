@@ -1,0 +1,16 @@
+artifacts:
+  - name: create_user
+    module: user
+    role: usecase
+    status: planned
+    inputs:
+      - CreateUserCommand
+    outputs:
+      - CreateUserResult
+
+  - name: user
+    module: user
+    role: entity
+    status: planned
+    outputs:
+      - User

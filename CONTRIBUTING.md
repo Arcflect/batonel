@@ -124,6 +124,19 @@ Before submitting a PR, please confirm:
 - schemas are updated if structure changes
 - decision records are reviewed if the change affects project direction
 
+### Testing
+
+Batonel relies on a mix of domain-level unit tests, application-level mock tests, and Rust-native integration tests.
+For detailed rules on when to write tests, see the Testing Rules section in `ARCHITECTURE_RULES.md`.
+
+When testing CLI flows (`batonel init`, `plan`, `scaffold`, `verify`), prefer adding tests to the Rust integration suite in `tests/` rather than creating new shell scripts. Shell scripts should be reserved for environment or ecosystem compliance checks.
+
+Run tests locally with:
+```bash
+cargo test
+cargo test --test cli  # For integration tests only
+```
+
 ### Commit and PR style
 
 Recommended style:

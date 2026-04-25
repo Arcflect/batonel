@@ -1,0 +1,9 @@
+name: user
+module: user
+role: entity
+path: src/domain/entities/user.rs
+status: planned
+responsibilities:
+  - TODO
+must_not:
+  - TODO
