@@ -1,6 +1,6 @@
 [package]
 name = "batonel"
-version = "1.10.2"
+version = "1.10.3"
 edition = "2021"
 description = "Architecture-to-Execution Bridge"
 license = "MIT"
