@@ -35,15 +35,27 @@ Batonel provides the following guarantees to users and contributors. These are a
 
 ---
 
-## 2. Release Gating
+## 2. Release Gating (The Release Contract)
 
-A release is considered "Gated" by these criteria. No official release of Batonel shall be published if any of the following workflows fail:
+A release is considered "Gated" by these criteria. No official release of Batonel shall be published if any of the following blocking workflows fail.
 
-1. **Batonel Verify Example** (G1)
-2. **Onboarding Init-Plan E2E** (G2)
-3. **Batonel Verify Parity** (G3)
+### Blocking Release Gates
+These checks are mandatory. A failure here explicitly prevents a release artifact from being published or trusted:
 
-For more details on the release process, see [docs/release-operations.md](./release-operations.md).
+1. **Tag Version Integrity** (`.github/workflows/verify-tag-version.yml`): Ensures the Git tag version strictly matches the `Cargo.toml` version.
+2. **Preset Trust & Signing** (`.github/workflows/preset-trust-verification.yml`): Validates cryptographic Ed25519 signatures of core presets using `scripts/verify_trust.sh`.
+3. **Core Verification Integrity** (`.github/workflows/batonel-verify-example.yml`): Verifies (G1).
+4. **Onboarding Determinism** (`.github/workflows/onboarding-init-plan-e2e.yml`): Verifies (G2) using `scripts/onboarding_e2e_init_plan.sh`.
+5. **Ecosystem Parity** (`.github/workflows/batonel-verify-parity.yml`): Verifies (G3) using `scripts/verify_parity.sh`.
+6. **Rust Native Integration Tests** (`cargo test --test cli`): Ensures core commands (`init`, `plan`, `scaffold`, `verify`) execute correctly against a real filesystem.
+
+### Non-Blocking / PR-Level Gates
+These checks act as advisory quality gates during PR review. While they are expected to pass on `main` for repository health, they do not technically block the creation of release artifacts:
+
+1. **Audit Baseline PR Gate** (`.github/workflows/batonel-audit-pr-gate.yml`): Verifies architectural compliance for the Batonel repository itself.
+2. **Guard Sidecar Checks** (`.github/workflows/batonel-guard-sidecar.yml`): Executes sidecar verifications explicitly.
+
+For more details on the release process and deliverables, see [docs/release-operations.md](./release-operations.md).
 
 ---
 

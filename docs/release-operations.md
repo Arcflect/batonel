@@ -13,6 +13,7 @@ Every release must publish all of the following assets on GitHub Releases:
 - `batonel-vX.Y.Z-aarch64-apple-darwin.tar.gz`
 - `*.sha256` for each archive
 - `checksums.txt` (combined checksum list)
+- `*.sig` (Ed25519 cryptographic signatures for the release archives, generated via the `sign-release-assets.yml` workflow)
 
 The release workflow is:
 
@@ -146,13 +147,16 @@ The generated release body describes all breaking changes from merged PR titles.
 
 Every release must pass the formal **Acceptance Criteria** defined in [docs/acceptance-criteria.md](./acceptance-criteria.md).
 
-The following CI workflows act as hard gates:
+The following CI workflows act as hard, blocking gates. If any of these fail, the release artifact must not be published:
 
-- **Batonel Verify Example**: Ensures core `verify` logic works on all standard examples.
-- **Onboarding Init-Plan E2E**: Ensures `init` and `plan` (determinism) work correctly for new projects.
-- **Batonel Verify Parity**: Ensures presets and examples stay synchronized.
+- **Tag Version Integrity**: Tag must match Cargo.toml version.
+- **Preset Trust & Signing**: Cryptographic verification of core presets.
+- **Batonel Verify Example**: Core `verify` logic works on standard examples.
+- **Onboarding Init-Plan E2E**: `init` and `plan` (determinism) work correctly.
+- **Batonel Verify Parity**: Presets and examples stay synchronized.
+- **Rust Native Integration Tests**: Primary CLI flows execute correctly.
 
-If any of these workflows fail, the release must be blocked until the root cause is resolved.
+For advisory, non-blocking PR gates (like Audit and Guard), refer to the full [Release Contract](./acceptance-criteria.md).
 
 ## 8. Verification checklist
 
