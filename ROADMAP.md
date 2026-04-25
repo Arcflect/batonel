@@ -53,6 +53,38 @@ These phases represent the core focus of current repository investments.
 ### Backlog & Aspirational
 These phases outline future capabilities and enterprise scale.
 
+#### Phase 13: Handoff MVP Execution Layer
+**Goal**: Transition from generating prompts to actively orchestrating AI-driven code generation.
+- introduce `batonel handoff` orchestration workflow
+- define AI response schemas and parsing boundaries
+- integrate local verification loop for AI outputs
+
+#### Phase 14: Continuous Alignment & Agentic Observability
+**Goal**: Track the quality, accuracy, and drift of AI-generated implementations over time.
+- implement `batonel drift` for implementation-to-contract comparison
+- create a telemetry model for AI success rates
+- automate continuous feedback loop in CI
+
+#### Phase 15: Generative Architecture Discovery (Reverse Engineering)
+**Goal**: Automatically derive Batonel contracts and placement rules from existing codebases.
+- introduce `batonel discover` for architecture reverse-engineering
+- AI-assisted mapping of legacy code to architectural roles
+- interactive migration workflow for legacy adoption
+
+#### Phase 16: Multi-Agent Collaboration Workflow
+**Goal**: Orchestrate concurrent AI agents building full-stack features via shared structural contracts.
+- implement `batonel orchestrate` for multi-agent role assignments
+- define cross-boundary contract resolution
+- introduce state-locking mechanisms for concurrent generation
+
+#### Phase 17: IDE & Real-Time Editor Integration
+**Goal**: Move the Batonel governance and handoff layer directly into the developer's IDE canvas.
+- build Language Server Protocol implementation
+- implement official extensions for real-time drift detection
+- interactive "Handoff to AI" UI within the editor
+
+
+
 #### Phase 9: Migration / Org-level Control / Reporting
 **Goal**: Provide enterprise-scale evolution and compliance visibility.
 - preset versioning and migration tooling
@@ -103,6 +135,21 @@ These phases represent the completed capabilities that Batonel already supports 
 - [#158](https://github.com/Arcflect/batonel/issues/158) Phase12 Task 1: Define preset signature and trust verification pipeline
 - [#159](https://github.com/Arcflect/batonel/issues/159) Phase12 Task 2: Build partner preset submission and review flow
 - [#160](https://github.com/Arcflect/batonel/issues/160) Phase12 Task 3: Publish ecosystem compliance maturity benchmark model
+- [#295](https://github.com/Arcflect/batonel/issues/295) Phase13 Task 1: Introduce `batonel handoff` orchestration workflow
+- [#296](https://github.com/Arcflect/batonel/issues/296) Phase13 Task 2: Define AI response schemas and parsing boundaries
+- [#297](https://github.com/Arcflect/batonel/issues/297) Phase13 Task 3: Integrate local verification loop for AI outputs
+- [#298](https://github.com/Arcflect/batonel/issues/298) Phase14 Task 1: Implement `batonel drift` for implementation-to-contract comparison
+- [#299](https://github.com/Arcflect/batonel/issues/299) Phase14 Task 2: Create a telemetry model for AI success rates
+- [#300](https://github.com/Arcflect/batonel/issues/300) Phase14 Task 3: Automate continuous feedback loop in CI
+- [#301](https://github.com/Arcflect/batonel/issues/301) Phase15 Task 1: Introduce `batonel discover` for architecture reverse-engineering
+- [#302](https://github.com/Arcflect/batonel/issues/302) Phase15 Task 2: AI-assisted mapping of legacy code to architectural roles
+- [#303](https://github.com/Arcflect/batonel/issues/303) Phase15 Task 3: Interactive migration workflow for legacy adoption
+- [#304](https://github.com/Arcflect/batonel/issues/304) Phase16 Task 1: Implement `batonel orchestrate` for multi-agent role assignments
+- [#305](https://github.com/Arcflect/batonel/issues/305) Phase16 Task 2: Define cross-boundary contract resolution
+- [#306](https://github.com/Arcflect/batonel/issues/306) Phase16 Task 3: Introduce state-locking mechanisms for concurrent generation
+- [#307](https://github.com/Arcflect/batonel/issues/307) Phase17 Task 1: Build Language Server Protocol implementation
+- [#308](https://github.com/Arcflect/batonel/issues/308) Phase17 Task 2: Implement official extensions for real-time drift detection
+- [#309](https://github.com/Arcflect/batonel/issues/309) Phase17 Task 3: Interactive "Handoff to AI" UI within the editor
 
 ---
 
@@ -146,6 +193,38 @@ These phases represent the completed capabilities that Batonel already supports 
 
 ### バックログ & 将来構想 (Backlog & Aspirational)
 将来の機能やエンタープライズ規模の運用を示すフェーズです。
+
+#### Phase 13: Handoff MVP Execution Layer
+**目標**: プロンプトの生成から、AIによるコード生成の積極的なオーケストレーションへ移行する。
+- `batonel handoff` オーケストレーションワークフローの導入
+- AIレスポンススキーマとパース境界の定義
+- AI出力に対するローカル検証ループの統合
+
+#### Phase 14: Continuous Alignment & Agentic Observability
+**目標**: AIによって生成された実装の品質、精度、およびドリフトを継続的に追跡する。
+- 実装と契約の比較のための `batonel drift` の実装
+- AI成功率のためのテレメトリモデルの作成
+- CIにおける継続的フィードバックループの自動化
+
+#### Phase 15: Generative Architecture Discovery (Reverse Engineering)
+**目標**: 既存のコードベースからBatonelの契約と配置ルールを自動的に導出する。
+- アーキテクチャのリバースエンジニアリングのための `batonel discover` の導入
+- レガシーコードからアーキテクチャの役割へのAI支援によるマッピング
+- レガシー導入のためのインタラクティブな移行ワークフロー
+
+#### Phase 16: Multi-Agent Collaboration Workflow
+**目標**: 共有の構造的契約を介して、フルスタック機能を構築する並行AIエージェントをオーケストレーションする。
+- マルチエージェントの役割割り当てのための `batonel orchestrate` の実装
+- 境界を越えた契約解決の定義
+- 並行生成のための状態ロック機構の導入
+
+#### Phase 17: IDE & Real-Time Editor Integration
+**目標**: Batonelのガバナンスとハンドオフレイヤを開発者のIDEキャンバスに直接移動する。
+- Language Server Protocol 実装の構築
+- リアルタイムなドリフト検出のための公式拡張機能の実装
+- エディタ内のインタラクティブな「AIへのハンドオフ」UI
+
+
 
 #### Phase 9: Migration / Org-level Control / Reporting
 **目標**: 組織導入を見据えた更新運用と準拠可視化を提供する。
@@ -197,3 +276,18 @@ These phases represent the completed capabilities that Batonel already supports 
 - [#158](https://github.com/Arcflect/batonel/issues/158) Phase12 Task 1: Define preset signature and trust verification pipeline
 - [#159](https://github.com/Arcflect/batonel/issues/159) Phase12 Task 2: Build partner preset submission and review flow
 - [#160](https://github.com/Arcflect/batonel/issues/160) Phase12 Task 3: Publish ecosystem compliance maturity benchmark model
+- [#295](https://github.com/Arcflect/batonel/issues/295) Phase13 Task 1: Introduce `batonel handoff` orchestration workflow
+- [#296](https://github.com/Arcflect/batonel/issues/296) Phase13 Task 2: Define AI response schemas and parsing boundaries
+- [#297](https://github.com/Arcflect/batonel/issues/297) Phase13 Task 3: Integrate local verification loop for AI outputs
+- [#298](https://github.com/Arcflect/batonel/issues/298) Phase14 Task 1: Implement `batonel drift` for implementation-to-contract comparison
+- [#299](https://github.com/Arcflect/batonel/issues/299) Phase14 Task 2: Create a telemetry model for AI success rates
+- [#300](https://github.com/Arcflect/batonel/issues/300) Phase14 Task 3: Automate continuous feedback loop in CI
+- [#301](https://github.com/Arcflect/batonel/issues/301) Phase15 Task 1: Introduce `batonel discover` for architecture reverse-engineering
+- [#302](https://github.com/Arcflect/batonel/issues/302) Phase15 Task 2: AI-assisted mapping of legacy code to architectural roles
+- [#303](https://github.com/Arcflect/batonel/issues/303) Phase15 Task 3: Interactive migration workflow for legacy adoption
+- [#304](https://github.com/Arcflect/batonel/issues/304) Phase16 Task 1: Implement `batonel orchestrate` for multi-agent role assignments
+- [#305](https://github.com/Arcflect/batonel/issues/305) Phase16 Task 2: Define cross-boundary contract resolution
+- [#306](https://github.com/Arcflect/batonel/issues/306) Phase16 Task 3: Introduce state-locking mechanisms for concurrent generation
+- [#307](https://github.com/Arcflect/batonel/issues/307) Phase17 Task 1: Build Language Server Protocol implementation
+- [#308](https://github.com/Arcflect/batonel/issues/308) Phase17 Task 2: Implement official extensions for real-time drift detection
+- [#309](https://github.com/Arcflect/batonel/issues/309) Phase17 Task 3: Interactive "Handoff to AI" UI within the editor
