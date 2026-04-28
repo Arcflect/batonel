@@ -4,6 +4,7 @@ pub mod fix;
 pub mod fix_rollout;
 pub mod triage;
 pub mod guard;
+pub mod handoff;
 pub mod plan;
 pub mod policy_resolve;
 pub mod preset_migrate;

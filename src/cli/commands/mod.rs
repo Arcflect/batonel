@@ -149,6 +149,9 @@ pub fn handle(command: Commands) {
         Commands::Prompt { target, mode } => {
             crate::commands::prompt::execute(&target, mode);
         }
+        Commands::Handoff { target } => {
+            crate::commands::handoff::execute(&target);
+        }
         Commands::Triage { top, json } => {
             crate::commands::triage::execute(top, json);
         }
