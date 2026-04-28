@@ -88,6 +88,11 @@ pub enum Commands {
         #[arg(short, long, default_value_t = OutputMode::Standard)]
         mode: OutputMode,
     },
+    /// [Advanced] Execute AI handoff by sending the generated prompt to an LLM interface
+    Handoff {
+        /// The artifact name or path to the .contract.yaml file
+        target: String,
+    },
     /// [Advanced] Triage audit violations by priority and generate a prioritized remediation plan
     Triage {
         /// Limit output to the top N remediation groups
