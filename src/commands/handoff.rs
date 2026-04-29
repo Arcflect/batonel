@@ -8,8 +8,8 @@ pub fn execute(target: &str) {
     println!("Batonel Handoff Execution");
     println!("=========================");
 
-    let contract_path = if target.ends_with(".yaml") || target.ends_with(".yml") {
-        PathBuf::from(target)
+    let (contract_path, target_path) = if target.ends_with(".yaml") || target.ends_with(".yml") {
+        (PathBuf::from(target), None)
     } else {
         // Resolve target as an artifact name
         let placement_config = match PlacementRulesConfig::load("placement.rules.yaml") {
@@ -56,7 +56,7 @@ pub fn execute(target: &str) {
             "contract.yaml",
         );
 
-        contract_path
+        (contract_path, Some(path))
     };
 
     println!("  [i] Resolving contract from: {}", contract_path.display());
@@ -83,18 +83,71 @@ pub fn execute(target: &str) {
     
     let request = LlmRequest {
         prompt: prompt_text,
-        system_prompt: Some("You are an expert AI code generator. Generate code that exactly matches the provided architectural contracts.".to_string()),
+        system_prompt: Some("You are an expert AI code generator. Generate code that exactly matches the provided architectural contracts. Return ONLY the generated code wrapped in a single markdown code block.".to_string()),
         temperature: Some(0.2),
     };
 
     match llm_adapter.complete(&request) {
         Ok(response) => {
-            println!("{}", response.content);
-            println!("\n  [+] Handoff execution completed successfully.");
+            let extracted_code = crate::generator::ai_parser::AiResponseParser::extract_code_block(&response.content);
+            
+            if let Some(target_file) = target_path {
+                if !is_safe_to_write(&target_file) {
+                    eprintln!("[!] Security violation: Attempted to write to unsafe path: {}", target_file.display());
+                    std::process::exit(1);
+                }
+
+                if let Some(parent) = target_file.parent() {
+                    if let Err(e) = std::fs::create_dir_all(parent) {
+                        eprintln!("[!] failed to create directories for {}: {}", target_file.display(), e);
+                        std::process::exit(1);
+                    }
+                }
+
+                match std::fs::write(&target_file, &extracted_code) {
+                    Ok(_) => {
+                        println!("\n  [+] Handoff execution completed successfully.");
+                        println!("  [+] Code written to: {}", target_file.display());
+                    }
+                    Err(e) => {
+                        eprintln!("[!] failed to write to {}: {}", target_file.display(), e);
+                        std::process::exit(1);
+                    }
+                }
+            } else {
+                println!("{}", extracted_code);
+                println!("\n  [+] Handoff execution completed successfully. (No target path resolved, output printed to stdout)");
+            }
         }
         Err(e) => {
             eprintln!("[!] LLM handoff failed: {}", e);
             std::process::exit(1);
         }
     }
+}
+
+fn is_safe_to_write(path: &std::path::Path) -> bool {
+    let reserved = [
+        "project.baton.yaml",
+        "placement.rules.yaml",
+        "artifacts.plan.yaml",
+        "contracts.template.yaml",
+        "policy.profile.yaml",
+    ];
+
+    let path_str = path.to_string_lossy();
+    
+    // Disallow absolute paths and path traversal
+    if path.is_absolute() || path_str.contains("..") {
+        return false;
+    }
+
+    // Disallow overwriting Batonel core configs
+    for r in reserved {
+        if path_str.ends_with(r) {
+            return false;
+        }
+    }
+    
+    true
 }
