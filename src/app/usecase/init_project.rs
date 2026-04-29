@@ -4,6 +4,11 @@ use std::path::{Path, PathBuf};
 use serde_yaml::{Mapping, Value};
 
 use crate::config::project::SUPPORTED_PROJECT_SCHEMA_VERSION;
+use rust_embed::RustEmbed;
+
+#[derive(RustEmbed)]
+#[folder = "presets/"]
+struct PresetAssets;
 
 // ---------------------------------------------------------------------------
 // Action types
@@ -323,33 +328,36 @@ checks:
     .to_string()
 }
 
-fn collect_preset_files(preset_id: &str) -> Result<Vec<(String, String)>, String> {
-    let preset_dir = match find_preset_dir(preset_id) {
-        Some(path) => path,
-        None => {
-            let available = list_available_presets();
-            let hint = if available.is_empty() {
-                "No presets are currently available under presets/".to_string()
-            } else {
-                format!("Available presets: {}", available.join(", "))
-            };
-            return Err(format!("Preset '{}' was not found. {}", preset_id, hint));
+fn load_preset_file(preset_id: &str, filename: &str) -> Result<String, String> {
+    // 1. Check local fs custom paths first
+    for root in preset_roots() {
+        let path = root.join(preset_id).join(filename);
+        if path.exists() {
+            return fs::read_to_string(&path)
+                .map_err(|e| format!("Failed to read custom preset file {}: {}", path.display(), e));
         }
-    };
+    }
 
-    if !preset_dir.exists() {
-        let available = list_available_presets();
+    // 2. Fall back to embedded presets
+    let asset_path = format!("{}/{}", preset_id, filename);
+    if let Some(file) = PresetAssets::get(&asset_path) {
+        if let Ok(content) = std::str::from_utf8(file.data.as_ref()) {
+            return Ok(content.to_string());
+        }
+    }
+
+    Err(format!("File '{}' not found in preset '{}'", filename, preset_id))
+}
+
+fn collect_preset_files(preset_id: &str) -> Result<Vec<(String, String)>, String> {
+    let available = list_available_presets();
+    if !available.contains(&preset_id.to_string()) {
         let hint = if available.is_empty() {
-            "No presets are currently available under presets/".to_string()
+            "No presets are currently available.".to_string()
         } else {
             format!("Available presets: {}", available.join(", "))
         };
-        return Err(format!(
-            "Preset '{}' was not found at {}. {}",
-            preset_id,
-            preset_dir.display(),
-            hint
-        ));
+        return Err(format!("Preset '{}' was not found. {}", preset_id, hint));
     }
 
     let mut files = Vec::new();
@@ -358,31 +366,18 @@ fn collect_preset_files(preset_id: &str) -> Result<Vec<(String, String)>, String
         "placement.rules.yaml",
         "contracts.template.yaml",
     ];
+    
     for filename in required {
-        let source = preset_dir.join(filename);
-        let contents = fs::read_to_string(&source).map_err(|e| {
-            format!(
-                "Failed to read required preset file {}: {}",
-                source.display(),
-                e
-            )
-        })?;
+        let contents = load_preset_file(preset_id, filename)?;
         files.push((filename.to_string(), contents));
     }
 
     let optional = ["artifacts.plan.yaml", "policy.profile.yaml", "guard.sidecar.yaml"];
     let mut has_policy_profile = false;
     let mut has_guard_sidecar = false;
+    
     for filename in optional {
-        let source = preset_dir.join(filename);
-        if source.exists() {
-            let contents = fs::read_to_string(&source).map_err(|e| {
-                format!(
-                    "Failed to read optional preset file {}: {}",
-                    source.display(),
-                    e
-                )
-            })?;
+        if let Ok(contents) = load_preset_file(preset_id, filename) {
             files.push((filename.to_string(), contents));
             if filename == "policy.profile.yaml" {
                 has_policy_profile = true;
@@ -411,6 +406,17 @@ fn collect_preset_files(preset_id: &str) -> Result<Vec<(String, String)>, String
 
 fn list_available_presets() -> Vec<String> {
     let mut presets = BTreeSet::new();
+    
+    // Check embedded presets
+    for file in PresetAssets::iter() {
+        if let Some(preset_name) = file.split('/').next() {
+            if preset_name != "." {
+                presets.insert(preset_name.to_string());
+            }
+        }
+    }
+
+    // Check local filesystem
     for root in preset_roots() {
         if let Ok(entries) = fs::read_dir(root) {
             for entry in entries.flatten() {
@@ -425,21 +431,23 @@ fn list_available_presets() -> Vec<String> {
     presets.into_iter().collect()
 }
 
-fn find_preset_dir(preset_id: &str) -> Option<PathBuf> {
-    for root in preset_roots() {
-        let candidate = root.join(preset_id);
-        if candidate.is_dir() {
-            return Some(candidate);
+fn preset_roots() -> Vec<PathBuf> {
+    let mut roots = vec![
+        PathBuf::from("presets"), // local dev override
+    ];
+
+    if let Ok(env_dir) = std::env::var("BATONEL_PRESET_DIR") {
+        roots.push(PathBuf::from(env_dir));
+    } else {
+        // XDG Default
+        if let Ok(xdg_data_home) = std::env::var("XDG_DATA_HOME") {
+            roots.push(PathBuf::from(xdg_data_home).join("batonel").join("presets"));
+        } else if let Ok(home) = std::env::var("HOME") {
+            roots.push(PathBuf::from(home).join(".local").join("share").join("batonel").join("presets"));
         }
     }
-    None
-}
 
-fn preset_roots() -> Vec<PathBuf> {
-    vec![
-        PathBuf::from("presets"),
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("presets"),
-    ]
+    roots
 }
 
 fn ensure_project_arch_metadata(contents: &str, preset: Option<&str>) -> Result<String, String> {
