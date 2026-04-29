@@ -77,51 +77,140 @@ pub fn execute(target: &str) {
     let prompt_text = prompt_model.format_markdown(OutputMode::Standard);
 
     println!("  [i] Successfully generated prompt ({} bytes)", prompt_text.len());
-    println!("  [~] Handing off to LLM execution engine...\n");
+    let project_config = match crate::config::ProjectConfig::load("project.baton.yaml") {
+        Ok(config) => config,
+        Err(e) => {
+            eprintln!("[!] loading project config failed: {}", e);
+            std::process::exit(1);
+        }
+    };
+    let language = project_config.project.language;
 
     let llm_adapter = crate::infra::llm::DummyLlmAdapter;
-    
-    let request = LlmRequest {
-        prompt: prompt_text,
-        system_prompt: Some("You are an expert AI code generator. Generate code that exactly matches the provided architectural contracts. Return ONLY the generated code wrapped in a single markdown code block.".to_string()),
-        temperature: Some(0.2),
-    };
+    let mut current_prompt_text = prompt_text;
+    let max_retries = 3;
+    let mut attempt = 1;
 
-    match llm_adapter.complete(&request) {
-        Ok(response) => {
-            let extracted_code = crate::generator::ai_parser::AiResponseParser::extract_code_block(&response.content);
-            
-            if let Some(target_file) = target_path {
-                if !is_safe_to_write(&target_file) {
-                    eprintln!("[!] Security violation: Attempted to write to unsafe path: {}", target_file.display());
-                    std::process::exit(1);
-                }
+    loop {
+        println!("  [~] Handing off to LLM execution engine (Attempt {}/{})...", attempt, max_retries);
+        
+        let request = LlmRequest {
+            prompt: current_prompt_text.clone(),
+            system_prompt: Some("You are an expert AI code generator. Generate code that exactly matches the provided architectural contracts. Return ONLY the generated code wrapped in a single markdown code block.".to_string()),
+            temperature: Some(0.2),
+        };
 
-                if let Some(parent) = target_file.parent() {
-                    if let Err(e) = std::fs::create_dir_all(parent) {
-                        eprintln!("[!] failed to create directories for {}: {}", target_file.display(), e);
+        match llm_adapter.complete(&request) {
+            Ok(response) => {
+                let extracted_code = crate::generator::ai_parser::AiResponseParser::extract_code_block(&response.content);
+                
+                if let Some(target_file) = &target_path {
+                    if !is_safe_to_write(target_file) {
+                        eprintln!("[!] Security violation: Attempted to write to unsafe path: {}", target_file.display());
                         std::process::exit(1);
                     }
-                }
 
-                match std::fs::write(&target_file, &extracted_code) {
-                    Ok(_) => {
-                        println!("\n  [+] Handoff execution completed successfully.");
-                        println!("  [+] Code written to: {}", target_file.display());
+                    if let Some(parent) = target_file.parent() {
+                        if let Err(e) = std::fs::create_dir_all(parent) {
+                            eprintln!("[!] failed to create directories for {}: {}", target_file.display(), e);
+                            std::process::exit(1);
+                        }
                     }
-                    Err(e) => {
+
+                    if let Err(e) = std::fs::write(target_file, &extracted_code) {
                         eprintln!("[!] failed to write to {}: {}", target_file.display(), e);
                         std::process::exit(1);
                     }
+                    
+                    println!("  [+] Code written to: {}", target_file.display());
+
+                    // 1. Run internal verification
+                    let mut verification_failed = false;
+                    let mut error_messages = String::new();
+
+                    println!("  [i] Running internal architectural verification...");
+                    let verify_output = match crate::app::usecase::ValidateProjectUseCase::execute(
+                        crate::app::usecase::ValidateProjectInput,
+                    ) {
+                        Ok(out) => out,
+                        Err(e) => {
+                            verification_failed = true;
+                            error_messages.push_str(&format!("Batonel execution error: {}\n", e));
+                            // Construct a dummy failing output to skip success check
+                            crate::app::usecase::ValidateProjectOutput {
+                                success: false,
+                                structural_errors: 1,
+                                structural_warnings: 0,
+                                report: crate::model::verify::VerifyReport::new(vec![]),
+                            }
+                        }
+                    };
+
+                    if !verify_output.success {
+                        verification_failed = true;
+                        error_messages.push_str("Architectural Verification Failed:\n");
+                        let lines = crate::commands::verify::build_report_lines(&verify_output.report);
+                        for line in lines {
+                            error_messages.push_str(&format!("{}\n", line));
+                        }
+                    } else {
+                        println!("  [+] Architectural verification passed.");
+                    }
+
+                    // 2. Run native tests if architecture passed (or even if it didn't? Let's only run if architecture passed to save time, or maybe run both to get all errors. Let's only run if architecture passed to ensure structural safety first.)
+                    if !verification_failed {
+                        let (cmd, args) = match language.as_str() {
+                            "rust" => ("cargo", vec!["test"]),
+                            "typescript" | "javascript" => ("npm", vec!["test"]),
+                            _ => ("", vec![]),
+                        };
+
+                        if !cmd.is_empty() {
+                            println!("  [i] Running native tests ({} {})...", cmd, args.join(" "));
+                            match std::process::Command::new(cmd).args(&args).output() {
+                                Ok(output) if !output.status.success() => {
+                                    verification_failed = true;
+                                    error_messages.push_str("\nNative Tests Failed:\n");
+                                    error_messages.push_str(&String::from_utf8_lossy(&output.stderr));
+                                    error_messages.push_str(&String::from_utf8_lossy(&output.stdout));
+                                }
+                                Err(e) => {
+                                    println!("  [!] Failed to execute test command: {}", e);
+                                    // Treat missing test runner as failure? Actually, just warn.
+                                }
+                                _ => {
+                                    println!("  [+] Native tests passed.");
+                                }
+                            }
+                        }
+                    }
+
+                    if verification_failed {
+                        if attempt >= max_retries {
+                            eprintln!("\n[!] Maximum retries ({}) reached. Handoff failed.", max_retries);
+                            eprintln!("Last errors:\n{}", error_messages);
+                            std::process::exit(1);
+                        }
+                        println!("  [!] Verification failed. Augmenting prompt and retrying...");
+                        current_prompt_text.push_str("\n\n## Previous Attempt Failed\nThe generated code failed verification with the following errors:\n```text\n");
+                        current_prompt_text.push_str(&error_messages);
+                        current_prompt_text.push_str("\n```\nPlease correct these issues and try again.\n");
+                        attempt += 1;
+                        continue;
+                    } else {
+                        println!("\n  [+] Handoff execution completed successfully.");
+                        break;
+                    }
+                } else {
+                    println!("{}", extracted_code);
+                    println!("\n  [+] Handoff execution completed successfully. (No target path resolved, output printed to stdout)");
+                    break;
                 }
-            } else {
-                println!("{}", extracted_code);
-                println!("\n  [+] Handoff execution completed successfully. (No target path resolved, output printed to stdout)");
             }
-        }
-        Err(e) => {
-            eprintln!("[!] LLM handoff failed: {}", e);
-            std::process::exit(1);
+            Err(e) => {
+                eprintln!("[!] LLM handoff failed: {}", e);
+                std::process::exit(1);
+            }
         }
     }
 }

@@ -11,4 +11,4 @@ pub use plan_architecture::{
     PlanArchitectureUseCase,
     PlanRenderFormat,
 };
-pub use validate_project::{ValidateProjectInput, ValidateProjectUseCase};
+pub use validate_project::{ValidateProjectInput, ValidateProjectOutput, ValidateProjectUseCase};
