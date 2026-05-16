@@ -2,15 +2,30 @@ roles:
   entity:
     path: "src/domain/entities/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/entity"
+      prompt_dir: ".batonel/prompts/entity"
   service:
     path: "src/application/services/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/service"
+      prompt_dir: ".batonel/prompts/service"
   repository_interface:
     path: "src/application/interfaces/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/repository_interface"
+      prompt_dir: ".batonel/prompts/repository_interface"
   controller:
     path: "src/interfaces/controllers/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/controller"
+      prompt_dir: ".batonel/prompts/controller"
   gateway:
     path: "src/infrastructure/gateways/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/gateway"
+      prompt_dir: ".batonel/prompts/gateway"

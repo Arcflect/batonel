@@ -2,15 +2,30 @@ roles:
   entity:
     path: "crates/domain/src/entities/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/entity"
+      prompt_dir: ".batonel/prompts/entity"
   usecase:
     path: "crates/application/src/usecases/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/usecase"
+      prompt_dir: ".batonel/prompts/usecase"
   repository_port:
     path: "crates/application/src/ports/outbound/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/repository_port"
+      prompt_dir: ".batonel/prompts/repository_port"
   http_handler:
     path: "crates/adapters/http/src/handlers/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/http_handler"
+      prompt_dir: ".batonel/prompts/http_handler"
   repository_impl:
     path: "crates/adapters/db/src/repositories/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/repository_impl"
+      prompt_dir: ".batonel/prompts/repository_impl"
