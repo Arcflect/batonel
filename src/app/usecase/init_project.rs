@@ -234,9 +234,15 @@ modules:
   usecase:
     path: "src/application/usecases/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/usecase"
+      prompt_dir: ".batonel/prompts/usecase"
   entity:
     path: "src/domain/entities/"
     file_extension: rs
+    sidecar:
+      contract_dir: ".batonel/contracts/entity"
+      prompt_dir: ".batonel/prompts/entity"
 "#
             .to_string(),
         ),
