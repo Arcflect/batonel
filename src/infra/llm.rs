@@ -26,8 +26,19 @@ impl crate::ports::LlmPort for DummyLlmAdapter {
             request.prompt.replace('\n', " ")
         };
         
+        let content = if request.system_prompt.as_deref().unwrap_or("").contains("JSON") {
+            r#"```json
+{
+  "has_drift": true,
+  "deviations": ["Mock drift detected in tests"]
+}
+```"#.to_string()
+        } else {
+            format!("Mock LLM Response generated for prompt:\n> {}\n\n```rust\n// AI-generated code based on contracts\nfn hello_ai() {{\n    println!(\"Successfully parsed contracts and generated code!\");\n}}\n```\n", preview)
+        };
+
         Ok(crate::ports::LlmResponse {
-            content: format!("Mock LLM Response generated for prompt:\n> {}\n\n```rust\n// AI-generated code based on contracts\nfn hello_ai() {{\n    println!(\"Successfully parsed contracts and generated code!\");\n}}\n```\n", preview)
+            content
         })
     }
 }

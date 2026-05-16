@@ -152,6 +152,9 @@ pub fn handle(command: Commands) {
         Commands::Handoff { target } => {
             crate::commands::handoff::execute(&target);
         }
+        Commands::Drift { target } => {
+            crate::commands::drift::execute(target.as_deref());
+        }
         Commands::Triage { top, json } => {
             crate::commands::triage::execute(top, json);
         }

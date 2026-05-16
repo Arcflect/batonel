@@ -93,6 +93,12 @@ pub enum Commands {
         /// The artifact name or path to the .contract.yaml file
         target: String,
     },
+    /// [Advanced] Detect drift between implementation code and architectural contracts
+    Drift {
+        /// The artifact name to check for drift. If omitted, checks all artifacts.
+        #[arg(long)]
+        target: Option<String>,
+    },
     /// [Advanced] Triage audit violations by priority and generate a prioritized remediation plan
     Triage {
         /// Limit output to the top N remediation groups
