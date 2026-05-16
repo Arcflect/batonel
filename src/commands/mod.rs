@@ -12,3 +12,4 @@ pub mod preset_registry;
 pub mod preset_verify;
 pub mod prompt;
 pub mod verify;
+pub mod drift;
